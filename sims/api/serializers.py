@@ -1,10 +1,10 @@
 from rest_framework import serializers
-from sims.models import Submission, Machine, Run, Lane, Sample, Adapter, Library, Pool,\
+from sims.models import Project, Machine, Run, Lane, Sample, Adapter, Library, Pool,\
     LanePool
 
-class SubmissionSerializer(serializers.ModelSerializer):
+class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Submission
+        model = Project
         exclude = []
 #         read_only_fields = ('id',)
 
@@ -17,8 +17,6 @@ class RunSerializer(serializers.ModelSerializer):
     class Meta:
         model = Run
         exclude = []
-
-
 
 class PoolSerializer(serializers.ModelSerializer):
     class Meta:

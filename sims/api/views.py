@@ -1,13 +1,26 @@
 from rest_framework import viewsets
 from sims.api.serializers import RunSerializer,RunDetailSerializer, MachineSerializer,\
-    SubmissionSerializer
-from sims.models import Run, Machine, Submission
+    ProjectSerializer, SampleSerializer
+from sims.models import Run, Machine, Project, Sample
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from django.conf import settings
+from sims.submission import Submission
 
-class SubmissionViewSet(viewsets.ModelViewSet):
-    serializer_class = SubmissionSerializer
+class ProjectViewSet(viewsets.ModelViewSet):
+    serializer_class = ProjectSerializer
     filter_fields = {'name':['icontains'],'description':['icontains']}
-    queryset = Submission.objects.all()
-
+    queryset = Project.objects.all()
+    @action(detail=False, methods=['get','post'])
+    def import_submission(self, request):
+        data = request.query_params
+        url = settings.SUBMISSION_SYSTEM_URLS['submission'].format(id=data.get('id'))
+        submission = Submission.get_submission(data.get('id'))
+        project = submission.create_project()
+        return Response({'id':data,'url':url, 'submission':submission._data, 'project': ProjectSerializer(project).data})
+class SampleViewSet(viewsets.ModelViewSet):
+    serializer_class = SampleSerializer
+    queryset = Sample.objects.all()
 # #@todo: fix this... it isn't being called when used as a mixin
 # class ActionSerializerMixin(object):
 #     """

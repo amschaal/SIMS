@@ -52,11 +52,11 @@ def create_run(sender,instance,created,**kwargs):
             Lane.objects.create(run=instance, index=i)
 
 #===============================================================================
-# Submission contains minimal subset of information from sample submission system.
+# Project contains minimal subset of information from sample submission system.
 # Data may be imported and updated from submission system.
 # This helps create local DB FKs as well as make submissions quickly searchable instead of using API.
 #===============================================================================
-class Submission(models.Model):
+class Project(models.Model):
     id = models.CharField(max_length=50, primary_key=True, editable=False)
     internal_id = models.CharField(max_length=25)
 #     status = models.CharField(max_length=50, null=True)#models.ForeignKey(SubmissionStatus,null=True,on_delete=models.SET_NULL)
@@ -78,7 +78,7 @@ class Submission(models.Model):
 #     payment_type = models.CharField(max_length=50,choices=PAYMENT_CHOICES)
 #     payment_info = models.CharField(max_length=250,null=True,blank=True)
 #     type = models.ForeignKey(SubmissionType,related_name="submissions", on_delete=models.PROTECT)
-    type = models.CharField(max_length=50)
+    type = JSONField()
     submission_schema = JSONField(null=True,blank=True)
     sample_schema = JSONField(null=True,blank=True)
     submission_data = JSONField(default=dict)
@@ -89,7 +89,7 @@ class Submission(models.Model):
     comments = models.TextField(null=True, blank=True)
 
 class Sample(models.Model):
-    submission = models.ForeignKey(Submission, on_delete=models.CASCADE, related_name="samples",null=True,blank=True)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="samples",null=True,blank=True)
     sample_id = models.CharField(max_length=60,unique=True,null=True,blank=True,db_index=True)
     name = models.CharField(max_length=100,db_index=True)
     imported = models.DateTimeField(auto_now=True,db_index=True)
@@ -102,7 +102,7 @@ class Sample(models.Model):
 #     def directory(self,full=True):
 #         return call_directory_function('get_sample_directory',self,full=full)
     class Meta:
-        unique_together = (('sample_id','submission'),('name','submission'),)
+        unique_together = (('sample_id','project'),('name','project'),)
 #     @transaction.atomic
 #     def save(self, *args, **kwargs):
 #         if not self.id:
