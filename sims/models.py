@@ -4,6 +4,7 @@ from django.dispatch.dispatcher import receiver
 from datetime import datetime
 from django.contrib.postgres.fields.jsonb import JSONField
 from django.contrib.auth.models import User
+from django.core.validators import MaxValueValidator
 
 class Machine(models.Model):
     name = models.CharField(max_length=50,db_index=True)
@@ -15,16 +16,26 @@ class Machine(models.Model):
 class Run(models.Model):
     name = models.CharField(max_length=100,blank=True,null=True,db_index=True)
     created = models.DateTimeField(auto_now_add=True)
-    machine = models.ForeignKey(Machine)
+    machine = models.ForeignKey(Machine, on_delete=models.PROTECT)
     description = models.TextField(null=True,blank=True)
 
 class Lane(models.Model):
-    run = models.ForeignKey(Run,related_name='lanes')
+    run = models.ForeignKey(Run, on_delete=models.CASCADE,related_name='lanes')
     index = models.PositiveSmallIntegerField()
-    pool = models.ForeignKey('Pool',null=True,blank=True)
+#     pool = models.ForeignKey('Pool',null=True,blank=True)
+    pools = models.ManyToManyField(
+        'Pool',
+        through='LanePool',
+        through_fields=('lane', 'pool'),
+    )
     description = models.TextField(null=True,blank=True,db_index=True)
     class Meta:
         unique_together = (('run','index'))
+
+class LanePool(models.Model):
+    lane = models.ForeignKey(Lane, on_delete=models.CASCADE, related_name='lane_pools')
+    pool = models.ForeignKey('Pool', on_delete=models.PROTECT)
+    percentage = models.PositiveIntegerField(validators=[MaxValueValidator(100)])
 
 @receiver(pre_save,sender=Run)
 def set_run_name(sender,instance,**kwargs):
@@ -78,7 +89,7 @@ class Submission(models.Model):
     comments = models.TextField(null=True, blank=True)
 
 class Sample(models.Model):
-    submission = models.ForeignKey(Submission, related_name="samples",null=True,blank=True)
+    submission = models.ForeignKey(Submission, on_delete=models.CASCADE, related_name="samples",null=True,blank=True)
     sample_id = models.CharField(max_length=60,unique=True,null=True,blank=True,db_index=True)
     name = models.CharField(max_length=100,db_index=True)
     imported = models.DateTimeField(auto_now=True,db_index=True)
@@ -109,8 +120,8 @@ class Adapter(models.Model):
 class Library(models.Model):
     created = models.DateTimeField(auto_now_add=True,db_index=True)
     name = models.CharField(max_length=100,null=True,blank=True,db_index=True)
-    sample = models.ForeignKey(Sample,related_name='libraries')
-    adapter = models.ForeignKey(Adapter,null=True,blank=True,related_name='libraries')
+    sample = models.ForeignKey(Sample, on_delete=models.CASCADE,related_name='libraries')
+    adapter = models.ForeignKey(Adapter, on_delete=models.PROTECT,null=True,blank=True,related_name='libraries')
     barcode = models.CharField(max_length=100, null=True, blank=True) #this should be updated if adapter changed
     description = models.TextField(null=True,blank=True,db_index=True)
     def get_group(self):
