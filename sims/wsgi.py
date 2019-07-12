@@ -1,5 +1,5 @@
 """
-WSGI config for slims project.
+WSGI config for sims project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'slims.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sims.settings')
 
 application = get_wsgi_application()
