@@ -100,7 +100,7 @@ class PoolPool(models.Model):
 #===============================================================================
 class Project(models.Model):
     id = models.CharField(max_length=50, primary_key=True, editable=False)
-    internal_id = models.CharField(max_length=25)
+    submission_id = models.CharField(max_length=50, unique=True, editable=False)
 #     status = models.CharField(max_length=50, null=True)#models.ForeignKey(SubmissionStatus,null=True,on_delete=models.SET_NULL)
 #     locked = models.BooleanField(default=False)
 #     cancelled = models.DateTimeField(null=True, blank=True)
@@ -131,29 +131,29 @@ class Project(models.Model):
     comments = models.TextField(null=True, blank=True)
 
 class Sample(models.Model):
+    id = models.CharField(max_length=50,primary_key=True)
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="samples",null=True,blank=True)
-    sample_id = models.CharField(max_length=60,unique=True,null=True,blank=True,db_index=True)
-    name = models.CharField(max_length=100,db_index=True)
+#     name = models.CharField(max_length=100,db_index=True)
     imported = models.DateTimeField(auto_now=True,db_index=True)
 #     received = models.DateField(null=True,blank=True,db_index=True)
     data = JSONField(null=True,blank=True)
     def __unicode__(self):
-        return self.sample_id
+        return self.id
     def __str__(self):
-        return self.sample_id
+        return self.id
 #     def get_absolute_url(self):
 #         return reverse('sample', args=[str(self.id)])
 #     def directory(self,full=True):
 #         return call_directory_function('get_sample_directory',self,full=full)
     class Meta:
-        unique_together = (('sample_id','project'),('name','project'),)
+        unique_together = (('id','project'),)
 #     @transaction.atomic
 #     def save(self, *args, **kwargs):
 #         if not self.id:
-# #             if not self.sample_id and self.project:
-# #             last = Sample.objects.filter(project=self.project,sample_id__regex=r'^[A-Z]\d{2}').last()
-#             sample_id = generate_sample_id(self.project)
-#             self.sample_id = sample_id
+# #             if not self.id and self.project:
+# #             last = Sample.objects.filter(project=self.project,id__regex=r'^[A-Z]\d{2}').last()
+#             id = generate_id(self.project)
+#             self.id = id
 #         super(Sample, self).save(*args, **kwargs)
 
 class Adapter(models.Model):
@@ -166,8 +166,8 @@ class Adapter(models.Model):
         return '{} ({})'.format(self.name,self.barcode)
 
 class Library(models.Model):
+    id = models.CharField(max_length=50, primary_key=True)
     created = models.DateTimeField(auto_now_add=True,db_index=True)
-    name = models.CharField(max_length=100,null=True,blank=True,db_index=True)
     sample = models.ForeignKey(Sample, on_delete=models.CASCADE,related_name='libraries')
     adapter = models.ForeignKey(Adapter, on_delete=models.PROTECT,null=True,blank=True,related_name='libraries')
     barcode = models.CharField(max_length=100, null=True, blank=True) #this should be updated if adapter changed
@@ -178,7 +178,9 @@ class Library(models.Model):
         except:
             return None
     def __unicode__(self):
-        return self.name
+        return self.id
+    def name(self):
+        return self.id
 
 @receiver(pre_save,sender=Run)
 def set_run_name(sender,instance,**kwargs):

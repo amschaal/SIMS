@@ -33,7 +33,21 @@ class PoolViewSet(viewsets.ModelViewSet):
     queryset = Pool.objects.all()
     @action(detail=True, methods=['get','post'])
     def add_libraries(self, request, pk=None):
-            
+        return self.update_libraries(request, 'add')
+    @action(detail=True, methods=['get','post'])
+    def remove_libraries(self, request, pk=None):
+        return self.update_libraries(request, 'remove')
+    def update_libraries(self, request, action):
+        pool = self.get_object()
+        data = request.query_params
+        libraries = list(Library.objects.filter(id__in=data.getlist('libraries',[])))
+        libraries += list(Library.objects.filter(sample__project__id__in=data.getlist('projects',[])))
+        if action == 'add':
+            pool.libraries.add(*[l for l in libraries])
+        elif action == 'remove':
+            pool.libraries.remove(*[l for l in libraries])
+        return Response({'libraries': LibrarySerializer(pool.libraries.all(),many=True).data})
+
 class AdapterViewSet(viewsets.ModelViewSet):
     serializer_class = AdapterSerializer
     queryset = Adapter.objects.all()

@@ -23,8 +23,8 @@ class Submission(object):
         self.comments = data['comments']
     def create_project(self):
         print(self.comments)
-        project = Project.objects.create(id=self.id, 
-                                         internal_id=self.internal_id, 
+        project = Project.objects.create(id=self.internal_id, 
+                                         submission_id=self.id, 
                                          submitted=self.submitted,
                                          first_name=self.first_name,
                                          last_name=self.last_name,
@@ -38,7 +38,7 @@ class Submission(object):
                                          data=self.data,
                                          comments=self.comments
                                          )
-        Sample.objects.bulk_create([Sample(project=project,sample_id=s.get('sample_name'),name=s.get('sample_name'),data=s) for s in self.sample_data])
+        Sample.objects.bulk_create([Sample(project=project,id=s.get('sample_name'),data=s) for s in self.sample_data])
         return project
     @staticmethod
     def get_submission(id):
