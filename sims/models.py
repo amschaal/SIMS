@@ -12,12 +12,18 @@ class Machine(models.Model):
     num_lanes = models.SmallIntegerField()
     def __unicode__(self):
         return self.name
+    def __str__(self):
+        return self.__unicode__()
 
 class Run(models.Model):
     name = models.CharField(max_length=100,blank=True,null=True,db_index=True)
     created = models.DateTimeField(auto_now_add=True)
     machine = models.ForeignKey(Machine, on_delete=models.PROTECT)
     description = models.TextField(null=True,blank=True)
+    def __unicode__(self):
+        return self.name
+    def __str__(self):
+        return self.__unicode__()
 
 class RunPool(models.Model):
     run = models.ForeignKey(Run, on_delete=models.CASCADE,related_name='lanes')
@@ -31,6 +37,10 @@ class RunPool(models.Model):
     description = models.TextField(null=True,blank=True,db_index=True)
     class Meta:
         unique_together = (('run','index'))
+    def __unicode__(self):
+        return '{} - {}'.format(self.run,self.index)
+    def __str__(self):
+        return self.__unicode__()
 
 class Pool(models.Model):
     name = models.CharField(max_length=100,unique=True,db_index=True)
@@ -181,6 +191,13 @@ class Library(models.Model):
         return self.id
     def name(self):
         return self.id
+    
+@receiver(pre_save,sender=Library)
+def set_barcode(sender,instance,**kwargs):
+    if instance.adapter and not instance.barcode:
+        instance.barcode = instance.adapter.barcode
+    if not instance.id:
+        instance.id = 'L_'+instance.sample.id
 
 @receiver(pre_save,sender=Run)
 def set_run_name(sender,instance,**kwargs):
@@ -194,4 +211,4 @@ def set_run_name(sender,instance,**kwargs):
 def create_run(sender,instance,created,**kwargs):
     if created:
         for i in range(1,instance.machine.num_lanes+1):
-            Run_Pool.objects.create(run=instance, index=i)
+            RunPool.objects.create(run=instance, index=i)
