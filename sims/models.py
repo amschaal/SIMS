@@ -19,37 +19,79 @@ class Run(models.Model):
     machine = models.ForeignKey(Machine, on_delete=models.PROTECT)
     description = models.TextField(null=True,blank=True)
 
-class Lane(models.Model):
+class RunPool(models.Model):
     run = models.ForeignKey(Run, on_delete=models.CASCADE,related_name='lanes')
     index = models.PositiveSmallIntegerField()
-#     pool = models.ForeignKey('Pool',null=True,blank=True)
-    pools = models.ManyToManyField(
-        'Pool',
-        through='LanePool',
-        through_fields=('lane', 'pool'),
-    )
+    pool = models.ForeignKey('Pool', on_delete=models.PROTECT, null=True,blank=True)
+#     pools = models.ManyToManyField(
+#         'Pool',
+#         through='LanePool',
+#         through_fields=('lane', 'pool'),
+#     )
     description = models.TextField(null=True,blank=True,db_index=True)
     class Meta:
         unique_together = (('run','index'))
 
-class LanePool(models.Model):
-    lane = models.ForeignKey(Lane, on_delete=models.CASCADE, related_name='lane_pools')
-    pool = models.ForeignKey('Pool', on_delete=models.PROTECT)
+class Pool(models.Model):
+    name = models.CharField(max_length=100,unique=True,db_index=True)
+    description = models.TextField(null=True,blank=True,db_index=True)
+    created = models.DateField(auto_now=True,db_index=True)
+    pools = models.ManyToManyField(
+        'self',
+        through='PoolPool',
+        through_fields=('pool', 'pooled'),
+        symmetrical=False,
+        related_name='pooled'
+    )
+#     pooled = models.ManyToManyField(
+#         'self',
+#         through='PoolPool',
+#         through_fields=('pooled', 'pool'),
+#         symmetrical=False
+#     )
+    libraries = models.ManyToManyField(
+        'Library',
+        through='PoolLibrary',
+        through_fields=('pool', 'library'),
+        related_name='pools'
+    )
+#     libraries = models.ManyToManyField(Library,related_name='pools')
+    def __unicode__(self):
+        return self.name
+#     def get_absolute_url(self):
+#         return reverse('pool', args=[str(self.id)])
+    def get_barcode_duplicates(self):
+        barcodes = self.get_library_barcodes()
+        duplicates = {barcode:libraries for barcode,libraries in barcodes.iteritems() if len(libraries) > 1}
+        return duplicates if len(duplicates) > 0 else None
+    def get_library_barcodes(self):
+        barcodes = {}
+        for l in self.libraries.select_related('adapter').filter(adapter__isnull=False):
+            if not barcodes.has_key(l.adapter.barcode):
+                barcodes[l.adapter.barcode] = []
+            barcodes[l.adapter.barcode].append(l.name)
+        return barcodes
+
+#     pools = models.ManyToManyField(
+#         'Pool',
+#         through='LanePool',
+#         through_fields=('lane', 'pool'),
+#     )
+
+class PoolLibrary(models.Model):
+    pool = models.ForeignKey(Pool, on_delete=models.CASCADE)
+    library = models.ForeignKey('Library', on_delete=models.PROTECT)
+    class Meta:
+        unique_together = (('pool','library'))
+
+class PoolPool(models.Model):
+    pool = models.ForeignKey(Pool, on_delete=models.CASCADE, related_name='pooled_intermediate')
+    pooled = models.ForeignKey(Pool, on_delete=models.PROTECT, related_name='pools_intermediate')
     percentage = models.PositiveIntegerField(validators=[MaxValueValidator(100)])
+    class Meta:
+        unique_together = (('pool','pooled'))
 
-@receiver(pre_save,sender=Run)
-def set_run_name(sender,instance,**kwargs):
-    if instance.name and instance.id:
-        return
-    if not instance.name:
-        t = instance.created or datetime.now()
-        instance.name = '%s: %s' % (instance.machine.name, t.strftime('%Y-%m-%d'))
 
-@receiver(post_save,sender=Run)
-def create_run(sender,instance,created,**kwargs):
-    if created:
-        for i in range(1,instance.machine.num_lanes+1):
-            Lane.objects.create(run=instance, index=i)
 
 #===============================================================================
 # Project contains minimal subset of information from sample submission system.
@@ -97,6 +139,8 @@ class Sample(models.Model):
     data = JSONField(null=True,blank=True)
     def __unicode__(self):
         return self.sample_id
+    def __str__(self):
+        return self.sample_id
 #     def get_absolute_url(self):
 #         return reverse('sample', args=[str(self.id)])
 #     def directory(self,full=True):
@@ -116,6 +160,10 @@ class Adapter(models.Model):
     name = models.CharField(max_length=100)
     barcode = models.CharField(max_length=100)
     description = models.TextField(null=True,blank=True)
+    def __unicode__(self):
+        return '{} ({})'.format(self.name,self.barcode)
+    def __str__(self):
+        return '{} ({})'.format(self.name,self.barcode)
 
 class Library(models.Model):
     created = models.DateTimeField(auto_now_add=True,db_index=True)
@@ -132,26 +180,16 @@ class Library(models.Model):
     def __unicode__(self):
         return self.name
 
-class Pool(models.Model):
-    name = models.CharField(max_length=100,unique=True,db_index=True)
-    description = models.TextField(null=True,blank=True,db_index=True)
-    created = models.DateField(auto_now=True,db_index=True)
-    libraries = models.ManyToManyField(Library,related_name='pools')
-    library_data = JSONField(null=True,blank=True,default={})
-    def __unicode__(self):
-        return self.name
-#     def get_absolute_url(self):
-#         return reverse('pool', args=[str(self.id)])
-    def get_barcode_duplicates(self):
-        barcodes = self.get_library_barcodes()
-        duplicates = {barcode:libraries for barcode,libraries in barcodes.iteritems() if len(libraries) > 1}
-        return duplicates if len(duplicates) > 0 else None
-    def get_library_barcodes(self):
-        barcodes = {}
-        for l in self.libraries.select_related('adapter').filter(adapter__isnull=False):
-            if not barcodes.has_key(l.adapter.barcode):
-                barcodes[l.adapter.barcode] = []
-            barcodes[l.adapter.barcode].append(l.name)
-        return barcodes
+@receiver(pre_save,sender=Run)
+def set_run_name(sender,instance,**kwargs):
+    if instance.name and instance.id:
+        return
+    if not instance.name:
+        t = instance.created or datetime.now()
+        instance.name = '%s: %s' % (instance.machine.name, t.strftime('%Y-%m-%d'))
 
-
+@receiver(post_save,sender=Run)
+def create_run(sender,instance,created,**kwargs):
+    if created:
+        for i in range(1,instance.machine.num_lanes+1):
+            Run_Pool.objects.create(run=instance, index=i)

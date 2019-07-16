@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from sims.models import Project, Machine, Run, Lane, Sample, Adapter, Library, Pool,\
-    LanePool
+from sims.models import Project, Machine, Run, Sample, Adapter, Library, Pool, RunPool
 
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,27 +17,28 @@ class RunSerializer(serializers.ModelSerializer):
         model = Run
         exclude = []
 
+class LibrarySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Library
+        exclude = []
+
 class PoolSerializer(serializers.ModelSerializer):
+    libraries = LibrarySerializer(many=True, read_only=True)
+#     pools = PoolSerializer(many=True, read_only=True)
     class Meta:
         model = Pool
         exclude = []
 
-class LanePoolSerializer(serializers.ModelSerializer):
-    pools = PoolSerializer(many=True, read_only=True)
+class RunPoolSerializer(serializers.ModelSerializer):
+    pool = PoolSerializer(many=True, read_only=True)
     class Meta:
-        model = LanePool
+        model = RunPool
         exclude = []
 
 class RunDetailSerializer(serializers.ModelSerializer):
-    lanes = LanePoolSerializer(read_only=True, many=True)
+    lanes = RunPoolSerializer(read_only=True, many=True)
     class Meta:
         model = Run
-        exclude = []
-
-class LaneSerializer(serializers.ModelSerializer):
-    lane_pools = LanePoolSerializer(read_only=True, many=True)
-    class Meta:
-        model = Lane
         exclude = []
 
 class SampleSerializer(serializers.ModelSerializer):
@@ -51,8 +51,5 @@ class AdapterSerializer(serializers.ModelSerializer):
         model = Adapter
         exclude = []
 
-class LibrarySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Library
-        exclude = []
+
 
