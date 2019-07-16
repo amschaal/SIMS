@@ -30,13 +30,13 @@ class PoolSerializer(serializers.ModelSerializer):
         exclude = []
 
 class RunPoolSerializer(serializers.ModelSerializer):
-    pool = PoolSerializer(many=True, read_only=True)
+#     pool = PoolSerializer(many=True, read_only=True)
     class Meta:
         model = RunPool
         exclude = []
 
 class RunDetailSerializer(serializers.ModelSerializer):
-    lanes = RunPoolSerializer(read_only=True, many=True)
+    run_pools = RunPoolSerializer(read_only=True, many=True)
     class Meta:
         model = Run
         exclude = []

@@ -26,7 +26,7 @@ class Run(models.Model):
         return self.__unicode__()
 
 class RunPool(models.Model):
-    run = models.ForeignKey(Run, on_delete=models.CASCADE,related_name='lanes')
+    run = models.ForeignKey(Run, on_delete=models.CASCADE,related_name='run_pools')
     index = models.PositiveSmallIntegerField()
     pool = models.ForeignKey('Pool', on_delete=models.PROTECT, null=True,blank=True)
 #     pools = models.ManyToManyField(
@@ -68,6 +68,8 @@ class Pool(models.Model):
 #     libraries = models.ManyToManyField(Library,related_name='pools')
     def __unicode__(self):
         return self.name
+    def __str__(self):
+        return self.__unicode__()
 #     def get_absolute_url(self):
 #         return reverse('pool', args=[str(self.id)])
     def get_barcode_duplicates(self):

@@ -1,8 +1,9 @@
 from rest_framework import viewsets
 from sims.api.serializers import RunSerializer,RunDetailSerializer, MachineSerializer,\
     ProjectSerializer, SampleSerializer, PoolSerializer, LibrarySerializer,\
-    AdapterSerializer
-from sims.models import Run, Machine, Project, Sample, Pool, Library, Adapter
+    AdapterSerializer, RunPoolSerializer
+from sims.models import Run, Machine, Project, Sample, Pool, Library, Adapter,\
+    RunPool
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.conf import settings
@@ -84,6 +85,10 @@ class RunViewSet(viewsets.ModelViewSet):
             if self.action in self.action_serializers.keys():
                 return self.action_serializers[self.action]
         return viewsets.ModelViewSet.get_serializer_class(self)
+
+class RunPoolViewSet(viewsets.ModelViewSet):
+    serializer_class = RunPoolSerializer
+    queryset = RunPool.objects.all()
 
 class MachineViewSet(viewsets.ModelViewSet):
     serializer_class = MachineSerializer
