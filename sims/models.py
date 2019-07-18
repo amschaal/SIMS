@@ -101,7 +101,7 @@ class PoolLibrary(models.Model):
 class PoolPool(models.Model):
     pool = models.ForeignKey(Pool, on_delete=models.CASCADE, related_name='pooled_intermediate')
     pooled = models.ForeignKey(Pool, on_delete=models.PROTECT, related_name='pools_intermediate')
-    percentage = models.PositiveIntegerField(validators=[MaxValueValidator(100)])
+    percentage = models.PositiveIntegerField(validators=[MaxValueValidator(100)], null=True, blank=True)
     class Meta:
         unique_together = (('pool','pooled'))
 

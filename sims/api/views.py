@@ -69,10 +69,25 @@ class PoolViewSet(viewsets.ModelViewSet):
         libraries = list(Library.objects.filter(id__in=data.getlist('libraries',[])))
         libraries += list(Library.objects.filter(sample__project__id__in=data.getlist('projects',[])))
         if action == 'add':
-            pool.libraries.add(*[l for l in libraries])
+            pool.libraries.add(*libraries)
         elif action == 'remove':
-            pool.libraries.remove(*[l for l in libraries])
+            pool.libraries.remove(*libraries)
         return Response({'libraries': LibrarySerializer(pool.libraries.all(),many=True).data})
+    @action(detail=True, methods=['get','post'])
+    def add_pools(self, request, pk=None):
+        return self.update_pools(request, 'add')
+    @action(detail=True, methods=['get','post'])
+    def remove_pools(self, request, pk=None):
+        return self.update_pools(request, 'remove')
+    def update_pools(self, request, action):
+        pool = self.get_object()
+        data = request.query_params
+        pools = list(Pool.objects.filter(id__in=data.getlist('pools',[])))
+        if action == 'add':
+            pool.pools.add(*pools)
+        elif action == 'remove':
+            pool.pools.remove(*pools)
+        return Response({'pools': PoolSerializer(pool.pools.all(),many=True).data})
 
 class AdapterViewSet(viewsets.ModelViewSet):
     filter_fields = {

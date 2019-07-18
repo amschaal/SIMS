@@ -22,12 +22,15 @@ class LibrarySerializer(serializers.ModelSerializer):
         model = Library
         exclude = []
 
-class PoolSerializer(serializers.ModelSerializer):
-    libraries = LibrarySerializer(many=True, read_only=True)
-#     pools = PoolSerializer(many=True, read_only=True)
+class BasePoolSerializer(serializers.ModelSerializer):
+#     libraries = LibrarySerializer(many=True, read_only=True)
     class Meta:
         model = Pool
         exclude = []
+
+class PoolSerializer(BasePoolSerializer):
+    libraries = LibrarySerializer(many=True, read_only=True)
+    pools = BasePoolSerializer(many=True, read_only=True)
 
 class RunPoolSerializer(serializers.ModelSerializer):
 #     pool = PoolSerializer(many=True, read_only=True)
