@@ -38,7 +38,7 @@ class Submission(object):
                                          data=self.data,
                                          comments=self.comments
                                          )
-        Sample.objects.bulk_create([Sample(project=project,id=s.get('sample_name'),data=s) for s in self.sample_data])
+        Sample.objects.bulk_create([Sample(project=project,id='{}_{}'.format(project.id,s.get('sample_name')),name=s.get('sample_name'),data=s) for s in self.sample_data])
         return project
     @staticmethod
     def get_submission(id):

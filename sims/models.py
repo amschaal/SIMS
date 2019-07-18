@@ -28,7 +28,7 @@ class Run(models.Model):
 class RunPool(models.Model):
     run = models.ForeignKey(Run, on_delete=models.CASCADE,related_name='run_pools')
     index = models.PositiveSmallIntegerField()
-    pool = models.ForeignKey('Pool', on_delete=models.PROTECT, null=True,blank=True)
+    pool = models.ForeignKey('Pool', on_delete=models.PROTECT, null=True,blank=True,related_name='run_pools')
 #     pools = models.ManyToManyField(
 #         'Pool',
 #         through='LanePool',
@@ -41,6 +41,8 @@ class RunPool(models.Model):
         return '{} - {}'.format(self.run,self.index)
     def __str__(self):
         return self.__unicode__()
+#     def all_libraries(self):
+#         return Library.objects
 
 class Pool(models.Model):
     name = models.CharField(max_length=100,unique=True,db_index=True)
@@ -145,7 +147,7 @@ class Project(models.Model):
 class Sample(models.Model):
     id = models.CharField(max_length=50,primary_key=True)
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="samples",null=True,blank=True)
-#     name = models.CharField(max_length=100,db_index=True)
+    name = models.CharField(max_length=50,db_index=True)
     imported = models.DateTimeField(auto_now=True,db_index=True)
 #     received = models.DateField(null=True,blank=True,db_index=True)
     data = JSONField(null=True,blank=True)

@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+#     'rest_framework_filters',
+    'django_filters',
     'rest_framework',
     'sims'
 ]
@@ -128,7 +130,8 @@ REST_FRAMEWORK = {
 #         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
         'rest_framework.permissions.AllowAny'
 
-    ]
+    ],
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']#['rest_framework_filters.backends.RestFrameworkFilterBackend']
 }
 
 SUBMISSION_SYSTEM_URLS = {
