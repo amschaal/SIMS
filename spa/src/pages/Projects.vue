@@ -1,6 +1,5 @@
 <template>
   <q-page class="flex flex-center">
-    Projects
     <q-table
       title="Projects"
       :data="data"

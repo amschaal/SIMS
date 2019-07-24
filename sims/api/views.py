@@ -18,6 +18,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         'samples__libraries__pools__id': ['exact'],
         'samples__libraries__pools__run_pools__run__id': ['exact']
         }
+    ordering_fields = ['id', 'submitted']
     queryset = Project.objects.distinct()
     @action(detail=False, methods=['get','post'])
     def import_submission(self, request):
