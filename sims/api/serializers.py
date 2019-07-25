@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from sims.models import Project, Machine, Run, Sample, Adapter, Library, Pool, RunPool
+from django.conf import settings
 
 #Allows Creation/Updating of related model fields with OBJECT instead of just id
 #usage field_name = ModelRelatedField(model=Sample,serializer=SampleSerializer)
@@ -30,6 +31,9 @@ class ModelRelatedField(serializers.RelatedField):
         return self.serializer(value).data
 
 class ProjectSerializer(serializers.ModelSerializer):
+    submission_url = serializers.SerializerMethodField()
+    def get_submission_url(self, obj):
+        return settings.SUBMISSION_SYSTEM_URLS['submission'].format(id=obj.submission_id)
     class Meta:
         model = Project
         exclude = []

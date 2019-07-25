@@ -139,7 +139,8 @@ REST_FRAMEWORK = {
 }
 
 SUBMISSION_SYSTEM_URLS = {
-    'submission': 'http://submissions.genomecenter.ucdavis.edu/server/api/submissions/{id}/'
+    'api': {'submission': 'http://submissions.genomecenter.ucdavis.edu/server/api/submissions/{id}/'},
+    'submission': 'http://submissions.genomecenter.ucdavis.edu/submissions/{id}/'
     }
 
 from sims.config import *

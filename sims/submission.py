@@ -10,8 +10,10 @@ class Submission(object):
         self.submitted = data['submitted']
         self.first_name = data['first_name']
         self.last_name = data['last_name']
+        self.email = data['email']
         self.pi_first_name = data['pi_first_name']
         self.pi_last_name = data['pi_last_name']
+        self.pi_email = data['pi_email']
         self.institute = data['institute']
         self.type = data['type']
         self.submission_schema = data['submission_schema']
@@ -28,6 +30,10 @@ class Submission(object):
                                          submitted=self.submitted,
                                          first_name=self.first_name,
                                          last_name=self.last_name,
+                                         email=self.email,
+                                         pi_first_name = self.pi_first_name,
+                                         pi_last_name = self.pi_last_name,
+                                         pi_email=self.pi_email,
                                          institute=self.institute,
                                          type=self.type,
                                          submission_schema=self.submission_schema,
@@ -42,7 +48,7 @@ class Submission(object):
         return project
     @staticmethod
     def get_submission(id):
-        URL = settings.SUBMISSION_SYSTEM_URLS['submission'].format(id=id)
+        URL = settings.SUBMISSION_SYSTEM_URLS['api']['submission'].format(id=id)
         with urllib.request.urlopen(URL) as url:
             data = json.load(url)#url.read().decode()
             return Submission(data)
