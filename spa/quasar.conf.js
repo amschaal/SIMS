@@ -49,7 +49,12 @@ module.exports = function (ctx) {
         'QTd',
         'QTr',
         'QInput',
-        'QSelect'
+        'QSelect',
+        'QTabs',
+        'QTab',
+        'QTabPanels',
+        'QTabPanel',
+        'QRouteTab'
       ],
 
       directives: [
