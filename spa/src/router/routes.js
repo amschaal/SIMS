@@ -5,7 +5,13 @@ const routes = [
     component: () => import('layouts/base.vue'),
     children: [
       { path: '', component: () => import('pages/Index.vue') },
-      { path: 'projects', component: () => import('pages/Projects.vue') }
+      { name: 'projects', path: 'projects', component: () => import('pages/Projects.vue') },
+      {
+        path: '/projects/:id',
+        component: () => import('pages/Project.vue'),
+        name: 'project',
+        props: true
+      }
     ]
   }
 ]
