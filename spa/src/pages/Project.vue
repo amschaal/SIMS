@@ -17,7 +17,7 @@
             {{project.sample_data}}
             <BaseDialog ref="dialog" title="Samples">
               <template v-slot:content>
-                <SamplesTable :filters="`project__id=${id}`"/>
+                <SamplesTable :filters="`project__id=${id}`" :options="{'selection': 'multiple'}"/>
               </template>
             </BaseDialog>
             <q-btn label="Samples" color="primary" @click="openDialog" />

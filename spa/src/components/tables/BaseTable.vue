@@ -10,6 +10,9 @@
       @request="onRequest"
       binary-state-sort
       :visible-columns="visibleColumns"
+      :selected-rows-label="getSelectedString"
+      :selection="selection"
+      :selected.sync="selected"
     >
       <template v-slot:top-right="props">
         <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
@@ -54,6 +57,8 @@ export default {
   props: ['apiUrl', 'columns', 'visibleColumns', 'options', 'filters'],
   data () {
     return {
+      selected: [],
+      selection: this.options && this.options.selection ? this.options.selection : 'none',
       filter: '',
       loading: false,
       pagination: {
@@ -137,6 +142,9 @@ export default {
         pagination: this.pagination,
         filter: this.filter
       })
+    },
+    getSelectedString () {
+      return this.selected.length === 0 ? '' : `${this.selected.length} record${this.selected.length > 1 ? 's' : ''} selected of ${this.data.length}`
     }
   }
 }
