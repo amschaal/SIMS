@@ -11,6 +11,13 @@ const routes = [
         component: () => import('pages/Project.vue'),
         name: 'project',
         props: true
+      },
+      { name: 'samples', path: 'samples', component: () => import('pages/Samples.vue') },
+      {
+        path: '/samples/:id',
+        component: () => import('pages/Sample.vue'),
+        name: 'sample',
+        props: true
       }
     ]
   }

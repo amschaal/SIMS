@@ -42,6 +42,12 @@
             <!-- <q-item-label caption>Projects</q-item-label> -->
           </q-item-section>
         </q-item>
+        <q-item clickable :to="{ name: 'samples'}">
+          <q-item-section>
+            <q-item-label>Samples</q-item-label>
+            <!-- <q-item-label caption>Projects</q-item-label> -->
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
