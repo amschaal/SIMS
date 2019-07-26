@@ -51,7 +51,7 @@
 <script>
 export default {
   name: 'BaseTable',
-  props: ['apiUrl', 'columns', 'visibleColumns', 'options'],
+  props: ['apiUrl', 'columns', 'visibleColumns', 'options', 'filters'],
   data () {
     return {
       filter: '',
@@ -110,7 +110,7 @@ export default {
       var pageSize = pagination.rowsPerPage ? pagination.rowsPerPage : 1000000 // HACKY
       // var type = this.$route.query.type ? `&type__name__icontains=${this.$route.query.type}` : ''
       this.$axios
-        .get(`${this.apiUrl}?ordering=${sortBy}&page=${pagination.page}&page_size=${pageSize}${search}`)// ${pagination.descending}&filter=${filter}
+        .get(`${this.apiUrl}?ordering=${sortBy}&page=${pagination.page}&page_size=${pageSize}${search}&${this.filters}`)// ${pagination.descending}&filter=${filter}
         .then(({ data }) => {
           console.log('data', data)
           // updating pagination to reflect in the UI

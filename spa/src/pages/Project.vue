@@ -15,7 +15,13 @@
           <q-tab-panel name="samples">
             <div class="text-h6">Samples</div>
             {{project.sample_data}}
-            <SamplesTable/>
+            <BaseDialog ref="dialog" title="Samples">
+              <template v-slot:content>
+                <SamplesTable :filters="`project__id=${id}`"/>
+              </template>
+            </BaseDialog>
+            <q-btn label="Samples" color="primary" @click="openDialog" />
+            <SamplesTable :filters="`project__id=${id}`"/>
           </q-tab-panel>
         </q-tab-panels>
   </q-page>
@@ -27,13 +33,15 @@
 <script>
 import Vue from 'vue'
 import SamplesTable from '../components/SamplesTable.vue'
+import BaseDialog from '../components/dialogs/BaseDialog.vue'
 export default {
   name: 'project',
   props: ['id'],
   data () {
     return {
       project: {},
-      tab: 'details'
+      tab: 'details',
+      openSampleDialog: false
     }
   },
   mounted: function () {
@@ -45,8 +53,15 @@ export default {
         Vue.set(self, 'project', response.data)
       })
   },
+  methods: {
+    openDialog () {
+      console.log('dialog', this.$refs.dialog)
+      this.$refs.dialog.open()
+    }
+  },
   components: {
-    SamplesTable
+    SamplesTable,
+    BaseDialog
   }
 }
 </script>

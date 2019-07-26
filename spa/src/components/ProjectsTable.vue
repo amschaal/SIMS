@@ -4,6 +4,7 @@
       :visible-columns="['id', 'submission_id', 'type', 'submitted', 'pi_name']"
       api-url="/api/projects/"
       :options="options"
+      :filters="filters"
     >
       <template v-slot:body="p">
         <!-- <q-tr :props="p.props"><q-td :props="p.props" key="id">{{p.props.row.id}}</q-td></q-tr> -->
@@ -27,9 +28,10 @@
 </style>
 
 <script>
-import BaseTable from './Tables/BaseTable.vue'
+import BaseTable from './tables/BaseTable.vue'
 export default {
   name: 'ProjectsTable',
+  props: ['filters'],
   data () {
     return {
       columns: [
