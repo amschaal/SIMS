@@ -1,5 +1,5 @@
 <template>
-  <q-page class="flex flex-center">
+  <q-page class="">
     <q-tabs
         v-model="tab"
       >
@@ -9,7 +9,7 @@
       <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="details">
             <div class="text-h6">Sample</div>
-            Sample {{sample}}
+            Sample {{sample.id}}
           </q-tab-panel>
           <q-tab-panel name="libraries">
             <div class="text-h6">Libraries</div>

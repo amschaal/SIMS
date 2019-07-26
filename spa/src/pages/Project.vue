@@ -1,5 +1,5 @@
 <template>
-  <q-page class="flex flex-center">
+  <q-page class="">
 
     <q-tabs
         v-model="tab"
@@ -10,11 +10,11 @@
       <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="details">
             <div class="text-h6">Project</div>
-            Project {{project}}
+            Project {{project.id}}
           </q-tab-panel>
           <q-tab-panel name="samples">
             <div class="text-h6">Samples</div>
-            {{project.sample_data}}
+            {{project.sample_data.length}}
             <BaseDialog ref="dialog" title="Samples">
               <template v-slot:content>
                 <SamplesTable :filters="`project__id=${id}`" :options="{'selection': 'multiple'}"/>
