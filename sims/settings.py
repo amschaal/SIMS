@@ -134,7 +134,7 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend',
                                 'rest_framework.filters.OrderingFilter',
                                 'rest_framework.filters.SearchFilter'], #['rest_framework_filters.backends.RestFrameworkFilterBackend']
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'DEFAULT_PAGINATION_CLASS': 'sims.api.pagination.StandardPagePagination',
     'PAGE_SIZE': 10
 }
 
