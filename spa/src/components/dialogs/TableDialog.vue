@@ -12,7 +12,7 @@
 <script>
 import BaseDialog from './BaseDialog.vue'
 export default {
-  props: ['tableComponent', 'title', 'options', 'filters'],
+  props: ['tableComponent', 'title', 'options', 'filters', 'onSelect'],
   data () {
     return {
     }
@@ -23,7 +23,10 @@ export default {
       this.$refs.dialog.open()
     },
     getSelected () {
-      console.log('selected', this.$refs.table.$refs.table.getSelected())
+      // console.log('selected', this.$refs.table.$refs.table.getSelected())
+      if (this.onSelect) {
+        this.onSelect(this.$refs.table.$refs.table.getSelected())
+      }
       this.$refs.dialog.close()
       // return this.$refs.dialog.getSelected()
     }
