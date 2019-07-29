@@ -5,15 +5,20 @@
       >
         <q-tab name="details" label="Details"/>
         <q-tab name="libraries" label="Libraries"/>
+        <q-tab name="pools" label="Pools"/>
       </q-tabs>
       <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="details">
-            <div class="text-h6">Sample</div>
-            Sample {{sample.id}}
+            <div class="text-h6">Run</div>
+            Run!! {{run}}
           </q-tab-panel>
           <q-tab-panel name="libraries">
             <div class="text-h6">Libraries</div>
-            <LibrariesTable :filters="`sample__id=${id}`"/>
+            <LibrariesTable :filters="`pools__run_pools__run__id=${id}`"/>
+          </q-tab-panel>
+          <q-tab-panel name="pools">
+            <div class="text-h6">Pools</div>
+            <PoolsTable :filters="`run_pools__run__id=${id}`"/>
           </q-tab-panel>
         </q-tab-panels>
   </q-page>
@@ -25,26 +30,27 @@
 <script>
 import Vue from 'vue'
 import LibrariesTable from '../components/tables/LibrariesTable.vue'
+import PoolsTable from '../components/tables/PoolsTable.vue'
 export default {
-  name: 'sample',
+  name: 'run',
   props: ['id'],
   data () {
     return {
-      sample: {},
+      run: {},
       tab: 'details'
     }
   },
   mounted: function () {
     var self = this
     this.$axios
-      .get(`/api/samples/${self.id}/`)
+      .get(`/api/runs/${self.id}/`)
       .then(function (response) {
-        console.log('response', response)
-        Vue.set(self, 'sample', response.data)
+        Vue.set(self, 'run', response.data)
       })
   },
   components: {
-    LibrariesTable
+    LibrariesTable,
+    PoolsTable
   }
 }
 </script>

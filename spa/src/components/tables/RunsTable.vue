@@ -2,7 +2,7 @@
   <BaseTable
     :columns="columns"
     :visible-columns="visibleColumns"
-    api-url="/api/pools/"
+    api-url="/api/runs/"
     :options="combined_options"
     :filters="filters"
     ref="table"
@@ -13,7 +13,7 @@
           <q-checkbox dense v-model="p.props.selected" />
         </q-td>
         <q-td key="created" :props="p.props">{{ p.props.row.created }}</q-td>
-        <q-td key="id" :props="p.props"><router-link replace :to="{ name: 'pool', params: { id: p.props.row.id }}">{{ p.props.row.name }}</router-link></q-td>
+        <q-td key="id" :props="p.props"><router-link replace :to="{ name: 'run', params: { id: p.props.row.id }}">{{ p.props.row.name }}</router-link></q-td>
         <q-td key="description" :props="p.props">{{ p.props.row.description }}</q-td>
       </q-tr>
     </template>
@@ -23,7 +23,7 @@
 <script>
 import BaseTable from './BaseTable.vue'
 export default {
-  name: 'PoolsTable',
+  name: 'RunsTable',
   props: ['filters', 'options'],
   data () {
     return {
@@ -39,7 +39,7 @@ export default {
   },
   mounted: function () {
     this.combined_options = this.options ? this.options : {}
-    this.combined_options.title = 'Pools'
+    this.combined_options.title = 'Runs'
   },
   components: {
     BaseTable
