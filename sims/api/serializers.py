@@ -50,6 +50,9 @@ class RunSerializer(serializers.ModelSerializer):
         exclude = []
 
 class LibrarySerializer(serializers.ModelSerializer):
+    project = serializers.SerializerMethodField()
+    def get_project(self, obj):
+        return obj.sample.project_id
     class Meta:
         model = Library
         exclude = []

@@ -18,6 +18,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         'samples__libraries__pools__id': ['exact'],
         'samples__libraries__pools__run_pools__run__id': ['exact']
         }
+    search_fields = ('id', 'submission_id', 'pi_first_name', 'pi_last_name', 'pi_email', 'first_name', 'last_name', 'email')
     ordering_fields = ['id', 'submitted', 'submission_id']
     queryset = Project.objects.distinct()
     @action(detail=False, methods=['get','post'])
@@ -34,6 +35,7 @@ class SampleViewSet(viewsets.ModelViewSet):
         'id':['icontains','exact'],
         'project__id':['icontains','exact'],
         }
+    search_fields = ('id', 'project__id')
     serializer_class = SampleSerializer
     queryset = Sample.objects.distinct()
 
@@ -46,15 +48,19 @@ class LibraryViewSet(viewsets.ModelViewSet):
         'pools__id': ['exact'],
         'pools__run_pools__run__id': ['exact']
         }
+    search_fields = ('id', 'sample__project__id', 'barcode')
     serializer_class = LibrarySerializer
-    queryset = Library.objects.distinct()
+    queryset = Library.objects.select_related('sample', 'sample__project').distinct()
 
 class PoolViewSet(viewsets.ModelViewSet):
     filter_fields = {
         'name':['icontains','exact'],
         'libraries__id':['exact'],
         'libraries__sample__id':['exact'],
-        'libraries__sample__project__id':['exact']
+        'libraries__sample__project__id':['exact'],
+        'pooled__id':['exact'],
+        'pools__id':['exact'],
+        'run_pools__run__id':['exact']
         }
     serializer_class = PoolSerializer
     queryset = Pool.objects.distinct()
