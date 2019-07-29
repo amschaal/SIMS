@@ -14,8 +14,9 @@
       <q-separator />
 
       <q-card-actions align="right">
-        <q-btn flat label="Decline" color="primary" v-close-popup />
-        <q-btn flat label="Accept" color="primary" v-close-popup />
+        <slot name="buttons">
+          <q-btn flat label="Close" color="primary" v-close-popup />
+        </slot>
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -31,6 +32,9 @@ export default {
   methods: {
     open () {
       this.opened = true
+    },
+    close () {
+      this.opened = false
     }
   }
 }

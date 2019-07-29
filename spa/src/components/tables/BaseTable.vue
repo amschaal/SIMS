@@ -14,14 +14,14 @@
       :selection="selection"
       :selected.sync="selected"
     >
-      <template v-slot:top-right="props">
+      <template v-slot:top-left="props">
         <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
         </q-input>
       </template>
-      <template v-slot:top="props">
+      <template v-slot:top-right="props">
        <q-select
          v-model="visibleColumns"
          multiple
@@ -145,6 +145,9 @@ export default {
     },
     getSelectedString () {
       return this.selected.length === 0 ? '' : `${this.selected.length} record${this.selected.length > 1 ? 's' : ''} selected of ${this.data.length}`
+    },
+    getSelected () {
+      return this.selected
     }
   }
 }

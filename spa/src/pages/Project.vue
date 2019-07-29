@@ -14,12 +14,14 @@
           </q-tab-panel>
           <q-tab-panel name="samples">
             <div class="text-h6">Samples</div>
-            {{project.sample_data.length}}
-            <BaseDialog ref="dialog" title="Samples">
+            <!-- {{project.sample_data.length}} -->
+            <!-- <BaseDialog ref="dialog" title="Samples">
               <template v-slot:content>
                 <SamplesTable :filters="`project__id=${id}`" :options="{'selection': 'multiple'}"/>
               </template>
-            </BaseDialog>
+            </BaseDialog> -->
+            <!-- <TableDialog table-component="SamplesTable" ref="dialog"/> -->
+            <TableDialog :table-component="SamplesTable" :options="{'selection': 'multiple'}" ref="dialog"/>
             <q-btn label="Samples" color="primary" @click="openDialog" />
             <SamplesTable :filters="`project__id=${id}`"/>
           </q-tab-panel>
@@ -32,8 +34,8 @@
 
 <script>
 import Vue from 'vue'
-import SamplesTable from '../components/SamplesTable.vue'
-import BaseDialog from '../components/dialogs/BaseDialog.vue'
+import SamplesTable from '../components/tables/SamplesTable.vue'
+import TableDialog from '../components/dialogs/TableDialog.vue'
 export default {
   name: 'project',
   props: ['id'],
@@ -41,7 +43,8 @@ export default {
     return {
       project: {},
       tab: 'details',
-      openSampleDialog: false
+      openSampleDialog: false,
+      SamplesTable: SamplesTable
     }
   },
   mounted: function () {
@@ -61,7 +64,7 @@ export default {
   },
   components: {
     SamplesTable,
-    BaseDialog
+    TableDialog
   }
 }
 </script>

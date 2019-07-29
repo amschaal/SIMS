@@ -8,7 +8,7 @@
 </style>
 
 <script>
-import ProjectsTable from '../components/ProjectsTable.vue'
+import ProjectsTable from '../components/tables/ProjectsTable.vue'
 export default {
   components: {
     ProjectsTable

@@ -8,7 +8,7 @@
 </style>
 
 <script>
-import SamplesTable from '../components/SamplesTable.vue'
+import SamplesTable from '../components/tables/SamplesTable.vue'
 export default {
   components: {
     SamplesTable

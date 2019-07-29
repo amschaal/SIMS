@@ -5,6 +5,7 @@
     api-url="/api/samples/"
     :options="combined_options"
     :filters="filters"
+    ref="table"
   >
     <template v-slot:body="p">
       <q-tr :props="p">
@@ -19,7 +20,7 @@
 </template>
 
 <script>
-import BaseTable from './tables/BaseTable.vue'
+import BaseTable from './BaseTable.vue'
 export default {
   name: 'SamplesTable',
   props: ['filters', 'options'],

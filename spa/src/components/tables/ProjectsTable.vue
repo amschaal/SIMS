@@ -5,6 +5,7 @@
       api-url="/api/projects/"
       :options="combined_options"
       :filters="filters"
+      ref="table"
     >
       <template v-slot:body="p">
         <!-- <q-tr :props="p.props"><q-td :props="p.props" key="id">{{p.props.row.id}}</q-td></q-tr> -->
@@ -31,7 +32,7 @@
 </style>
 
 <script>
-import BaseTable from './tables/BaseTable.vue'
+import BaseTable from './BaseTable.vue'
 export default {
   name: 'ProjectsTable',
   props: ['filters', 'options'],
