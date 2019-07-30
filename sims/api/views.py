@@ -72,9 +72,9 @@ class PoolViewSet(viewsets.ModelViewSet):
         return self.update_libraries(request, 'remove')
     def update_libraries(self, request, action):
         pool = self.get_object()
-        data = request.query_params
-        libraries = list(Library.objects.filter(id__in=data.getlist('libraries',[])))
-        libraries += list(Library.objects.filter(sample__project__id__in=data.getlist('projects',[])))
+        data = request.data
+        libraries = list(Library.objects.filter(id__in=data.get('libraries',[])))
+        libraries += list(Library.objects.filter(sample__project__id__in=data.get('projects',[])))
         if action == 'add':
             pool.libraries.add(*libraries)
         elif action == 'remove':
@@ -151,7 +151,8 @@ class RunViewSet(viewsets.ModelViewSet):
         return viewsets.ModelViewSet.get_serializer_class(self)
 
 class RunPoolViewSet(viewsets.ModelViewSet):
-    filter_fields = {'run__id':['exact']}
+    filter_fields = {'run__id':['exact']
+                     }
     serializer_class = RunPoolSerializer
     queryset = RunPool.objects.distinct()
     action_serializers = {

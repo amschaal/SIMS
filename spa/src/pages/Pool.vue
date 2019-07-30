@@ -14,7 +14,9 @@
           </q-tab-panel>
           <q-tab-panel name="libraries">
             <div class="text-h6">Libraries</div>
-            <LibrariesTable :filters="`pools__id=${id}`"/>
+            <TableDialog :table-component="LibrariesTable" :options="{'selection': 'multiple'}" ref="libraries" :on-select="addLibraries"/>
+            <q-btn label="Add libraries" color="primary" @click="open('libraries')" />
+            <LibrariesTable :filters="`pools__id=${id}`" ref="libraries_table"/>
           </q-tab-panel>
           <q-tab-panel name="pools">
             <div class="text-h6">Pools</div>
@@ -31,6 +33,7 @@
 import Vue from 'vue'
 import LibrariesTable from '../components/tables/LibrariesTable.vue'
 import PoolsTable from '../components/tables/PoolsTable.vue'
+import TableDialog from '../components/dialogs/TableDialog.vue'
 // import PoolFormDialog from '../components/forms/PoolFormDialog.vue'
 export default {
   name: 'pool',
@@ -38,7 +41,28 @@ export default {
   data () {
     return {
       pool: {},
-      tab: 'details'
+      tab: 'details',
+      LibrariesTable: LibrariesTable
+    }
+  },
+  methods: {
+    addLibraries (libraries) {
+      libraries = libraries.map(l => l.id)
+      console.log('addLibraries', libraries)
+      var self = this
+      this.$axios
+        .post(`/api/pools/${self.id}/add_libraries/`, { libraries: libraries })
+        .then(function (response) {
+          self.$q.notify('Libraries added.')
+          self.$refs.libraries_table.$refs.table.refresh()
+        })
+        // .catch(function (error) {
+        //   console.log(error.code)
+        //   self.$q.notify('Failed to add libraries.')
+        // })
+    },
+    open (table) {
+      this.$refs[table].open()
     }
   },
   mounted: function () {
@@ -51,7 +75,8 @@ export default {
   },
   components: {
     LibrariesTable,
-    PoolsTable
+    PoolsTable,
+    TableDialog
     // PoolFormDialog
   }
 }

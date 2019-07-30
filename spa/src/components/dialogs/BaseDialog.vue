@@ -1,13 +1,13 @@
 <template>
   <q-dialog v-model="opened">
-    <q-card>
+    <q-card class="full-width" style="width:90%; max-width: 90%;">
       <q-card-section>
         <div class="text-h6">{{title}}</div>
       </q-card-section>
 
       <q-separator />
 
-      <q-card-section style="max-height: 50vh" class="scroll">
+      <q-card-section style="" class="scroll">
         <slot name="content"></slot>
       </q-card-section>
 
