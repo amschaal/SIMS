@@ -31,6 +31,7 @@
 import Vue from 'vue'
 import LibrariesTable from '../components/tables/LibrariesTable.vue'
 import PoolsTable from '../components/tables/PoolsTable.vue'
+// import PoolFormDialog from '../components/forms/PoolFormDialog.vue'
 export default {
   name: 'pool',
   props: ['id'],
@@ -51,6 +52,7 @@ export default {
   components: {
     LibrariesTable,
     PoolsTable
+    // PoolFormDialog
   }
 }
 </script>

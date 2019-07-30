@@ -7,15 +7,15 @@
     :filters="filters"
     ref="table"
   >
-    <template v-slot:body="p">
-      <q-tr :props="p">
+    <template v-slot:body="{ props }">
+      <q-tr :props="props">
         <q-td auto-width v-if="combined_options.selection === 'multiple'">
-          <q-checkbox dense v-model="p.props.selected" />
+          <q-checkbox dense v-model="props.selected" />
         </q-td>
-        <q-td key="id" :props="p.props"><router-link :to="{ name: 'library', params: { id: p.props.row.id }}">{{ p.props.row.id }}</router-link></q-td>
-        <q-td key="sample" :props="p.props"><router-link :to="{ name: 'sample', params: { id: p.props.row.sample }}">{{ p.props.row.sample }}</router-link></q-td>
-        <q-td key="project" :props="p.props"><router-link :to="{ name: 'project', params: { id: p.props.row.project }}">{{ p.props.row.project }}</router-link></q-td>
-        <q-td key="barcode" :props="p.props">{{ p.props.row.barcode }}</q-td>
+        <q-td key="id" :props="props"><router-link :to="{ name: 'library', params: { id: props.row.id }}">{{ props.row.id }}</router-link></q-td>
+        <q-td key="sample" :props="props"><router-link :to="{ name: 'sample', params: { id: props.row.sample }}">{{ props.row.sample }}</router-link></q-td>
+        <q-td key="project" :props="props"><router-link :to="{ name: 'project', params: { id: props.row.project }}">{{ props.row.project }}</router-link></q-td>
+        <q-td key="barcode" :props="props">{{ props.row.barcode }}</q-td>
       </q-tr>
     </template>
   </BaseTable>

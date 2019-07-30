@@ -7,14 +7,14 @@
     :filters="filters"
     ref="table"
   >
-    <template v-slot:body="p">
-      <q-tr :props="p">
+    <template v-slot:body="{ props }">
+      <q-tr :props="props">
         <q-td auto-width v-if="combined_options.selection === 'multiple'">
-          <q-checkbox dense v-model="p.props.selected" />
+          <q-checkbox dense v-model="props.selected" />
         </q-td>
-        <q-td key="created" :props="p.props">{{ p.props.row.created }}</q-td>
-        <q-td key="id" :props="p.props"><router-link replace :to="{ name: 'pool', params: { id: p.props.row.id }}">{{ p.props.row.name }}</router-link></q-td>
-        <q-td key="description" :props="p.props">{{ p.props.row.description }}</q-td>
+        <q-td key="created" :props="props">{{ props.row.created }}</q-td>
+        <q-td key="id" :props="props"><router-link replace :to="{ name: 'pool', params: { id: props.row.id }}">{{ props.row.name }}</router-link></q-td>
+        <q-td key="description" :props="props">{{ props.row.description }}</q-td>
       </q-tr>
     </template>
   </BaseTable>

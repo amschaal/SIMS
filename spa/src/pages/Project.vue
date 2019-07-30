@@ -6,6 +6,7 @@
       >
         <q-tab name="details" label="Details"/>
         <q-tab name="samples" label="Samples"/>
+        <q-tab name="runs" label="Runs"/>
       </q-tabs>
       <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="details">
@@ -25,6 +26,11 @@
             <q-btn label="Samples" color="primary" @click="openDialog" />
             <SamplesTable :filters="`project__id=${id}`"/>
           </q-tab-panel>
+          <q-tab-panel name="runs">
+            <div class="text-h6">Runs</div>
+            <RunsTable :filters="`run_pools__pool__libraries__sample__project__id=${id}`"/>
+          </q-tab-panel>
+
         </q-tab-panels>
   </q-page>
 </template>
@@ -35,6 +41,7 @@
 <script>
 import Vue from 'vue'
 import SamplesTable from '../components/tables/SamplesTable.vue'
+import RunsTable from '../components/tables/RunsTable.vue'
 import TableDialog from '../components/dialogs/TableDialog.vue'
 export default {
   name: 'project',
@@ -64,6 +71,7 @@ export default {
   },
   components: {
     SamplesTable,
+    RunsTable,
     TableDialog
   }
 }
