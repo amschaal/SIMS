@@ -8,7 +8,6 @@
     :on-success="onSuccess"
     :on-error="onError">
     <template v-slot:content="{ data, errors, has_error }">
-      Pool
       <q-input outlined v-model="data.name" label="Name"
         :error-message="errors.name"
         :error="has_error.name"

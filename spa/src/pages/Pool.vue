@@ -20,7 +20,9 @@
           </q-tab-panel>
           <q-tab-panel name="pools">
             <div class="text-h6">Pools</div>
-            <PoolsTable :filters="`pooled__id=${id}`"/>
+            <TableDialog :table-component="PoolsTable" :options="{'selection': 'multiple'}" ref="pools" :on-select="addPools"/>
+            <q-btn label="Add pools" color="primary" @click="open('pools')" />
+            <PoolsTable :filters="`pooled__id=${id}`" ref="pools_table"/>
           </q-tab-panel>
         </q-tab-panels>
   </q-page>
@@ -42,7 +44,8 @@ export default {
     return {
       pool: {},
       tab: 'details',
-      LibrariesTable: LibrariesTable
+      LibrariesTable: LibrariesTable,
+      PoolsTable: PoolsTable
     }
   },
   methods: {
@@ -60,6 +63,16 @@ export default {
         //   console.log(error.code)
         //   self.$q.notify('Failed to add libraries.')
         // })
+    },
+    addPools (pools) {
+      pools = pools.map(p => p.id)
+      var self = this
+      this.$axios
+        .post(`/api/pools/${self.id}/add_pools/`, { pools: pools })
+        .then(function (response) {
+          self.$q.notify('Pools added.')
+          self.$refs.pools_table.$refs.table.refresh()
+        })
     },
     open (table) {
       this.$refs[table].open()

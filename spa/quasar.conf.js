@@ -65,7 +65,8 @@ module.exports = function (ctx) {
 
         'QToggle',
         'QCheckbox',
-        'QInput'
+        'QInput',
+        'QSelect'
       ],
 
       directives: [
