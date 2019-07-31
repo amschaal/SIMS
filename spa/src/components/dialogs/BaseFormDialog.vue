@@ -1,9 +1,8 @@
 <template>
   <BaseDialog ref="dialog" :title="title">
     <template v-slot:content>
-      {{formComponent}}Foo!
-      <component :is="formComponent" ref="form">
-        <template v-slot:buttons></template>
+      <component :is="formComponent" :hide-buttons="true" ref="form">
+        <template v-slot:buttons>Nothing here</template>Dood
       </component>
     </template>
     <template v-slot:buttons>
@@ -29,7 +28,7 @@ export default {
       this.$refs.dialog.open()
     },
     submit () {
-      this.$refs.form.submit()
+      this.$refs.form.$refs.form.submit()
     }
   },
   // mounted: function () {
