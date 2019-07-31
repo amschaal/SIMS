@@ -1,5 +1,6 @@
 <template>
-  <q-page class="">
+  <q-page class="q-pa-md q-gutter-md">
+    <h4 class="text-center">Pool</h4>
     <q-tabs
         v-model="tab"
       >

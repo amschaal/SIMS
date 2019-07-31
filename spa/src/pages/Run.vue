@@ -1,5 +1,5 @@
 <template>
-  <q-page class="">
+  <q-page class="q-pa-md q-gutter-md">
     <q-tabs
         v-model="tab"
       >
@@ -10,7 +10,7 @@
       <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="details">
             <div class="text-h6">Run</div>
-            Run!! {{run}}
+            <RunDetailForm :model="run"/>
           </q-tab-panel>
           <q-tab-panel name="libraries">
             <div class="text-h6">Libraries</div>
@@ -29,6 +29,7 @@
 
 <script>
 import Vue from 'vue'
+import RunDetailForm from '../components/forms/RunDetailForm.vue'
 import LibrariesTable from '../components/tables/LibrariesTable.vue'
 import PoolsTable from '../components/tables/PoolsTable.vue'
 export default {
@@ -50,7 +51,8 @@ export default {
   },
   components: {
     LibrariesTable,
-    PoolsTable
+    PoolsTable,
+    RunDetailForm
   }
 }
 </script>

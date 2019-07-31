@@ -12,7 +12,7 @@
         <q-td auto-width v-if="combined_options.selection === 'multiple'">
           <q-checkbox dense v-model="props.selected" />
         </q-td>
-        <q-td key="created" :props="props">{{ props.row.created }}</q-td>
+        <q-td key="created" :props="props">{{ props.row.created|formatDate}}</q-td>
         <q-td key="machine__name" :props="props">{{ props.row.machine_name }}</q-td>
         <q-td key="id" :props="props"><router-link replace :to="{ name: 'run', params: { id: props.row.id }}">{{ props.row.name }}</router-link></q-td>
         <q-td key="description" :props="props">{{ props.row.description }}</q-td>
@@ -31,7 +31,7 @@ export default {
       columns: [
         { name: 'created', label: 'Created', field: 'created', sortable: true },
         { name: 'machine__name', label: 'Machine', field: 'machine__name', sortable: true },
-        { name: 'id', label: 'ID', field: 'id', sortable: true },
+        { name: 'id', label: 'Name', field: 'id', sortable: true },
         { name: 'description', label: 'Description', field: 'description', sortable: false }
       ],
       // visibleColumns: ['id', 'project'],

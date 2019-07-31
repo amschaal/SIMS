@@ -1,7 +1,7 @@
 <template>
   <BaseDialog ref="dialog" :title="title">
     <template v-slot:content>
-      <component :is="formComponent" :hide-buttons="true" ref="form">
+      <component :is="formComponent" :onSuccess="onSuccess" :onError="onError" :hide-buttons="true" ref="form">
         <template v-slot:buttons>Nothing here</template>Dood
       </component>
     </template>
@@ -16,7 +16,7 @@ import BaseDialog from './BaseDialog.vue'
 // import Vue from 'vue'
 // import _ from 'lodash'
 export default {
-  props: ['formComponent', 'title'],
+  props: ['formComponent', 'title', 'onSuccess', 'onError'],
   data () {
     return {
       errors: {},

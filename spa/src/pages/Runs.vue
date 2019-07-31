@@ -1,6 +1,6 @@
 <template>
-  <q-page class="">
-    <BaseFormDialog ref="run_form" :form-component="RunForm" title="Create Run"/>
+  <q-page class="q-pa-md q-gutter-md">
+    <BaseFormDialog ref="run_form" :form-component="RunForm" title="Create Run" :on-success="runCreated"/>
     <q-btn label="Create Run" @click="createRun"/>
     <!-- <RunForm/> -->
     <RunsTable/>
@@ -25,7 +25,7 @@ export default {
       this.$refs.run_form.open()
     },
     runCreated (request) {
-      console.log('pool!', request.data)
+      console.log('run!', request.data)
       console.log('still here', this.$q, this.$refs)
       this.$q.notify('Run created.')
       this.$router.push({ name: 'run', params: { id: request.data.id } })

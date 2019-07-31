@@ -1,5 +1,5 @@
 <template>
-  <q-page class="">
+  <q-page class="q-pa-md q-gutter-md">
     <h4 class="text-center">Pools</h4>
     <PoolFormDialog ref="pool_form" :model="{}" :onSuccess="poolCreated"/>
     <q-btn label="Create Pool" @click="openPoolDialog"/>

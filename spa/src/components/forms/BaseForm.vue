@@ -1,8 +1,8 @@
 <template>
-  <div>
-    <slot name="content" v-bind:errors="error_messages" v-bind:has_error="has_error" v-bind:data="data">
+  <div class="q-pa-md q-gutter-md">
+    <slot name="content" v-bind:errors="error_messages" v-bind:has_error="has_error" v-bind:model="model">
       Override me
-      Data: {{data}}
+      Data: {{model}}
       Errors: {{errors}}
     </slot>
     <slot name="buttons" v-bind:submit="submit">
@@ -17,16 +17,17 @@ export default {
   props: ['model', 'apiUrl', 'apiMethod', 'onSuccess', 'onError', 'hideButtons'],
   data () {
     return {
-      errors: {},
-      data: this.model
+      errors: {}
+      // data: this.model
     }
   },
   methods: {
     submit () {
       var self = this
-      this.$axios[this.apiMethod](this.apiUrl, this.data)
+      this.$axios[this.apiMethod](this.apiUrl, this.model)
         .then(function (response) {
           console.log('success', response)
+          self.errors = {}
           if (self.onSuccess) {
             self.onSuccess(response)
           }
@@ -35,6 +36,9 @@ export default {
         .catch(function (error) {
           if (error.response && error.response.data) {
             Vue.set(self, 'errors', error.response.data)
+            if (self.onError) {
+              self.onError(error)
+            }
           }
         })
     }

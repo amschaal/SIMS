@@ -1,6 +1,6 @@
 <template>
   <BaseForm
-    :model="data"
+    :model="model"
     ref="form"
     api-method="post"
     api-url="/api/runs/"
@@ -8,8 +8,8 @@
     :on-error="onError"
     :hide-buttons="hideButtons"
   >
-    <template v-slot:content="{ data, errors, has_error }">
-      <q-select outlined v-model="data.machine" :options="options" label="Machine"
+    <template v-slot:content="{ model, errors, has_error }">
+      <q-select outlined v-model="model.machine" :options="options" label="Machine"
         :error-message="errors.machine"
         :error="has_error.machine"
         option-value="id"
@@ -17,11 +17,11 @@
         emit-value
         map-options
         />
-      <q-input outlined v-model="data.name" label="Name"
+      <q-input outlined v-model="model.name" label="Name"
         :error-message="errors.name"
         :error="has_error.name"
         />
-      <q-input outlined v-model="data.description" label="Description" />
+      <q-input outlined v-model="model.description" label="Description" />
     </template>
   </BaseForm>
 </template>
@@ -32,7 +32,7 @@ export default {
   data () {
     return {
       errors: {},
-      data: {},
+      model: {},
       options: [
       ]
     }
