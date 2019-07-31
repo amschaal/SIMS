@@ -88,8 +88,8 @@ class PoolViewSet(viewsets.ModelViewSet):
         return self.update_pools(request, 'remove')
     def update_pools(self, request, action):
         pool = self.get_object()
-        data = request.query_params
-        pools = list(Pool.objects.filter(id__in=data.getlist('pools',[])))
+        data = request.data
+        pools = list(Pool.objects.filter(id__in=data.get('pools',[])))
         if action == 'add':
             pool.pools.add(*pools)
         elif action == 'remove':
@@ -140,6 +140,7 @@ class RunViewSet(viewsets.ModelViewSet):
         'run_pools__pool__libraries__sample__id':['exact'],
         'run_pools__pool__libraries__sample__project__id':['exact'],
         }#,'lanes__pool__library__name':['icontains'],'lanes__pool__name':['icontains']
+    ordering_fields = ['created', 'name', 'machine__name']
     def get_queryset(self):
         if self.action == 'retrieve':
             return Run.objects.distinct().prefetch_related('run_pools', 'run_pools__pool__libraries')

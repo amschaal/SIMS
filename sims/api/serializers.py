@@ -45,6 +45,9 @@ class MachineSerializer(serializers.ModelSerializer):
         exclude = []
 
 class RunSerializer(serializers.ModelSerializer):
+    machine_name = serializers.SerializerMethodField()
+    def get_machine_name(self, obj):
+        return obj.machine.name
     class Meta:
         model = Run
         exclude = []
