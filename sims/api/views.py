@@ -23,7 +23,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.distinct()
     @action(detail=False, methods=['get','post'])
     def import_submission(self, request):
-        data = request.query_params
+        data = request.data
         url = settings.SUBMISSION_SYSTEM_URLS['submission'].format(id=data.get('id'))
         submission = Submission.get_submission(data.get('id'))
         project = submission.create_project()
@@ -156,7 +156,7 @@ class RunPoolViewSet(viewsets.ModelViewSet):
     filter_fields = {'run__id':['exact']
                      }
     serializer_class = RunPoolSerializer
-    queryset = RunPool.objects.distinct()
+    queryset = RunPool.objects.distinct().order_by('run', 'index')
     action_serializers = {
         'retrieve': RunPoolDetailSerializer,
         'list': RunPoolSerializer,

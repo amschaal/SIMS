@@ -37,6 +37,7 @@ class RunPool(models.Model):
     description = models.TextField(null=True,blank=True,db_index=True)
     class Meta:
         unique_together = (('run','index'))
+        ordering = ['run', 'index']
     def __unicode__(self):
         return '{} - {}'.format(self.run,self.index)
     def __str__(self):

@@ -82,10 +82,25 @@ class RunPoolDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = RunPool
         exclude = []
-        read_only_fields =('index', 'run')
+        read_only_fields =('run',)
 
 class RunDetailSerializer(serializers.ModelSerializer):
+    def update(self, instance, validated_data):
+        run_pools = validated_data.pop('run_pools')
+        for rp in run_pools:
+            run_pool = RunPool.objects.get(run=instance, index=rp['index'])
+            run_pool.pool = rp['pool']
+            run_pool.description = rp['description']
+            run_pool.save()
+        print('Run pools')
+        print(run_pools)
+        return instance
+#         album = Album.objects.create(**validated_data)
+#         for track_data in tracks_data:
+#             Track.objects.create(album=album, **track_data)
+#         return album
     run_pools = RunPoolDetailSerializer(many=True)
+    
     class Meta:
         model = Run
         exclude = []
