@@ -22,14 +22,20 @@
         :error="has_error.name"
         />
       <q-input outlined v-model="model.description" label="Description" />
-      <TableDialog :table-component="PoolsTable" :options="{'selection': 'multiple'}" ref="pools_dialog" :on-select="onSelect"/>
-      <table>
+      <TableDialog :table-component="PoolsTable" :options="{'selection': 'single'}" ref="pools_dialog" :on-select="onSelect"/>
+      <table class="full-width">
         <thead><th>Index</th><th>Pool</th><th>Description</th></thead>
         <tbody>
         <tr v-for="p in pools" v-bind:key="p.id">
           <td>{{ p.index }}</td>
-          <td>{{p.pool ? p.pool.name : ''}}
-            <q-btn label="Select" color="primary" @click="open('libraries')" />
+          <td>
+            <span v-if="p.pool">
+              <q-btn label="Clear" color="negative" @click="clearLane(p)" />
+              {{p.pool.name}}
+              <span v-if="p.pool.libraries.length > 0">({{p.pool.libraries.length}} libraries)</span>
+              <span v-if="p.pool.pools.length > 0">({{p.pool.pools.length}} pools)</span>
+            </span>
+            <q-btn v-else label="Select" color="primary" @click="open(p)" />
           </td>
           <td>
             <q-input v-model="p.description" autogrow
@@ -50,6 +56,7 @@ export default {
   props: ['hideButtons', 'model'], // 'onSuccess', 'onError',
   data () {
     return {
+      currentLane: null,
       errors: {},
       data: {},
       options: [
@@ -64,8 +71,18 @@ export default {
     onError: function () {
       this.$q.notify('Error updating run.')
     },
-    open (table) {
+    open (lane) {
+      this.currentLane = lane
       this.$refs.pools_dialog.open()
+    },
+    onSelect (selected) {
+      console.log('selected', this.currentLane, selected)
+      if (selected.length === 1) {
+        this.currentLane.pool = selected[0]
+      }
+    },
+    clearLane (lane) {
+      lane.pool = null
     }
   },
   mounted: function () {

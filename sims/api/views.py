@@ -126,7 +126,7 @@ class RunViewSet(viewsets.ModelViewSet):
         'retrieve': RunDetailSerializer,
         'list': RunSerializer,
         'create': RunSerializer,
-        'update': RunSerializer
+        'update': RunDetailSerializer
     }
     serializer_class = RunSerializer
     queryset = Run.objects.distinct()
@@ -141,6 +141,7 @@ class RunViewSet(viewsets.ModelViewSet):
         'run_pools__pool__libraries__sample__project__id':['exact'],
         }#,'lanes__pool__library__name':['icontains'],'lanes__pool__name':['icontains']
     ordering_fields = ['created', 'name', 'machine__name']
+    search_fields = ('name', 'description', 'machine__name')
     def get_queryset(self):
         if self.action == 'retrieve':
             return Run.objects.distinct().prefetch_related('run_pools', 'run_pools__pool__libraries')

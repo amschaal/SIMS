@@ -77,13 +77,15 @@ class RunPoolSerializer(serializers.ModelSerializer):
         exclude = []
 
 class RunPoolDetailSerializer(serializers.ModelSerializer):
-    pool = PoolSerializer(read_only=True)
+#     pool = PoolSerializer(read_only=True)
+    pool = ModelRelatedField(model=Pool,serializer=PoolSerializer)
     class Meta:
         model = RunPool
         exclude = []
+        read_only_fields =('index', 'run')
 
 class RunDetailSerializer(serializers.ModelSerializer):
-    run_pools = RunPoolDetailSerializer(read_only=True, many=True)
+    run_pools = RunPoolDetailSerializer(many=True)
     class Meta:
         model = Run
         exclude = []
