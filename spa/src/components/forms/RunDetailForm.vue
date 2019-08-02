@@ -8,7 +8,7 @@
     :on-error="onError"
     :hide-buttons="hideButtons"
   >
-    <template v-slot:content="{ data, errors, has_error }">
+    <template v-slot:content="{ data, errors, has_error, _errors }">
       <q-select outlined v-model="model.machine" :options="options" label="Machine"
         :error-message="errors.machine"
         :error="has_error.machine"
@@ -26,7 +26,7 @@
       <table class="full-width">
         <thead><th>Index</th><th>Pool</th><th>Description</th></thead>
         <tbody>
-        <tr v-for="p in pools" v-bind:key="p.id">
+        <tr v-for="(p, ind)  in pools" v-bind:key="p.id">
           <td>{{ p.index }}</td>
           <td>
             <span v-if="p.pool">
@@ -36,6 +36,9 @@
               <span v-if="p.pool.pools.length > 0">({{p.pool.pools.length}} pools)</span>
             </span>
             <q-btn v-else label="Select" color="primary" @click="open(p)" />
+            <span class="q-field--error" v-if="_errors.run_pools && _errors.run_pools[ind].pool">
+              <span class="q-field__bottom">{{_errors.run_pools[ind].pool.join(', ')}}</span>
+            </span>
           </td>
           <td>
             <q-input v-model="p.description" autogrow

@@ -9,7 +9,7 @@
   >
     <template v-slot:body="{ props }">
       <q-tr :props="props">
-        <q-td auto-width v-if="combined_options.selection === 'multiple'">
+        <q-td auto-width v-if="combined_options.selection === 'multiple' || combined_options.selection === 'single'">
           <q-checkbox dense v-model="props.selected" />
         </q-td>
         <q-td key="created" :props="props">{{ props.row.created }}</q-td>

@@ -10,7 +10,7 @@
       <template v-slot:body="{ props }">
         <!-- <q-tr :props="props"><q-td :props="props" key="id">{{props.row.id}}</q-td></q-tr> -->
         <q-tr :props="props">
-          <q-td auto-width v-if="combined_options.selection === 'multiple'">
+          <q-td auto-width v-if="combined_options.selection === 'multiple' || combined_options.selection === 'single'">
             <q-checkbox dense v-model="props.selected" />
           </q-td>
           <q-td key="id" :props="props"><router-link :to="{ name: 'project', params: { id: props.row.id }}">{{ props.row.id }}</router-link></q-td>

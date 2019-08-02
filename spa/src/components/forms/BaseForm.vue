@@ -1,6 +1,6 @@
 <template>
   <div class="q-pa-md q-gutter-md">
-    <slot name="content" v-bind:errors="error_messages" v-bind:has_error="has_error" v-bind:model="model">
+    <slot name="content" v-bind:errors="error_messages" v-bind:has_error="has_error" v-bind:_errors="errors" v-bind:model="model">
       Override me
       Data: {{model}}
       Errors: {{errors}}
