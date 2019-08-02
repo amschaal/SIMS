@@ -14,7 +14,6 @@
             Project {{project.id}}
           </q-tab-panel>
           <q-tab-panel name="samples">
-            <div class="text-h6">Samples</div>
             <!-- {{project.sample_data.length}} -->
             <!-- <BaseDialog ref="dialog" title="Samples">
               <template v-slot:content>
@@ -22,12 +21,11 @@
               </template>
             </BaseDialog> -->
             <!-- <TableDialog table-component="SamplesTable" ref="dialog"/> -->
-            <TableDialog :table-component="SamplesTable" :options="{'selection': 'multiple'}" ref="dialog"/>
-            <q-btn label="Samples" color="primary" @click="openDialog" />
+            <!-- <TableDialog :table-component="SamplesTable" :options="{'selection': 'multiple'}" ref="dialog"/>
+            <q-btn label="Samples" color="primary" @click="openDialog" /> -->
             <SamplesTable :filters="`project__id=${id}`"/>
           </q-tab-panel>
           <q-tab-panel name="runs">
-            <div class="text-h6">Runs</div>
             <RunsTable :filters="`run_pools__pool__libraries__sample__project__id=${id}`"/>
           </q-tab-panel>
 
@@ -42,7 +40,7 @@
 import Vue from 'vue'
 import SamplesTable from '../components/tables/SamplesTable.vue'
 import RunsTable from '../components/tables/RunsTable.vue'
-import TableDialog from '../components/dialogs/TableDialog.vue'
+// import TableDialog from '../components/dialogs/TableDialog.vue'
 export default {
   name: 'project',
   props: ['id'],
@@ -71,8 +69,8 @@ export default {
   },
   components: {
     SamplesTable,
-    RunsTable,
-    TableDialog
+    RunsTable
+    // TableDialog
   }
 }
 </script>

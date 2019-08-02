@@ -13,7 +13,7 @@
           <q-checkbox dense v-model="props.selected" />
         </q-td>
         <q-td key="created" :props="props">{{ props.row.created }}</q-td>
-        <q-td key="id" :props="props"><router-link replace :to="{ name: 'pool', params: { id: props.row.id }}">{{ props.row.name }}</router-link></q-td>
+        <q-td key="id" :props="props"><router-link :to="{ name: 'pool', params: { id: props.row.id }}">{{ props.row.name }}</router-link></q-td>
         <q-td key="pools" :props="props">{{ props.row.pools.length }}
           <q-tooltip v-if="props.row.pools.length > 0">
             {{props.row.pools.map(p => p.name).join(', ')}}

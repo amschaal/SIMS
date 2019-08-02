@@ -13,7 +13,6 @@
             Sample {{sample.id}}
           </q-tab-panel>
           <q-tab-panel name="libraries">
-            <div class="text-h6">Libraries</div>
             <LibrariesTable :filters="`sample__id=${id}`"/>
           </q-tab-panel>
         </q-tab-panels>

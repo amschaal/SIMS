@@ -13,7 +13,6 @@
             Library {{library.id}}
           </q-tab-panel>
           <q-tab-panel name="pools">
-            <div class="text-h6">Pools</div>
             <PoolsTable :filters="`libraries__id=${id}`"/>
           </q-tab-panel>
         </q-tab-panels>

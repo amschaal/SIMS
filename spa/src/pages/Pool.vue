@@ -7,23 +7,27 @@
         <q-tab name="details" label="Details"/>
         <q-tab name="libraries" label="Libraries"/>
         <q-tab name="pools" label="Pools"/>
+        <q-tab name="runs" label="Runs"/>
       </q-tabs>
       <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="details">
             <div class="text-h6">Pool</div>
-            Pool {{pool.id}}
+            Pool {{pool.name}}
           </q-tab-panel>
           <q-tab-panel name="libraries">
             <TableDialog :table-component="LibrariesTable" :options="{'selection': 'multiple'}" ref="libraries" :on-select="addLibraries"/>
-            <q-btn label="Add libraries" color="primary" @click="open('libraries')" />
+            <q-btn label="Add libraries" color="primary" @click="open('libraries')" class="on-left"/>
             <q-btn label="Remove selected" color="negative" @click="removeLibraries" />
             <LibrariesTable :filters="`pools__id=${id}`" ref="libraries_table" :options="{'selection': 'multiple'}"/>
           </q-tab-panel>
           <q-tab-panel name="pools">
             <TableDialog :table-component="PoolsTable" :options="{'selection': 'multiple'}" ref="pools" :on-select="addPools"/>
-            <q-btn label="Add pools" color="primary" @click="open('pools')" />
+            <q-btn label="Add pools" color="primary" @click="open('pools')" class="on-left"/>
             <q-btn label="Remove selected" color="negative" @click="removePools" />
             <PoolsTable :filters="`pooled__id=${id}`" ref="pools_table" :options="{'selection': 'multiple'}"/>
+          </q-tab-panel>
+          <q-tab-panel name="runs">
+            <RunsTable :filters="`run_pools__pool__id=${id}`" ref="runs_table"/>
           </q-tab-panel>
         </q-tab-panels>
   </q-page>
@@ -36,6 +40,7 @@
 import Vue from 'vue'
 import LibrariesTable from '../components/tables/LibrariesTable.vue'
 import PoolsTable from '../components/tables/PoolsTable.vue'
+import RunsTable from '../components/tables/RunsTable.vue'
 import TableDialog from '../components/dialogs/TableDialog.vue'
 // import PoolFormDialog from '../components/forms/PoolFormDialog.vue'
 export default {
@@ -121,6 +126,7 @@ export default {
   components: {
     LibrariesTable,
     PoolsTable,
+    RunsTable,
     TableDialog
     // PoolFormDialog
   }

@@ -14,7 +14,7 @@
         </q-td>
         <q-td key="created" :props="props">{{ props.row.created|formatDate}}</q-td>
         <q-td key="machine__name" :props="props">{{ props.row.machine_name }}</q-td>
-        <q-td key="id" :props="props"><router-link replace :to="{ name: 'run', params: { id: props.row.id }}">{{ props.row.name }}</router-link></q-td>
+        <q-td key="id" :props="props"><router-link :to="{ name: 'run', params: { id: props.row.id }}">{{ props.row.name }}</router-link></q-td>
         <q-td key="description" :props="props">{{ props.row.description }}</q-td>
       </q-tr>
     </template>

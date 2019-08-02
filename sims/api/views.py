@@ -23,17 +23,17 @@ class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.distinct()
     @action(detail=False, methods=['get','post'])
     def import_submission(self, request):
-        data = request.data
-        url = settings.SUBMISSION_SYSTEM_URLS['submission'].format(id=data.get('id'))
+        id = request.data.get('id').strip()
+#         url = settings.SUBMISSION_SYSTEM_URLS['submission'].format(id=id)
         try:
-            submission = Submission.get_submission(data.get('id'))
+            submission = Submission.get_submission(id)
         except:
-            return Response({'message': 'Error: unable to retrieve submission with ID "{0}"'.format(data.get('id'))},status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'Error: unable to retrieve submission with ID "{0}"'.format(id)},status=status.HTTP_400_BAD_REQUEST)
         try:
             project = submission.create_project()
         except Exception as e:
             return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({'id':data,'url':url, 'submission':submission._data, 'project': ProjectSerializer(project).data})
+        return Response({'id':id,'submission':submission._data, 'project': ProjectSerializer(project).data})
 
 class SampleViewSet(viewsets.ModelViewSet):
     filter_fields = {
