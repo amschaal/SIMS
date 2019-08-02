@@ -31,9 +31,8 @@ export default {
           self.$router.push({ name: 'project', params: { id: response.data.project.id } })
         })
         .catch(function (error) {
-          console.log(error.response)
-          if (error.response.data.errors) {
-            self.$q.notify(`There was an error importing submission id "${self.submission_id}"`)
+          if (error.response.data.message) {
+            self.$q.notify(error.response.data.message)
           }
         })
     }

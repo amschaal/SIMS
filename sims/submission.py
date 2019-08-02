@@ -24,7 +24,9 @@ class Submission(object):
         self.data = data['data']
         self.comments = data['comments']
     def create_project(self):
-        print(self.comments)
+        from sims.models import Project
+        if Project.objects.filter(submission_id=self.id).first():
+            raise Exception('Submission "{0}" has already been imported.'.format(self.id))
         project = Project.objects.create(id=self.internal_id, 
                                          submission_id=self.id, 
                                          submitted=self.submitted,

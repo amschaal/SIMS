@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from sims.api.serializers import RunSerializer,RunDetailSerializer, MachineSerializer,\
     ProjectSerializer, SampleSerializer, PoolSerializer, LibrarySerializer,\
     AdapterSerializer, RunPoolSerializer, RunPoolDetailSerializer
@@ -25,8 +25,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def import_submission(self, request):
         data = request.data
         url = settings.SUBMISSION_SYSTEM_URLS['submission'].format(id=data.get('id'))
-        submission = Submission.get_submission(data.get('id'))
-        project = submission.create_project()
+        try:
+            submission = Submission.get_submission(data.get('id'))
+        except:
+            return Response({'message': 'Error: unable to retrieve submission with ID "{0}"'.format(data.get('id'))},status=status.HTTP_400_BAD_REQUEST)
+        try:
+            project = submission.create_project()
+        except Exception as e:
+            return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'id':data,'url':url, 'submission':submission._data, 'project': ProjectSerializer(project).data})
 
 class SampleViewSet(viewsets.ModelViewSet):
