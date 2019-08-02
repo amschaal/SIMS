@@ -14,16 +14,16 @@
             Pool {{pool.id}}
           </q-tab-panel>
           <q-tab-panel name="libraries">
-            <div class="text-h6">Libraries</div>
             <TableDialog :table-component="LibrariesTable" :options="{'selection': 'multiple'}" ref="libraries" :on-select="addLibraries"/>
             <q-btn label="Add libraries" color="primary" @click="open('libraries')" />
-            <LibrariesTable :filters="`pools__id=${id}`" ref="libraries_table"/>
+            <q-btn label="Remove selected" color="negative" @click="removeLibraries" />
+            <LibrariesTable :filters="`pools__id=${id}`" ref="libraries_table" :options="{'selection': 'multiple'}"/>
           </q-tab-panel>
           <q-tab-panel name="pools">
-            <div class="text-h6">Pools</div>
             <TableDialog :table-component="PoolsTable" :options="{'selection': 'multiple'}" ref="pools" :on-select="addPools"/>
             <q-btn label="Add pools" color="primary" @click="open('pools')" />
-            <PoolsTable :filters="`pooled__id=${id}`" ref="pools_table"/>
+            <q-btn label="Remove selected" color="negative" @click="removePools" />
+            <PoolsTable :filters="`pooled__id=${id}`" ref="pools_table" :options="{'selection': 'multiple'}"/>
           </q-tab-panel>
         </q-tab-panels>
   </q-page>
@@ -65,6 +65,22 @@ export default {
         //   self.$q.notify('Failed to add libraries.')
         // })
     },
+    removeSelected (libraries) {
+      libraries = this.$refs.libraries_table.$refs.table.selected.map(l => l.id)
+      console.log('removeLibraries', libraries)
+      var self = this
+      this.$axios
+        .post(`/api/pools/${self.id}/remove_libraries/`, { libraries: libraries })
+        .then(function (response) {
+          self.$q.notify('Libraries removed.')
+          self.$refs.libraries_table.$refs.table.selected = []
+          self.$refs.libraries_table.$refs.table.refresh()
+        })
+      // .catch(function (error) {
+      //   console.log(error.code)
+      //   self.$q.notify('Failed to add libraries.')
+      // })
+    },
     addPools (pools) {
       pools = pools.map(p => p.id)
       var self = this
@@ -74,6 +90,21 @@ export default {
           self.$q.notify('Pools added.')
           self.$refs.pools_table.$refs.table.refresh()
         })
+    },
+    removePools (pools) {
+      pools = this.$refs.pools_table.$refs.table.selected.map(l => l.id)
+      var self = this
+      this.$axios
+        .post(`/api/pools/${self.id}/remove_pools/`, { pools: pools })
+        .then(function (response) {
+          self.$q.notify('Pools removed.')
+          self.$refs.pools_table.$refs.table.selected = []
+          self.$refs.pools_table.$refs.table.refresh()
+        })
+      // .catch(function (error) {
+      //   console.log(error.code)
+      //   self.$q.notify('Failed to add libraries.')
+      // })
     },
     open (table) {
       this.$refs[table].open()

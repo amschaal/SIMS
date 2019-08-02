@@ -30,12 +30,20 @@
           <td>{{ p.index }}</td>
           <td>
             <span v-if="p.pool">
-              <q-btn label="Clear" color="negative" @click="clearLane(p)" />
-              {{p.pool.name}}
-              <span v-if="p.pool.libraries.length > 0">({{p.pool.libraries.length}} libraries)</span>
-              <span v-if="p.pool.pools.length > 0">({{p.pool.pools.length}} pools)</span>
+              <q-btn label="Clear" size="sm" color="negative" @click="clearLane(p)" class="on-left"/>
+              <router-link :to="{ name: 'pool', params: { id: p.pool.id }}">{{p.pool.name}}</router-link>
+              <span v-if="p.pool.libraries.length > 0"> ({{p.pool.libraries.length}} libraries)
+                <q-tooltip>
+                  {{p.pool.libraries.map(l => l.id).join(', ')}}
+                </q-tooltip>
+              </span>
+              <span v-if="p.pool.pools.length > 0"> ({{p.pool.pools.length}} pools)
+                <q-tooltip>
+                  {{p.pool.pools.map(p => p.name).join(', ')}}
+                </q-tooltip>
+              </span>
             </span>
-            <q-btn v-else label="Select" color="primary" @click="open(p)" />
+            <q-btn v-else label="Select" size="sm" color="primary" @click="open(p)" class="on-left"/>
             <span class="q-field--error" v-if="_errors.run_pools && _errors.run_pools[ind].pool">
               <span class="q-field__bottom">{{_errors.run_pools[ind].pool.join(', ')}}</span>
             </span>
