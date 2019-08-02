@@ -1,6 +1,6 @@
 <template>
-  <q-page class="q-pa-md q-gutter-md">
-    <h4 class="text-center">Sample</h4>
+  <q-page class="q-pa-sm q-gutter-sm">
+    <h6 class="text-center"><router-link :to="{ name: 'samples'}">Samples</router-link> / {{sample.id}}</h6>
     <q-tabs
         v-model="tab"
       >

@@ -1,12 +1,12 @@
 <template>
-  <div class="q-pa-md q-gutter-md">
+  <div class="q-pa-sm q-gutter-sm">
     <slot name="content" v-bind:errors="error_messages" v-bind:has_error="has_error" v-bind:_errors="errors" v-bind:model="model">
       Override me
       Data: {{model}}
       Errors: {{errors}}
     </slot>
     <slot name="buttons" v-bind:submit="submit">
-      <q-btn flat label="Submit" color="primary" @click="submit" v-if="!hideButtons"/>
+      <q-btn label="Submit" color="primary" @click="submit" v-if="!hideButtons"/>
     </slot>
   </div>
 </template>

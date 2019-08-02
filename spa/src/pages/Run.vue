@@ -1,5 +1,6 @@
 <template>
-  <q-page class="q-pa-md q-gutter-md">
+  <q-page class="q-pa-sm q-gutter-sm">
+    <h6 class="text-center"><router-link :to="{ name: 'runs'}">Runs</router-link> / {{run.name}}</h6>
     <q-tabs
         v-model="tab"
       >

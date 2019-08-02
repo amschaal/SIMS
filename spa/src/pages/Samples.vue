@@ -1,5 +1,5 @@
 <template>
-  <q-page class="q-pa-md q-gutter-md">
+  <q-page class="q-pa-sm q-gutter-sm">
     <h4 class="text-center">Samples</h4>
     <SamplesTable/>
   </q-page>

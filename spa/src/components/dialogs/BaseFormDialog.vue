@@ -6,8 +6,8 @@
       </component>
     </template>
     <template v-slot:buttons>
-      <q-btn flat label="Submit" color="primary" @click="submit"/>
-      <q-btn flat label="Cancel" color="primary" v-close-popup />
+      <q-btn label="Submit" color="primary" @click="submit"/>
+      <q-btn label="Cancel" color="negative" v-close-popup />
     </template>
   </BaseDialog>
 </template>

@@ -1,10 +1,10 @@
 <template>
-  <q-page class="q-pa-md q-gutter-md">
+  <q-page class="q-pa-sm q-gutter-sm">
     <h4 class="text-center">Projects</h4>
     <div style="display: inline-block;  max-width:300px;">
       <q-input outlined v-model="submission_id" label="Submission ID">
          <template v-slot:append>
-           <q-btn label="Import" @click="importSubmission"/>
+           <q-btn label="Import" color="primary" @click="importSubmission"/>
          </template>
       </q-input>
       </div>

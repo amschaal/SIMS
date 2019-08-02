@@ -1,13 +1,15 @@
 <template>
   <BaseDialog ref="dialog" :title="title">
     <template v-slot:content>
-      <slot name="content" v-bind:errors="error_messages" v-bind:has_error="has_error" v-bind:data="data"></slot>
-      Data: {{data}}
-      Errors: {{errors}}
+      <slot name="content" v-bind:errors="error_messages" v-bind:has_error="has_error" v-bind:data="data">
+        Override me
+        Data: {{data}}
+        Errors: {{errors}}
+      </slot>
     </template>
     <template v-slot:buttons>
-      <q-btn flat label="Submit" color="primary" @click="submit"/>
-      <q-btn flat label="Cancel" color="primary" v-close-popup />
+      <q-btn label="Submit" color="primary" @click="submit"/>
+      <q-btn label="Cancel" color="negative" v-close-popup />
     </template>
   </BaseDialog>
 </template>

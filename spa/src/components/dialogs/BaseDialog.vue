@@ -7,7 +7,7 @@
 
       <q-separator />
 
-      <q-card-section style="" class="scroll">
+      <q-card-section style="" class="scroll q-pa-sm q-gutter-sm">
         <slot name="content"></slot>
       </q-card-section>
 
