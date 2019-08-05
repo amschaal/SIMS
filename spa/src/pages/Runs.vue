@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-pa-sm q-gutter-sm">
     <h4 class="text-center">Runs</h4>
-    <BaseFormDialog ref="run_form" :form-component="RunForm" title="Create Run" :on-success="runCreated"/>
+    <BaseFormDialog ref="run_form" :form-component="RunForm" title="Create Run" :on-success="runCreated" :on-error="runError"/>
     <q-btn label="Create Run" color="primary" @click="createRun"/>
     <!-- <RunForm/> -->
     <RunsTable/>
@@ -31,6 +31,11 @@ export default {
       this.$q.notify('Run created.')
       this.$router.push({ name: 'run', params: { id: request.data.id } })
       this.$refs.run_form.$refs.dialog.close()
+    },
+    runError (error) {
+      if (error) {
+        this.$q.notify({ color: 'negative', message: 'Error creating run.' })
+      }
     }
   },
   components: {

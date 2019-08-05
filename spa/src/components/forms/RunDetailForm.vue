@@ -80,7 +80,7 @@ export default {
       this.$q.notify('Run updated.')
     },
     onError: function () {
-      this.$q.notify('Error updating run.')
+      this.$q.notify({ color: 'negative', message: 'Error updating run.' })
     },
     open (lane) {
       this.currentLane = lane

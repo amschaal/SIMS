@@ -38,7 +38,7 @@ export default {
         })
         .catch(function (error) {
           if (error.response.data.message) {
-            self.$q.notify(error.response.data.message)
+            self.$q.notify({ color: 'negative', 'message': error.response.data.message })
           }
         })
     }

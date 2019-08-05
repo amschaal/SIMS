@@ -135,6 +135,7 @@ export default {
           console.log(error)
           // we tell QTable to exit the "loading" state
           self.loading = false
+          self.$q.notify({ color: 'negative', message: 'There was an error retrieving data.' })
         })
     },
     refresh () {

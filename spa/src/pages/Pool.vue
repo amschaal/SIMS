@@ -65,12 +65,12 @@ export default {
           self.$q.notify('Libraries added.')
           self.$refs.libraries_table.$refs.table.refresh()
         })
-        // .catch(function (error) {
-        //   console.log(error.code)
-        //   self.$q.notify('Failed to add libraries.')
-        // })
+        .catch(function (error) {
+          console.log(error.response)
+          self.$q.notify({ color: 'negative', message: 'Failed to add libraries.' })
+        })
     },
-    removeSelected (libraries) {
+    removeLibraries (libraries) {
       libraries = this.$refs.libraries_table.$refs.table.selected.map(l => l.id)
       console.log('removeLibraries', libraries)
       var self = this
@@ -81,10 +81,10 @@ export default {
           self.$refs.libraries_table.$refs.table.selected = []
           self.$refs.libraries_table.$refs.table.refresh()
         })
-      // .catch(function (error) {
-      //   console.log(error.code)
-      //   self.$q.notify('Failed to add libraries.')
-      // })
+        .catch(function (error) {
+          console.log(error.code)
+          self.$q.notify({ color: 'negative', message: 'Failed to remove libraries.' })
+        })
     },
     addPools (pools) {
       pools = pools.map(p => p.id)
@@ -94,6 +94,10 @@ export default {
         .then(function (response) {
           self.$q.notify('Pools added.')
           self.$refs.pools_table.$refs.table.refresh()
+        })
+        .catch(function (error) {
+          console.log(error.code)
+          self.$q.notify({ color: 'negative', message: 'Failed to add pools.' })
         })
     },
     removePools (pools) {
@@ -106,10 +110,10 @@ export default {
           self.$refs.pools_table.$refs.table.selected = []
           self.$refs.pools_table.$refs.table.refresh()
         })
-      // .catch(function (error) {
-      //   console.log(error.code)
-      //   self.$q.notify('Failed to add libraries.')
-      // })
+        .catch(function (error) {
+          console.log(error.code)
+          self.$q.notify({ color: 'negative', message: 'Failed to remove pools.' })
+        })
     },
     open (table) {
       this.$refs[table].open()
