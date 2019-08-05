@@ -1,6 +1,7 @@
 <template>
   <q-page class="q-pa-sm q-gutter-sm">
     <h6 class="text-center"><router-link :to="{ name: 'pools'}">Pools</router-link> / {{pool.name}}</h6>
+    <DeleteButton :url="`/api/pools/${id}/`" :redirect="{name: 'pools'}"/>
     <q-tabs
         v-model="tab"
       >
@@ -42,6 +43,7 @@ import LibrariesTable from '../components/tables/LibrariesTable.vue'
 import PoolsTable from '../components/tables/PoolsTable.vue'
 import RunsTable from '../components/tables/RunsTable.vue'
 import TableDialog from '../components/dialogs/TableDialog.vue'
+import DeleteButton from '../components/DeleteButton.vue'
 // import PoolFormDialog from '../components/forms/PoolFormDialog.vue'
 export default {
   name: 'pool',
@@ -131,7 +133,8 @@ export default {
     LibrariesTable,
     PoolsTable,
     RunsTable,
-    TableDialog
+    TableDialog,
+    DeleteButton
     // PoolFormDialog
   }
 }

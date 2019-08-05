@@ -1,6 +1,7 @@
 <template>
   <q-page class="q-pa-sm q-gutter-sm">
     <h6 class="text-center"><router-link :to="{ name: 'samples'}">Samples</router-link> / {{sample.id}}</h6>
+    <DeleteButton :url="`/api/samples/${id}/`"/>
     <q-tabs
         v-model="tab"
       >
@@ -25,6 +26,7 @@
 <script>
 import Vue from 'vue'
 import LibrariesTable from '../components/tables/LibrariesTable.vue'
+import DeleteButton from '../components/DeleteButton.vue'
 export default {
   name: 'sample',
   props: ['id'],
@@ -44,7 +46,8 @@ export default {
       })
   },
   components: {
-    LibrariesTable
+    LibrariesTable,
+    DeleteButton
   }
 }
 </script>

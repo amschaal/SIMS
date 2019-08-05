@@ -1,6 +1,7 @@
 <template>
   <q-page class="q-pa-sm q-gutter-sm">
     <h6 class="text-center"><router-link :to="{ name: 'projects'}">Projects</router-link> / {{project.id}}</h6>
+    <DeleteButton :url="`/api/projects/${id}/`"/>
     <q-tabs
         v-model="tab"
       >
@@ -40,6 +41,7 @@
 import Vue from 'vue'
 import SamplesTable from '../components/tables/SamplesTable.vue'
 import RunsTable from '../components/tables/RunsTable.vue'
+import DeleteButton from '../components/DeleteButton.vue'
 // import TableDialog from '../components/dialogs/TableDialog.vue'
 export default {
   name: 'project',
@@ -69,7 +71,8 @@ export default {
   },
   components: {
     SamplesTable,
-    RunsTable
+    RunsTable,
+    DeleteButton
     // TableDialog
   }
 }
