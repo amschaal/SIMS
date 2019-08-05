@@ -17,20 +17,15 @@
         </q-toolbar-title>
 
         <div>
-          <q-btn  round flat icon="menu">
-            <q-menu
-              transition-show="jump-down"
-              transition-hide="jump-up"
-            >
-              <q-list>
-                <q-item clickable v-close-popup>
-                  <q-item-section>
-                    <q-item-label>Machines</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-menu>
-          </q-btn>
+          <q-btn-dropdown color="white" flat label="Admin">
+            <q-list>
+              <q-item clickable v-close-popup :to="{ name: 'machines'}">
+                <q-item-section>
+                  <q-item-label>Machines</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
         </div>
       </q-toolbar>
     </q-header>

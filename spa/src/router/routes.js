@@ -39,6 +39,13 @@ const routes = [
         component: () => import('pages/Run.vue'),
         name: 'run',
         props: true
+      },
+      { name: 'machines', path: 'machines', component: () => import('pages/Machines.vue') },
+      {
+        path: '/machines/:id/',
+        component: () => import('pages/Machine.vue'),
+        name: 'machine',
+        props: true
       }
     ]
   }
