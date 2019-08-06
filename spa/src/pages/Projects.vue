@@ -29,14 +29,19 @@ export default {
   },
   methods: {
     importSubmission () {
+      this.$q.loading.show({
+        message: `Importing submission ID: '${this.submission_id}'`
+      })
       var self = this
       this.$axios.post('/api/projects/import_submission/', { id: this.submission_id })
         .then(function (response) {
+          self.$q.loading.hide()
           self.errors = {}
           self.$q.notify(`Successfully imported submission id "${self.submission_id}"`)
           self.$router.push({ name: 'project', params: { id: response.data.project.id } })
         })
         .catch(function (error) {
+          self.$q.loading.hide()
           if (error.response.data.message) {
             self.$q.notify({ color: 'negative', 'message': error.response.data.message })
           }

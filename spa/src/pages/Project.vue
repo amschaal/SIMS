@@ -12,7 +12,7 @@
       <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="details">
             <div class="text-h6">Project</div>
-            Project {{project.id}}
+            <Project :project="project"/>
           </q-tab-panel>
           <q-tab-panel name="samples">
             <!-- {{project.sample_data.length}} -->
@@ -39,6 +39,7 @@
 
 <script>
 import Vue from 'vue'
+import Project from '../components/details/Project.vue'
 import SamplesTable from '../components/tables/SamplesTable.vue'
 import RunsTable from '../components/tables/RunsTable.vue'
 import DeleteButton from '../components/DeleteButton.vue'
@@ -72,7 +73,8 @@ export default {
   components: {
     SamplesTable,
     RunsTable,
-    DeleteButton
+    DeleteButton,
+    Project
     // TableDialog
   }
 }
