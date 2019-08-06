@@ -10,8 +10,7 @@
       </q-tabs>
       <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="details">
-            <div class="text-h6">Sample</div>
-            Sample {{sample.id}}
+            <Sample :sample="sample"/>
           </q-tab-panel>
           <q-tab-panel name="libraries">
             <LibrariesTable :filters="`sample__id=${id}`"/>
@@ -25,6 +24,7 @@
 
 <script>
 import Vue from 'vue'
+import Sample from '../components/details/Sample.vue'
 import LibrariesTable from '../components/tables/LibrariesTable.vue'
 import DeleteButton from '../components/DeleteButton.vue'
 export default {
@@ -47,7 +47,8 @@ export default {
   },
   components: {
     LibrariesTable,
-    DeleteButton
+    DeleteButton,
+    Sample
   }
 }
 </script>
