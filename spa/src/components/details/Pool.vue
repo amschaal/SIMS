@@ -36,10 +36,6 @@ import Vue from 'vue'
 export default {
   name: 'pool',
   props: ['id', 'pool'],
-  data () {
-    return {
-    }
-  },
   mounted: function () {
     if (!this.pool) {
       var self = this

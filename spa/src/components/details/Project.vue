@@ -23,11 +23,6 @@ import Vue from 'vue'
 export default {
   name: 'project',
   props: ['id', 'project'],
-  data () {
-    return {
-      // project: this.instance
-    }
-  },
   mounted: function () {
     if (!this.project) {
       var self = this

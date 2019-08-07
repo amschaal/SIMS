@@ -9,7 +9,7 @@ from django.core.validators import MaxValueValidator
 class Machine(models.Model):
     name = models.CharField(max_length=50,db_index=True)
     description = models.TextField(null=True,blank=True)
-    num_lanes = models.SmallIntegerField()
+    num_lanes = models.PositiveSmallIntegerField()
     def __unicode__(self):
         return self.name
     def __str__(self):
