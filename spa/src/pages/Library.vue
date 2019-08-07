@@ -10,8 +10,7 @@
       </q-tabs>
       <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="details">
-            <div class="text-h6">Library</div>
-            Library {{library.id}}
+            <Library :library="library"/>
           </q-tab-panel>
           <q-tab-panel name="pools">
             <PoolsTable :filters="`libraries__id=${id}`"/>
@@ -25,6 +24,7 @@
 
 <script>
 import Vue from 'vue'
+import Library from '../components/details/Library.vue'
 import PoolsTable from '../components/tables/PoolsTable.vue'
 import DeleteButton from '../components/DeleteButton.vue'
 export default {
@@ -45,6 +45,7 @@ export default {
       })
   },
   components: {
+    Library,
     PoolsTable,
     DeleteButton
   }
