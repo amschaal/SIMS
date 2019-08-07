@@ -12,8 +12,7 @@
       </q-tabs>
       <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="details">
-            <div class="text-h6">Pool</div>
-            Pool {{pool.name}}
+            <Pool :pool="pool"/>
           </q-tab-panel>
           <q-tab-panel name="libraries">
             <TableDialog :table-component="LibrariesTable" :options="{'selection': 'multiple'}" ref="libraries" :on-select="addLibraries"/>
@@ -39,6 +38,7 @@
 
 <script>
 import Vue from 'vue'
+import Pool from '../components/details/Pool.vue'
 import LibrariesTable from '../components/tables/LibrariesTable.vue'
 import PoolsTable from '../components/tables/PoolsTable.vue'
 import RunsTable from '../components/tables/RunsTable.vue'
@@ -130,6 +130,7 @@ export default {
       })
   },
   components: {
+    Pool,
     LibrariesTable,
     PoolsTable,
     RunsTable,
