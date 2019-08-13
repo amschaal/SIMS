@@ -14,7 +14,7 @@
             <div class="text-h6">Project</div>
             <Project :project="project"/>
           </q-tab-panel>
-          <q-tab-panel name="samples">
+          <q-tab-panel name="samples" class="q-pa-sm q-gutter-sm">
             <!-- {{project.sample_data.length}} -->
             <!-- <BaseDialog ref="dialog" title="Samples">
               <template v-slot:content>
@@ -24,7 +24,8 @@
             <!-- <TableDialog table-component="SamplesTable" ref="dialog"/> -->
             <!-- <TableDialog :table-component="SamplesTable" :options="{'selection': 'multiple'}" ref="dialog"/>
             <q-btn label="Samples" color="primary" @click="openDialog" /> -->
-            <SamplesTable :filters="`project__id=${id}`"/>
+            <q-btn label="Update Samples" @click="updateSamples"/>
+            <SamplesTable :filters="`project__id=${id}`" ref="samples"/>
           </q-tab-panel>
           <q-tab-panel name="runs">
             <RunsTable :filters="`run_pools__pool__libraries__sample__project__id=${id}`"/>
@@ -68,6 +69,20 @@ export default {
     openDialog () {
       console.log('dialog', this.$refs.dialog)
       this.$refs.dialog.open()
+    },
+    updateSamples () {
+      var self = this
+      this.$axios
+        .post(`/api/projects/${this.id}/update_samples/`)
+        .then(function (response) {
+          console.log('response', response, self.$refs.samples)
+          var message = `Samples updated.  ${response.data.new_samples.length} new samples added.`
+          if (response.data.new_samples.length > 0) {
+            message += '  New sample ids: ' + response.data.new_samples.map(s => s.id).join(', ')
+          }
+          self.$q.notify(message)
+          self.$refs.samples.$refs.table.refresh()
+        })
     }
   },
   components: {

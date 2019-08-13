@@ -51,9 +51,9 @@ class Submission(object):
         self.update_samples(project, import_only=True)
         return project
     def update_samples(self, project, import_only=True):
-        sample_ids = project.samples.all().values_list('id')
+        sample_ids = list(project.samples.all().values_list('id', flat=True))
         new_samples = [s for s in self.sample_data if self.get_sample_id(project, s) not in sample_ids]
-        return Sample.objects.bulk_create([Sample(project=project,id='{}_{}'.format(project.id,s.get('sample_name')),name=s.get('sample_name'),data=s) for s in new_samples])
+        return Sample.objects.bulk_create([Sample(project=project,id=self.get_sample_id(project, s),name=s.get('sample_name'),data=s) for s in new_samples])
     @staticmethod
     def get_sample_id(project, sample):
         return '{}_{}'.format(project.id,sample.get('sample_name'))

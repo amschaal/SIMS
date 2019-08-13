@@ -35,19 +35,18 @@ class ProjectViewSet(viewsets.ModelViewSet):
             return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'id':id,'submission':submission._data, 'project': ProjectSerializer(project).data})
     @action(detail=True, methods=['post'])
-    def update_samples(self, request):
+    def update_samples(self, request, pk=None):
         project = self.get_object()
-        id = request.data.get('id').strip()
 #         url = settings.SUBMISSION_SYSTEM_URLS['submission'].format(id=id)
         try:
-            submission = Submission.get_submission(id)
+            submission = Submission.get_submission(project.submission_id)
         except:
             return Response({'message': 'Error: unable to retrieve submission with ID "{0}"'.format(id)},status=status.HTTP_400_BAD_REQUEST)
         try:
             samples = submission.update_samples(project, import_only=True)
         except Exception as e:
             return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({'id':id, 'project': ProjectSerializer(project).data, 'samples': SampleSerializer(samples, many=True).data})
+        return Response({'project': ProjectSerializer(project).data, 'new_samples': SampleSerializer(samples, many=True).data})
     
 class SampleViewSet(viewsets.ModelViewSet):
     filter_fields = {
