@@ -1,6 +1,7 @@
 import urllib.request, json
 from django.conf import settings
 from sims.models import Project, Sample
+from django.conf.urls.static import static
 
 class Submission(object):
     def __init__(self, data):
@@ -46,8 +47,16 @@ class Submission(object):
                                          data=self.data,
                                          comments=self.comments
                                          )
-        Sample.objects.bulk_create([Sample(project=project,id='{}_{}'.format(project.id,s.get('sample_name')),name=s.get('sample_name'),data=s) for s in self.sample_data])
+#         Sample.objects.bulk_create([Sample(project=project,id='{}_{}'.format(project.id,s.get('sample_name')),name=s.get('sample_name'),data=s) for s in self.sample_data])
+        self.update_samples(project, import_only=True)
         return project
+    def update_samples(self, project, import_only=True):
+        sample_ids = project.samples.all().values_list('id')
+        new_samples = [s for s in self.sample_data if self.get_sample_id(project, s) not in sample_ids]
+        return Sample.objects.bulk_create([Sample(project=project,id='{}_{}'.format(project.id,s.get('sample_name')),name=s.get('sample_name'),data=s) for s in new_samples])
+    @staticmethod
+    def get_sample_id(project, sample):
+        return '{}_{}'.format(project.id,sample.get('sample_name'))
     @staticmethod
     def get_submission(id):
         URL = settings.SUBMISSION_SYSTEM_URLS['api']['submission'].format(id=id)
