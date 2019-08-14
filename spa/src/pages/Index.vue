@@ -6,6 +6,8 @@
     <q-btn label="Samples" color="primary" @click="open('samples')" />
     <TableDialog :table-component="ProjectsTable" :options="{'selection': 'multiple'}" ref="projects" :on-select="onSelect"/>
     <q-btn label="Projects" color="primary" @click="open('projects')" />
+    <TableDialog :table-component="AdaptersTable" :options="{'selection': 'single'}" ref="adapters" :on-select="onSelect"/>
+    <q-btn label="Adapters" color="primary" @click="open('adapters')" />
   </q-page>
 </template>
 
@@ -16,13 +18,15 @@
 import LibrariesTable from '../components/tables/LibrariesTable.vue'
 import SamplesTable from '../components/tables/SamplesTable.vue'
 import ProjectsTable from '../components/tables/ProjectsTable.vue'
+import AdaptersTable from '../components/tables/AdaptersTable.vue'
 import TableDialog from '../components/dialogs/TableDialog.vue'
 export default {
   data () {
     return {
       SamplesTable: SamplesTable,
       ProjectsTable: ProjectsTable,
-      LibrariesTable: LibrariesTable
+      LibrariesTable: LibrariesTable,
+      AdaptersTable: AdaptersTable
     }
   },
   methods: {

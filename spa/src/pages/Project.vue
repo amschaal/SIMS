@@ -24,7 +24,7 @@
             <!-- <TableDialog table-component="SamplesTable" ref="dialog"/> -->
             <!-- <TableDialog :table-component="SamplesTable" :options="{'selection': 'multiple'}" ref="dialog"/>
             <q-btn label="Samples" color="primary" @click="openDialog" /> -->
-            <q-btn label="Update Samples" @click="updateSamples"/>
+            <q-btn label="Import Samples" @click="updateSamples"/>
             <SamplesTable :filters="`project__id=${id}`" ref="samples"/>
           </q-tab-panel>
           <q-tab-panel name="runs">
@@ -76,7 +76,7 @@ export default {
         .post(`/api/projects/${this.id}/update_samples/`)
         .then(function (response) {
           console.log('response', response, self.$refs.samples)
-          var message = `Samples updated.  ${response.data.new_samples.length} new samples added.`
+          var message = `Samples updated.  ${response.data.new_samples.length} new samples imported.`
           if (response.data.new_samples.length > 0) {
             message += '  New sample ids: ' + response.data.new_samples.map(s => s.id).join(', ')
           }
