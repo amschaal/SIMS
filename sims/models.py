@@ -184,9 +184,9 @@ class Adapter(models.Model):
     class Meta:
         unique_together = (('db','name'))
     def __unicode__(self):
-        return '{} ({})'.format(self.name,self.barcode)
+        return '{} ({})'.format(self.db, self.name)
     def __str__(self):
-        return '{} ({})'.format(self.name,self.barcode)
+        return '{} ({})'.format(self.db, self.name)
 
 class Library(models.Model):
     id = models.CharField(max_length=50, primary_key=True)

@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from sims.models import Project, Machine, Run, Sample, Adapter, Library, Pool, RunPool
+from sims.models import Project, Machine, Run, Sample, Adapter, Library, Pool, RunPool,\
+    AdapterDB
 from django.conf import settings
 
 #Allows Creation/Updating of related model fields with OBJECT instead of just id
@@ -115,5 +116,8 @@ class AdapterSerializer(serializers.ModelSerializer):
         model = Adapter
         exclude = []
 
-
+class AdapterDBSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AdapterDB
+        exclude = []
 

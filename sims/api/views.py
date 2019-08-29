@@ -1,9 +1,10 @@
 from rest_framework import viewsets, status
 from sims.api.serializers import RunSerializer,RunDetailSerializer, MachineSerializer,\
     ProjectSerializer, SampleSerializer, PoolSerializer, LibrarySerializer,\
-    AdapterSerializer, RunPoolSerializer, RunPoolDetailSerializer
+    AdapterSerializer, RunPoolSerializer, RunPoolDetailSerializer,\
+    AdapterDBSerializer
 from sims.models import Run, Machine, Project, Sample, Pool, Library, Adapter,\
-    RunPool
+    RunPool, AdapterDB
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.conf import settings
@@ -115,7 +116,16 @@ class PoolViewSet(viewsets.ModelViewSet):
             pool.pools.remove(*pools)
         return Response({'pools': PoolSerializer(pool.pools.all(),many=True).data})
 
-class AdapterViewSet(viewsets.ModelViewSet):
+class AdapterDBViewset(viewsets.ReadOnlyModelViewSet):
+    queryset = AdapterDB.objects.distinct()
+    serializer_class = AdapterDBSerializer
+    filter_fields = {
+        'name':['icontains','exact'],
+        'id':['icontains','exact'],
+        'description':['icontains']
+        }
+
+class AdapterViewSet(viewsets.ReadOnlyModelViewSet):
     filter_fields = {
         'name':['icontains','exact'],
         'barcode':['icontains','exact'],
@@ -123,6 +133,7 @@ class AdapterViewSet(viewsets.ModelViewSet):
         }
     serializer_class = AdapterSerializer
     queryset = Adapter.objects.distinct()
+
 # #@todo: fix this... it isn't being called when used as a mixin
 # class ActionSerializerMixin(object):
 #     """
