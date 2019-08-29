@@ -5,6 +5,7 @@ from datetime import datetime
 from django.contrib.postgres.fields.jsonb import JSONField
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator
+from django.contrib.postgres.fields.hstore import HStoreField
 
 class Machine(models.Model):
     name = models.CharField(max_length=50,db_index=True)
@@ -171,10 +172,17 @@ class Sample(models.Model):
 #             self.id = id
 #         super(Sample, self).save(*args, **kwargs)
 
+class AdapterDB(models.Model):
+    id = models.SlugField(primary_key=True)
+    name = models.CharField(max_length=50)
+    description = models.TextField(null=True, blank=True)
+
 class Adapter(models.Model):
+    db = models.ForeignKey(AdapterDB, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
-    barcode = models.CharField(max_length=100)
-    description = models.TextField(null=True,blank=True)
+    barcodes = JSONField(default=dict)
+    class Meta:
+        unique_together = (('db','name'))
     def __unicode__(self):
         return '{} ({})'.format(self.name,self.barcode)
     def __str__(self):
