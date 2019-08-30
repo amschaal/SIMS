@@ -127,13 +127,16 @@ class AdapterDBViewset(viewsets.ReadOnlyModelViewSet):
 
 class AdapterViewSet(viewsets.ReadOnlyModelViewSet):
     filter_fields = {
-        'name':['icontains','exact'],
-        'barcode':['icontains','exact'],
-        'description':['icontains']
+        'name':['icontains','exact']
+#         'barcodes':['icontains','exact']
         }
     serializer_class = AdapterSerializer
     queryset = Adapter.objects.distinct()
-
+    lookup_field = 'name'
+    def get_queryset(self):
+        return viewsets.ReadOnlyModelViewSet.get_queryset(self).filter(db=self.kwargs.get('db'))
+    def get_object(self):
+        return viewsets.ReadOnlyModelViewSet.get_object(self)
 # #@todo: fix this... it isn't being called when used as a mixin
 # class ActionSerializerMixin(object):
 #     """
