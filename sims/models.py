@@ -193,7 +193,8 @@ class Library(models.Model):
     created = models.DateTimeField(auto_now_add=True,db_index=True)
     sample = models.ForeignKey(Sample, on_delete=models.CASCADE,related_name='libraries')
     adapter = models.ForeignKey(Adapter, on_delete=models.PROTECT,null=True,blank=True,related_name='libraries')
-    barcode = models.CharField(max_length=100, null=True, blank=True) #this should be updated if adapter changed
+    barcodes = JSONField(default=dict)
+#     barcode = models.CharField(max_length=100, null=True, blank=True) #this should be updated if adapter changed
     description = models.TextField(null=True,blank=True,db_index=True)
     def get_group(self):
         try:
