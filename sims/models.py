@@ -207,9 +207,9 @@ class Library(models.Model):
         return self.id
     
 @receiver(pre_save,sender=Library)
-def set_barcode(sender,instance,**kwargs):
-    if instance.adapter and not instance.barcode:
-        instance.barcode = instance.adapter.barcode
+def set_barcodes(sender,instance,**kwargs):
+#     if instance.adapter and not instance.barcodes:
+    instance.barcodes = instance.adapter.barcodes
     if not instance.id:
         instance.id = 'L_'+instance.sample.id
 
