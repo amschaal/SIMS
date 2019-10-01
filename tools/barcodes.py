@@ -1,12 +1,11 @@
-#reverse hamming distance ?
 def hamming_distance(s1, s2):
     assert len(s1) == len(s2)
-    return len(s1) - sum(c1 != c2 for c1, c2 in zip(s1, s2))
+    return sum(c1 != c2 for c1, c2 in zip(s1, s2))
 
 """
 l1, l2: {'id':'id1', 'barcodes': {'P5':[...]}} 
 """
-def get_conflicts(l1, l2, min_distance=1):
+def get_conflicts(l1, l2, min_distance=2):
 #     print('test distance {} + {}'.format(l1,l2))
     conflicts = []
     for k in l1['barcodes'].keys():
@@ -15,8 +14,8 @@ def get_conflicts(l1, l2, min_distance=1):
             for s1 in l1['barcodes'][k]:
                 for s2 in l2['barcodes'][k]:
                     d = hamming_distance(s1, s2)
-                    print('hamming distance {} + {} = {}'.format(s1,s2,d))
-                    if d >= min_distance:
+                    if d < min_distance:
+                        print('hamming distance {} - {} = {}'.format(s1,s2,d))
                         conflicts.append({l1['id']: s1, l2['id']: s2, 'distance': d})
     return conflicts
 #     if len(conflicts) > 0:
@@ -28,7 +27,7 @@ def get_conflicts(l1, l2, min_distance=1):
 libraries: [{'id':'id1', 'barcodes': {'P5':[...]}}, ...] 
 returns: {'id1': {'id3': [{'barcode':'...','distance':2},...]}, 'id3': {'id1': [{'barcode':'...','distance':2},...]}
 """
-def get_all_conflicts(libraries, min_distance=1):
+def get_all_conflicts(libraries, min_distance=2):
     conflicts = {}
     for i, l1 in enumerate(libraries):
         for l2 in libraries[i+1:]:
