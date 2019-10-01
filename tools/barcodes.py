@@ -41,9 +41,22 @@ def get_all_conflicts(libraries, min_distance=2):
                 conflicts[l2['id']][l1['id']] = c
     return conflicts
 
-def test_conflicts(min_distance=1):
+def test_all_library_conflicts(min_distance=1):
     from sims.models import Library
     from sims.api.serializers import LibrarySerializer
 #     for l in Library
     return get_all_conflicts(LibrarySerializer(list(Library.objects.all()),many=True).data,min_distance=min_distance)
 # def is_compatible(s1, s2, h):
+
+def test_adapter_conflicts(min_distance=1, adapter_db=None):
+    from sims.models import AdapterDB
+    db_conflicts = {}
+    if adapter_db:
+        dbs = AdapterDB.objects.filter(id=adapter_db)
+    else:
+        dbs = AdapterDB.objects.all()
+    for db in dbs:
+        print(db.id)
+        libraries = [{'id': a.name, 'barcodes': a.barcodes} for a in db.adapters.all()]
+        db_conflicts[db.id] = get_all_conflicts(libraries,min_distance=min_distance)
+    return db_conflicts

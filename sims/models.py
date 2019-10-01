@@ -178,7 +178,7 @@ class AdapterDB(models.Model):
     description = models.TextField(null=True, blank=True)
 
 class Adapter(models.Model):
-    db = models.ForeignKey(AdapterDB, on_delete=models.CASCADE)
+    db = models.ForeignKey(AdapterDB, on_delete=models.CASCADE, related_name="adapters")
     name = models.CharField(max_length=100)
     barcodes = JSONField(default=dict)
     class Meta:

@@ -9,6 +9,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.conf import settings
 from sims.submission import Submission
+from tools.barcodes import get_all_conflicts
 
 class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
@@ -71,6 +72,45 @@ class LibraryViewSet(viewsets.ModelViewSet):
     search_fields = ('id', 'sample__project__id', 'barcode')
     serializer_class = LibrarySerializer
     queryset = Library.objects.select_related('sample', 'sample__project').distinct()
+    @action(detail=False, methods=['get','post'])
+    def check_adapters(self, request):
+        libs = request.data.get('libraries',[]) # [{'id': 'library_id', 'adapter_db': '...', 'adapter': '...'}, ...]
+        search_adapters = request.data.get('search_adapters', False)
+        min_distance = request.data.get('min_distance',2)
+        libraries = []
+        errors = {}
+        for l in libs:
+            if not 'id' in l:
+                continue
+            lib = {'id': l['id']}
+            if 'barcodes' in l:
+                lib['barcodes'] =  l['barcodes']
+                libraries.append(lib)
+            elif 'adapter_db' in l and 'adapter' in l:
+                try:
+                    lib['barcodes'] = Adapter.objects.get(db__id=l['adapter_db'], name=l['adapter']).barcodes
+                    libraries.append(lib)
+                except Adapter.DoesNotExist:
+                    errors[l['id']] = 'No adapter found for library "{}" for DB "{}" and adapter ""'.format(l['id'], l['adapter_db'], l['adapter'])
+            elif 'adapter_id' in l:
+                try:
+                    lib['barcodes'] = Adapter.objects.get(id=l['adapter_id']).barcodes
+                    libraries.append(lib)
+                except Adapter.DoesNotExist:
+                    errors[l['id']] = 'No adapter found for library "{}" for adapter_id ""'.format(l['id'], l['adapter_id'])
+            else:
+                errors[l['id']] = 'Library "{}" must have either "barcodes", "adapter_id", or "adapter_db" and "adapter" properties'.format(l['id'])
+                continue
+        return self.check_compatibility(libraries, min_distance, errors)
+    @action(detail=False, methods=['get','post'])
+    def check_libraries(self, request):
+        libs = request.data.get('library_ids',[])
+        min_distance = request.data.get('min_distance',2)
+        libraries = Library.objects.filter(id__in=libs)
+        return self.check_compatibility(LibrarySerializer(libraries, many=True).data, min_distance=min_distance)
+    def check_compatibility(self, libraries, min_distance=2, errors={}):
+        conflicts = get_all_conflicts(libraries, min_distance=min_distance)
+        return Response({'conflicts': conflicts, 'errors': errors})
 
 class PoolViewSet(viewsets.ModelViewSet):
     filter_fields = {
@@ -124,12 +164,14 @@ class AdapterDBViewset(viewsets.ReadOnlyModelViewSet):
         'id':['icontains','exact'],
         'description':['icontains']
         }
+    search_fields = ('name', 'id')
 
 class AdapterViewSet(viewsets.ReadOnlyModelViewSet):
     filter_fields = {
         'name':['icontains','exact']
 #         'barcodes':['icontains','exact']
         }
+    search_fields = ('name',)
     serializer_class = AdapterSerializer
     queryset = Adapter.objects.distinct()
     lookup_field = 'name'
