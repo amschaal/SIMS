@@ -40,12 +40,14 @@ INSTALLED_APPS = [
 #     'rest_framework_filters',
     'django_filters',
     'rest_framework',
+    'corsheaders',
     'sims'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -142,5 +144,15 @@ SUBMISSION_SYSTEM_URLS = {
     'api': {'submission': 'http://submissions.genomecenter.ucdavis.edu/server/api/submissions/{id}/'},
     'submission': 'http://submissions.genomecenter.ucdavis.edu/submissions/{id}/'
     }
+
+# CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOW_METHODS = [
+    'GET',
+    'OPTIONS',
+#     'PATCH',
+#     'POST',
+#     'PUT',
+]
 
 from sims.config import *
