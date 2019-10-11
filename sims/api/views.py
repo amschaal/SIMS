@@ -29,8 +29,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
 #         url = settings.SUBMISSION_SYSTEM_URLS['submission'].format(id=id)
         try:
             submission = Submission.get_submission(id)
-        except:
-            return Response({'message': 'Error: unable to retrieve submission with ID "{0}"'.format(id)},status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'message': 'Error: unable to retrieve submission with ID "{}": {}'.format(id,e)},status=status.HTTP_400_BAD_REQUEST)
         try:
             project = submission.create_project()
         except Exception as e:
