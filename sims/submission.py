@@ -61,5 +61,6 @@ class Submission(object):
     def get_submission(id):
         URL = settings.SUBMISSION_SYSTEM_URLS['api']['submission'].format(id=id)
         with urllib.request.urlopen(URL) as url:
-            data = json.load(url)#url.read().decode()
+            data = url if isinstance(url, str) else url.read().decode('utf-8')
+            data = json.loads(data)#url.read().decode()
             return Submission(data)
