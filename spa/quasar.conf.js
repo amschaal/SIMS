@@ -106,12 +106,26 @@ module.exports = function (ctx) {
       }
     },
 
+    // devServer: {
+    //   // https: true,
+    //   // port: 8080,
+    //   open: true // opens browser window automatically
+    // },
     devServer: {
-      // https: true,
-      // port: 8080,
-      open: true // opens browser window automatically
-    },
-
+      // https: true
+      port: ctx.mode.ssr ? 9100 : 5050,
+      open: false, // opens browser window automatically
+      proxy: {
+        // proxy all requests starting with /api to jsonplaceholder
+        '/server': {
+          target: 'http://sims_api:8000',
+          changeOrigin: true,
+          pathRewrite: {
+            '^/server': ''
+          }
+        }
+      }
+    }
     // animations: 'all', // --- includes all animations
     animations: [],
 
