@@ -13,8 +13,8 @@ services:
       - VERSION=DOCKER
       - DEBUG=1
       - PYTHONUNBUFFERED=1
-    # env_file:
-    #   - ./.env.dev
+    env_file:
+      - ./.env.dev
     networks:
       # - shared-network
       - sims-network
