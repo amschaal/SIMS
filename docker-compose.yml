@@ -1,9 +1,9 @@
 version: '3.9'
 
 services:
-  sims_api:
+  simsapi:
     build: .
-    hostname: sims_api
+    hostname: simsapi
     # command: gunicorn dnaorder.wsgi:application --bind 0.0.0.0:8000
     command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
     volumes:
@@ -17,7 +17,9 @@ services:
     #   - ./.env.dev
     networks:
       # - shared-network
-      - internal-network
+      - sims-network
+    ports:
+      - "11111:11111"
     depends_on:
       - db
   db:
@@ -27,24 +29,24 @@ services:
     environment:
       - "POSTGRES_HOST_AUTH_METHOD=trust"
     networks:
-      - internal-network
-  spa:
+      - sims-network
+  spa2:
     build:
-        context: ./spa
+        context: ./spa2
         dockerfile: dev.Dockerfile
-    hostname: spa
+    hostname: spa2
     ports:
       - "5050:5050"
     networks:
-      - internal-network
+      - sims-network
     volumes:
-      - ./spa:/app
+      - ./spa2:/app
     depends_on:
-      - lims_api
+      - simsapi
 volumes:
   postgres_data:
   data_volume:
 networks:
-  internal-network:
+  sims-network:
   # shared-network: #for communicating with other docker application APIs used by plugins.  First run: docker network create shared-network
   #   external: true

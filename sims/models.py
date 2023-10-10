@@ -2,7 +2,8 @@ from django.db import models
 from django.db.models.signals import pre_save, post_save
 from django.dispatch.dispatcher import receiver
 from datetime import datetime
-from django.contrib.postgres.fields.jsonb import JSONField
+# from django.contrib.postgres.fields.jsonb import JSONField
+from django.db.models import JSONField
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator
 from django.contrib.postgres.fields.hstore import HStoreField

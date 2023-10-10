@@ -58,7 +58,7 @@ module.exports = configure(function (ctx) {
         node: 'node16'
       },
 
-      vueRouterMode: 'hash' // available values: 'hash', 'history'
+      vueRouterMode: 'history' // available values: 'hash', 'history'
       // vueRouterBase,
       // vueDevtools,
       // vueOptionsAPI: false,
@@ -94,7 +94,7 @@ module.exports = configure(function (ctx) {
       proxy: {
         // proxy all requests starting with /api to jsonplaceholder
         '/server': {
-          target: 'http://sims_api:8000',
+          target: 'http://simsapi:8000',
           changeOrigin: true,
           pathRewrite: {
             '^/server': ''
