@@ -18,9 +18,9 @@ class Submission(object):
         self.institute = data['institute']
         self.type = data['type']
         self.submission_schema = data['submission_schema']
-        self.sample_schema = data['sample_schema']
+        # self.sample_schema = data['sample_schema']
         self.submission_data = data['submission_data']
-        self.sample_data = data['sample_data']
+        # self.sample_data = data['sample_data']
         self.biocore = data['biocore']
         self.data = data['data']
         self.comments = data['comments']
@@ -40,10 +40,10 @@ class Submission(object):
                                          institute=self.institute,
                                          type=self.type,
                                          submission_schema=self.submission_schema,
-                                         sample_schema=self.sample_schema,
+                                        #  sample_schema=self.sample_schema,
                                          submission_data=self.submission_data,
-                                         sample_data=self.sample_data,
-                                         biocore=self.biocore,
+                                        #  sample_data=self.sample_data,
+                                        #  biocore=self.biocore,
                                          data=self.data,
                                          comments=self.comments
                                          )
@@ -51,8 +51,9 @@ class Submission(object):
         self.update_samples(project, import_only=True)
         return project
     def update_samples(self, project, import_only=True):
-        sample_ids = list(project.samples.all().values_list('id', flat=True))
-        new_samples = [s for s in self.sample_data if self.get_sample_id(project, s) not in sample_ids]
+        # sample_ids = list(project.samples.all().values_list('id', flat=True))
+        # new_samples = [s for s in self.sample_data if self.get_sample_id(project, s) not in sample_ids]
+        new_samples = []
         return Sample.objects.bulk_create([Sample(project=project,id=self.get_sample_id(project, s),name=s.get('sample_name'),data=s) for s in new_samples])
     @staticmethod
     def get_sample_id(project, sample):
@@ -60,7 +61,9 @@ class Submission(object):
     @staticmethod
     def get_submission(id):
         URL = settings.SUBMISSION_SYSTEM_URLS['api']['submission'].format(id=id)
+        print('URL', URL)
         with urllib.request.urlopen(URL) as url:
             data = url if isinstance(url, str) else url.read().decode('utf-8')
             data = json.loads(data)#url.read().decode()
+            print(data)
             return Submission(data)

@@ -6,9 +6,9 @@ from datetime import datetime
 from django.db.models import JSONField
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator
-from django.contrib.postgres.fields.hstore import HStoreField
 
 class Machine(models.Model):
+    type = models.CharField(max_length=25)
     name = models.CharField(max_length=50,db_index=True)
     description = models.TextField(null=True,blank=True)
     num_lanes = models.PositiveSmallIntegerField()
@@ -18,6 +18,7 @@ class Machine(models.Model):
         return self.__unicode__()
 
 class Run(models.Model):
+    type = models.CharField(max_length=25)
     name = models.CharField(max_length=100,blank=True,null=True,db_index=True)
     created = models.DateTimeField(auto_now_add=True)
     machine = models.ForeignKey(Machine, on_delete=models.PROTECT)
@@ -101,6 +102,7 @@ class PoolLibrary(models.Model):
     class Meta:
         unique_together = (('pool','library'))
 
+# Maybe this is excessive.  Instead when putting pools together, samples could just be joined into a standard Pool.
 class PoolPool(models.Model):
     pool = models.ForeignKey(Pool, on_delete=models.CASCADE, related_name='pooled_intermediate')
     pooled = models.ForeignKey(Pool, on_delete=models.PROTECT, related_name='pools_intermediate')
@@ -146,9 +148,11 @@ class Project(models.Model):
 #     participants = models.ManyToManyField(User,blank=True)
     data = JSONField(default=dict)
     comments = models.TextField(null=True, blank=True)
+    # plugin_data = JSONField(default=dict)s = models.TextField(null=True,blank=True)
 
 class Sample(models.Model):
     id = models.CharField(max_length=50,primary_key=True)
+    type = models.CharField(max_length=25)
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="samples",null=True,blank=True)
     name = models.CharField(max_length=50,db_index=True)
     imported = models.DateTimeField(auto_now=True,db_index=True)
