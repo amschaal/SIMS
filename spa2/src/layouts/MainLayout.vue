@@ -6,106 +6,94 @@
           flat
           dense
           round
-          icon="menu"
+          @click="leftDrawerOpen = !leftDrawerOpen"
           aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
+        >
+          <q-icon name="menu" />
+        </q-btn>
 
         <q-toolbar-title>
-          Quasar App
+          D^3
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <div>
+          <q-btn-dropdown color="white" flat label="Admin">
+            <q-list>
+              <q-item clickable v-close-popup :to="{ name: 'machines'}">
+                <q-item-section>
+                  <q-item-label>Machines</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
+        </div>
       </q-toolbar>
     </q-header>
 
     <q-drawer
       v-model="leftDrawerOpen"
-      show-if-above
       bordered
+      content-class="bg-grey-2"
     >
       <q-list>
-        <q-item-label
-          header
-        >
-          Essential Links
-        </q-item-label>
-
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
+        <q-item-label header>MENU</q-item-label>
+        <!-- <q-item clickable tag="a" target="_blank" href="https://quasar.dev">
+          <q-item-section avatar>
+            <q-icon name="school" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Docs</q-item-label>
+            <q-item-label caption>quasar.dev</q-item-label>
+          </q-item-section>
+        </q-item> -->
+        <q-item clickable :to="{ name: 'projects'}">
+          <q-item-section>
+            <q-item-label>Projects</q-item-label>
+            <!-- <q-item-label caption>Projects</q-item-label> -->
+          </q-item-section>
+        </q-item>
+        <q-item clickable :to="{ name: 'samples'}">
+          <q-item-section>
+            <q-item-label>Samples</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item clickable :to="{ name: 'libraries'}">
+          <q-item-section>
+            <q-item-label>Libraries</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item clickable :to="{ name: 'pools'}">
+          <q-item-section>
+            <q-item-label>Pools</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item clickable :to="{ name: 'runs'}">
+          <q-item-section>
+            <q-item-label>Runs</q-item-label>
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <router-view :key="$route.fullPath"/>
     </q-page-container>
   </q-layout>
 </template>
 
 <script>
 import { defineComponent, ref } from 'vue'
-import EssentialLink from 'components/EssentialLink.vue'
-
-const linksList = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-]
 
 export default defineComponent({
   name: 'MainLayout',
 
   components: {
-    EssentialLink
   },
 
   setup () {
     const leftDrawerOpen = ref(false)
 
     return {
-      essentialLinks: linksList,
       leftDrawerOpen,
       toggleLeftDrawer () {
         leftDrawerOpen.value = !leftDrawerOpen.value
