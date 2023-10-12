@@ -2,7 +2,7 @@
     <BaseTable
       :columns="columns"
       :visible-columns="['id', 'submission_id', 'type', 'submitted', 'pi_name']"
-      api-url="/server/api/projects/"
+      api-url="/api/projects/"
       :options="combined_options"
       :filters="filters"
       ref="table"
@@ -16,7 +16,7 @@
           <q-td key="id" :props="props"><router-link :to="{ name: 'project', params: { id: props.row.id }}">{{ props.row.id }}</router-link></q-td>
           <q-td key="submission_id" :props="props"><a :href="props.row.submission_url">{{ props.row.submission_id }}</a></q-td>
           <q-td key="type" :props="props">{{ props.row.type.name }}</q-td>
-          <q-td key="submitted" :props="props">{{ props.row.submitted }}</q-td>
+          <q-td key="submitted" :props="props">{{ $filters.formatDate(props.row.submitted) }}</q-td>
           <q-td key="name" :props="props">{{ props.row.first_name }} {{ props.row.last_name }}</q-td>
           <q-td key="email" :props="props">{{ props.row.email }}</q-td>
           <q-td key="pi_name" :props="props">{{ props.row.pi_first_name }} {{ props.row.pi_last_name }}</q-td>
