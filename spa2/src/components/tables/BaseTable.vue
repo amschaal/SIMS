@@ -36,6 +36,13 @@
          style="min-width: 150px"
        />{{ props.foo }}
      </template>
+     <template v-slot:body="props">
+        <slot name="body" v-bind:props="props">
+          <q-tr :props="props">
+            <q-td :props="props" key="id">{{props.row.id}}</q-td>
+          </q-tr>
+        </slot>
+      </template>
      <!-- <template slot="body" slot-scope="props">
        <slot name="body" v-bind:props="props">
           Example

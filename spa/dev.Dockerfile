@@ -10,8 +10,8 @@ COPY . .
 FROM develop-stage as build-stage
 # WORKDIR /app/lims
 RUN yarn
-CMD ["quasar", "dev"]
-# CMD ["quasar", "serve", "."]
+# CMD ["quasar", "dev"]
+CMD ["quasar", "serve", "."]
 # # production stage
 # FROM nginx:stable-alpine as production-stage
 # COPY --from=build-stage /app/dist/spa /usr/share/nginx/html
