@@ -57,8 +57,8 @@ export default {
   },
   mounted: function () {
     const self = this
-    this.$axios
-      .get(`/server/api/projects/${self.id}/`)
+    this.$api
+      .get(`/api/projects/${self.id}/`)
       .then(function (response) {
         console.log('response', response)
         // Vue.set(self, 'project', response.data) #Vue2
@@ -72,8 +72,8 @@ export default {
     },
     updateSamples () {
       const self = this
-      this.$axios
-        .post(`/server/api/projects/${this.id}/update_samples/`)
+      this.$api
+        .post(`/api/projects/${this.id}/update_samples/`)
         .then(function (response) {
           console.log('response', response, self.$refs.samples)
           let message = `Samples updated.  ${response.data.new_samples.length} new samples imported.`

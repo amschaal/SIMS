@@ -34,8 +34,8 @@ export default {
     console.log('project mounting', this.id)
     if (!this.project) {
       const self = this
-      this.$axios
-        .get(`/server/api/projects/${self.id}/`)
+      this.$api
+        .get(`/api/projects/${self.id}/`)
         .then(function (response) {
           console.log('project response', response)
           // Vue.set(self, 'project', response.data)

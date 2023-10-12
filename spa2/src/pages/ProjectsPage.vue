@@ -33,7 +33,7 @@ export default {
       //   message: `Importing submission ID: '${this.submission_id}'`
       // })
       const self = this
-      this.$axios.post('/server/api/projects/import_submission/', { id: this.submission_id })
+      this.$api.post('/api/projects/import_submission/', { id: this.submission_id })
         .then(function (response) {
           // self.$q.loading.hide()
           self.errors = {}
