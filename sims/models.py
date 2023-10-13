@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator
 
 class Machine(models.Model):
-    type = models.CharField(max_length=25)
+    type = models.CharField(max_length=25, null=True)
     name = models.CharField(max_length=50,db_index=True)
     description = models.TextField(null=True,blank=True)
     num_lanes = models.PositiveSmallIntegerField()
@@ -18,7 +18,7 @@ class Machine(models.Model):
         return self.__unicode__()
 
 class Run(models.Model):
-    type = models.CharField(max_length=25)
+    type = models.CharField(max_length=25, null=True)
     name = models.CharField(max_length=100,blank=True,null=True,db_index=True)
     created = models.DateTimeField(auto_now_add=True)
     machine = models.ForeignKey(Machine, on_delete=models.PROTECT)
@@ -152,7 +152,7 @@ class Project(models.Model):
 
 class Sample(models.Model):
     id = models.CharField(max_length=50,primary_key=True)
-    type = models.CharField(max_length=25)
+    type = models.CharField(max_length=25, null=True)
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="samples",null=True,blank=True)
     name = models.CharField(max_length=50,db_index=True)
     imported = models.DateTimeField(auto_now=True,db_index=True)
