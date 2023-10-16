@@ -13,7 +13,7 @@ from tools.barcodes import get_all_conflicts
 
 class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
-    filter_fields = {
+    filterset_fields = {
         'id':['icontains','exact'],
         'samples__id': ['exact'],
         'samples__libraries__id': ['exact'],
@@ -51,7 +51,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response({'project': ProjectSerializer(project).data, 'new_samples': SampleSerializer(samples, many=True).data})
     
 class SampleViewSet(viewsets.ModelViewSet):
-    filter_fields = {
+    filterset_fields = {
         'name':['icontains','exact'],
         'id':['icontains','exact'],
         'project__id':['icontains','exact'],
@@ -61,7 +61,7 @@ class SampleViewSet(viewsets.ModelViewSet):
     queryset = Sample.objects.distinct()
 
 class LibraryViewSet(viewsets.ModelViewSet):
-    filter_fields = {
+    filterset_fields = {
         'id':['icontains','exact'],
         'sample__name':['icontains','exact'],
         'sample__id':['icontains','exact'],
@@ -113,7 +113,7 @@ class LibraryViewSet(viewsets.ModelViewSet):
         return Response({'conflicts': conflicts, 'errors': errors})
 
 class PoolViewSet(viewsets.ModelViewSet):
-    filter_fields = {
+    filterset_fields = {
         'name':['icontains','exact'],
         'libraries__id':['exact'],
         'libraries__sample__id':['exact'],
@@ -159,7 +159,7 @@ class PoolViewSet(viewsets.ModelViewSet):
 class AdapterDBViewset(viewsets.ReadOnlyModelViewSet):
     queryset = AdapterDB.objects.distinct()
     serializer_class = AdapterDBSerializer
-    filter_fields = {
+    filterset_fields = {
         'name':['icontains','exact'],
         'id':['icontains','exact'],
         'description':['icontains']
@@ -167,7 +167,7 @@ class AdapterDBViewset(viewsets.ReadOnlyModelViewSet):
     search_fields = ('name', 'id')
 
 class AdapterViewSet(viewsets.ReadOnlyModelViewSet):
-    filter_fields = {
+    filterset_fields = {
         'name':['icontains','exact']
 #         'barcodes':['icontains','exact']
         }
@@ -205,7 +205,7 @@ class RunViewSet(viewsets.ModelViewSet):
     }
     serializer_class = RunSerializer
     queryset = Run.objects.distinct()
-    filter_fields = {
+    filterset_fields = {
         'name':['icontains'],
         'machine__id':['exact'],
         'machine__name':['icontains'],
@@ -228,7 +228,7 @@ class RunViewSet(viewsets.ModelViewSet):
         return viewsets.ModelViewSet.get_serializer_class(self)
 
 class RunPoolViewSet(viewsets.ModelViewSet):
-    filter_fields = {'run__id':['exact']
+    filterset_fields = {'run__id':['exact']
                      }
     serializer_class = RunPoolSerializer
     queryset = RunPool.objects.distinct().order_by('run', 'index')
@@ -251,6 +251,6 @@ class RunPoolViewSet(viewsets.ModelViewSet):
 class MachineViewSet(viewsets.ModelViewSet):
     serializer_class = MachineSerializer
     model = Machine
-    filter_fields = {'name':['icontains'],'description':['icontains']}
+    filterset_fields = {'name':['icontains'],'description':['icontains']}
 #     filter_fields = {'machine__name':['icontains'],'description':['icontains']}#,'lanes__pool__library__name':['icontains'],'lanes__pool__name':['icontains']
     queryset = Machine.objects.distinct()
