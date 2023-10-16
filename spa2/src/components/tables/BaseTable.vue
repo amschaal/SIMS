@@ -9,19 +9,19 @@
       :filter="filter"
       @request="onRequest"
       binary-state-sort
-      :visible-columns="visibleColumns"
+      :visible-columns="tableColumns"
       :selected-rows-label="getSelectedString"
       :selection="selection"
       v-model:selected="selected"
     >
-      <template v-slot:top-left="props">
+      <template v-slot:top-left>
         <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
           <template v-slot:append>
-            <q-icon name="search" />{{ props.foo }}
+            <q-icon name="search" />
           </template>
         </q-input>
       </template>
-      <template v-slot:top-right="props">
+      <template v-slot:top-right>
        <q-select
          v-model="tableColumns"
          multiple
@@ -34,7 +34,7 @@
          :options="columns"
          option-value="name"
          style="min-width: 150px"
-       />{{ props.foo }}
+       />
      </template>
      <template v-slot:body="props">
         <slot name="body" v-bind:props="props">

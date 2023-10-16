@@ -1,5 +1,4 @@
 <template>
-  <div>Samples</div>
   <BaseTable
     :columns="columns"
     :visible-columns="visibleColumns"

@@ -21,8 +21,7 @@
           <q-td key="email" :props="props">{{ props.row.email }}</q-td>
           <q-td key="pi_name" :props="props">{{ props.row.pi_first_name }} {{ props.row.pi_last_name }}</q-td>
           <q-td key="pi_email" :props="props">{{ props.row.pi_email }}</q-td>
-          <q-td key="sample_data" :props="props"><span v-if="props.row.sample_data">{{ props.row.sample_data.length }}</span></q-td>
-          <q-td key="biocore" :props="props"><q-icon size="18px" name="check_circle" v-if="props.row.biocore" color="green"/></q-td>
+          <!-- <q-td key="num_samples" :props="props"><span v-if="props.row.num_samples">{{ props.row.num_samples }}</span></q-td> -->
         </q-tr>
       </template>
     </BaseTable>
@@ -46,9 +45,8 @@ export default {
         { name: 'name', label: 'Submitter', field: 'name' },
         { name: 'email', label: 'Email', field: 'email', sortable: true },
         { name: 'pi_name', label: 'PI', field: 'pi_name' },
-        { name: 'pi_email', label: 'PI Email', field: 'pi_email', sortable: true },
-        { name: 'sample_data', label: 'Samples', field: 'sample_data', sortable: false },
-        { name: 'biocore', label: 'Biocore', field: 'biocore', sortable: true }
+        { name: 'pi_email', label: 'PI Email', field: 'pi_email', sortable: true }
+        // { name: 'num_samples', label: 'Samples', field: 'num_samples', sortable: false }
       ],
       combined_options: this.options ? this.options : {}
       // visibleColumns: ['id', 'submission_id', 'type', 'submitted', 'pi_name'],
