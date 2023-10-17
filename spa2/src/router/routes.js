@@ -44,7 +44,7 @@ const routes = [
       { name: 'pools', path: 'pools', component: () => import('pages/PoolsPage.vue') },
       {
         path: '/pools/:id/',
-        component: () => import('pages/Pool.vue'),
+        component: () => import('pages/PoolPage.vue'),
         name: 'pool',
         props: true
       },
