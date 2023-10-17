@@ -12,6 +12,16 @@ pool_field_map = {
 
 sample_field_map = {
     'row': 'samples',
+    # 'pool_map': None, #{'src': 'pool_name', 'dest': 'pool_name'} # if samples reference pool, enter field, else None
+    'fields': {
+        'name': 'sample_name'
+    },
+    'data': '*' # * indicates all fields should be kept in data, None -> none, ['field1','field2'] for a list of fields to retain
+}
+
+libary_field_map = {
+    'row': 'libraries',
+    # 'pool_map': None, #{'src': 'pool_name', 'dest': 'pool_name'} # if samples reference pool, enter field, else None
     'fields': {
         'name': 'sample_name'
     },
@@ -23,7 +33,7 @@ def get_pools(project, field_map):
     data = project.submission_data
     pools = []
     for row in data[field_map['row']]:
-        fields = {key: row[val] for key, val in field_map['fields'].items()}
+        fields = {key: row[val] for key, val in field_map['fields'].items() if val}
         fields['data'] = row
         pools.append(Pool(**fields))
     return pools
@@ -41,6 +51,12 @@ def get_samples(project, field_map=sample_field_map):
         sample.id = '{}_{}'.format(project.id,sample.name)
         samples.append(sample)
     return samples
+
+def create_project_samples(project):
+    data = project.submission_data
+    if 'samples' in data and isinstance(data['samples'], list):
+        samples = get_samples(project)
+        return samples
 
 
 """

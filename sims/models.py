@@ -7,6 +7,8 @@ from django.db.models import JSONField
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator
 
+
+
 class Machine(models.Model):
     type = models.CharField(max_length=25, null=True)
     name = models.CharField(max_length=50,db_index=True)
@@ -149,6 +151,11 @@ class Project(models.Model):
     data = JSONField(default=dict)
     comments = models.TextField(null=True, blank=True)
     # plugin_data = JSONField(default=dict)s = models.TextField(null=True,blank=True)
+    def process_samples(self):
+        from sims.transform import create_project_samples
+        samples = create_project_samples(self)
+        samples = Sample.objects.bulk_create(samples)
+        return samples
 
 class Sample(models.Model):
     id = models.CharField(max_length=50,primary_key=True)

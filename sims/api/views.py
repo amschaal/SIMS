@@ -49,7 +49,13 @@ class ProjectViewSet(viewsets.ModelViewSet):
         except Exception as e:
             return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'project': ProjectSerializer(project).data, 'new_samples': SampleSerializer(samples, many=True).data})
-    
+    @action(detail=True, methods=['post'])
+    def process_samples(self, request, pk=None):
+        project = self.get_object()
+        samples = project.process_samples()
+        return Response({'project': ProjectSerializer(project).data, 'new_samples': SampleSerializer(samples, many=True).data})
+        # return Response({'samples':SampleSerializer(samples, many=True).data})
+
 class SampleViewSet(viewsets.ModelViewSet):
     filterset_fields = {
         'name':['icontains','exact'],

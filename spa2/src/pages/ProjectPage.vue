@@ -73,7 +73,8 @@ export default {
     updateSamples () {
       const self = this
       this.$api
-        .post(`/api/projects/${this.id}/update_samples/`)
+        // .post(`/api/projects/${this.id}/update_samples/`)
+        .post(`/api/projects/${this.id}/process_samples/`)
         .then(function (response) {
           console.log('response', response, self.$refs.samples)
           let message = `Samples updated.  ${response.data.new_samples.length} new samples imported.`
