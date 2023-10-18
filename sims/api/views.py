@@ -52,8 +52,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'])
     def process_samples(self, request, pk=None):
         project = self.get_object()
-        samples = project.process_samples()
-        return Response({'project': ProjectSerializer(project).data, 'new_samples': SampleSerializer(samples, many=True).data})
+        pools, samples, libraries = project.process_samples()
+        return Response({'project': ProjectSerializer(project).data, 'new_pools': PoolSerializer(pools, many=True).data, 'new_samples': SampleSerializer(samples, many=True).data, 'new_libraries': LibrarySerializer(libraries, many=True).data})
         # return Response({'samples':SampleSerializer(samples, many=True).data})
 
 class SampleViewSet(viewsets.ModelViewSet):

@@ -54,6 +54,7 @@ class Pool(models.Model):
     name = models.CharField(max_length=100,unique=True,db_index=True)
     description = models.TextField(null=True,blank=True,db_index=True)
     created = models.DateField(auto_now=True,db_index=True)
+    data = JSONField(default=dict)
     pools = models.ManyToManyField(
         'self',
         through='PoolPool',
@@ -153,9 +154,11 @@ class Project(models.Model):
     # plugin_data = JSONField(default=dict)s = models.TextField(null=True,blank=True)
     def process_samples(self):
         from sims.transform import create_project_samples
-        samples = create_project_samples(self)
+        pools, samples, libraries = create_project_samples(self)
+        pools = Pool.objects.bulk_create(pools)
         samples = Sample.objects.bulk_create(samples)
-        return samples
+        libraries = Library.objects.bulk_create(libraries)
+        return (pools, samples, libraries)
 
 class Sample(models.Model):
     id = models.CharField(max_length=50,primary_key=True)

@@ -19,16 +19,16 @@ sample_field_map = {
     'data': '*' # * indicates all fields should be kept in data, None -> none, ['field1','field2'] for a list of fields to retain
 }
 
-libary_field_map = {
+library_field_map = {
     'row': 'libraries',
     # 'pool_map': None, #{'src': 'pool_name', 'dest': 'pool_name'} # if samples reference pool, enter field, else None
     'fields': {
-        'name': 'sample_name'
+        'name': 'library_name'
     },
     'data': '*' # * indicates all fields should be kept in data, None -> none, ['field1','field2'] for a list of fields to retain
 }
 
-def get_pools(project, field_map):
+def get_pools(project, field_map=pool_field_map):
     schema = project.submission_schema
     data = project.submission_data
     pools = []
@@ -52,11 +52,33 @@ def get_samples(project, field_map=sample_field_map):
         samples.append(sample)
     return samples
 
+def get_libraries(project, field_map=library_field_map):
+    # This is just for testing, and will probably go as libraries may become just a type of sample
+    schema = project.submission_schema
+    data = project.submission_data
+    samples = []
+    libraries = []
+    for row in data[field_map['row']]:
+        fields = {key: row[val] for key, val in field_map['fields'].items()}
+        fields['data'] = row
+        fields['project'] = project
+        sample = Sample(**fields)
+        sample.id = '{}_{}'.format(project.id,sample.name)
+        samples.append(sample)
+        library = Library(id=sample.id, sample=sample)
+        libraries.append(library)
+    return (samples, libraries)
+
 def create_project_samples(project):
     data = project.submission_data
+    pools, samples, libraries = [], [], []
     if 'samples' in data and isinstance(data['samples'], list):
         samples = get_samples(project)
-        return samples
+    if 'pools' in data and isinstance(data['pools'], list):
+        pools = get_pools(project)
+    if 'libraries' in data and isinstance(data['libraries'], list):
+        samples, libraries = get_libraries(project)
+    return (pools, samples, libraries)
 
 
 """
