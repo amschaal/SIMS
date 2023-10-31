@@ -30,6 +30,11 @@ class Run(models.Model):
     def __str__(self):
         return self.__unicode__()
 
+"""
+This may need to be extended to:
+- an individual sample where samples are not pooled (proteomics for example)
+- a project, for historical metadata purposes, when in SLIMS a lane was assigned to a project
+"""
 class RunPool(models.Model):
     run = models.ForeignKey(Run, on_delete=models.CASCADE,related_name='run_pools')
     index = models.PositiveSmallIntegerField()
@@ -68,10 +73,10 @@ class Pool(models.Model):
 #         through_fields=('pooled', 'pool'),
 #         symmetrical=False
 #     )
-    libraries = models.ManyToManyField(
-        'Library',
-        through='PoolLibrary',
-        through_fields=('pool', 'library'),
+    samples = models.ManyToManyField(
+        'Sample',
+        through='SamplePool',
+        through_fields=('pool', 'sample'),
         related_name='pools'
     )
 #     libraries = models.ManyToManyField(Library,related_name='pools')
@@ -87,7 +92,7 @@ class Pool(models.Model):
         return duplicates if len(duplicates) > 0 else None
     def get_library_barcodes(self):
         barcodes = {}
-        for l in self.libraries.select_related('adapter').filter(adapter__isnull=False):
+        for l in self.samples.select_related('adapter').filter(adapter__isnull=False):
             if not barcodes.has_key(l.adapter.barcode):
                 barcodes[l.adapter.barcode] = []
             barcodes[l.adapter.barcode].append(l.name)
@@ -104,6 +109,12 @@ class PoolLibrary(models.Model):
     library = models.ForeignKey('Library', on_delete=models.PROTECT)
     class Meta:
         unique_together = (('pool','library'))
+
+class SamplePool(models.Model):
+    pool = models.ForeignKey(Pool, on_delete=models.CASCADE)
+    sample = models.ForeignKey('Sample', on_delete=models.PROTECT)
+    class Meta:
+        unique_together = (('pool','sample'))
 
 # Maybe this is excessive.  Instead when putting pools together, samples could just be joined into a standard Pool.
 class PoolPool(models.Model):
@@ -154,20 +165,24 @@ class Project(models.Model):
     # plugin_data = JSONField(default=dict)s = models.TextField(null=True,blank=True)
     def process_samples(self):
         from sims.transform import create_project_samples
-        pools, samples, libraries = create_project_samples(self)
+        pools, samples = create_project_samples(self)
         pools = Pool.objects.bulk_create(pools)
         samples = Sample.objects.bulk_create(samples)
-        libraries = Library.objects.bulk_create(libraries)
-        return (pools, samples, libraries)
+        # libraries = Library.objects.bulk_create(libraries)
+        return (pools, samples)
 
 class Sample(models.Model):
+    TYPE_LIBRARY = 'LIBRARY'
     id = models.CharField(max_length=50,primary_key=True)
     type = models.CharField(max_length=25, null=True)
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="samples",null=True,blank=True)
     name = models.CharField(max_length=50,db_index=True)
     imported = models.DateTimeField(auto_now=True,db_index=True)
-#     received = models.DateField(null=True,blank=True,db_index=True)
     data = JSONField(null=True,blank=True)
+    # fields below are for library only
+    adapter = models.ForeignKey('Adapter', on_delete=models.PROTECT,null=True,blank=True,related_name='samples')
+    barcodes = JSONField(default=dict, null=True)
+#     received = models.DateField(null=True,blank=True,db_index=True)
     def __unicode__(self):
         return self.id
     def __str__(self):
@@ -203,6 +218,7 @@ class Adapter(models.Model):
     def __str__(self):
         return '{} ({})'.format(self.db, self.name)
 
+# Maybe this goes away, and a library becomes just a type of sample with adapter/barcodes
 class Library(models.Model):
     id = models.CharField(max_length=50, primary_key=True)
     created = models.DateTimeField(auto_now_add=True,db_index=True)
