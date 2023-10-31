@@ -1,4 +1,4 @@
-from .models import Pool, Sample, Library, Project
+from .models import Pool, Sample, Project
 # Maybe use this: https://github.com/kennknowles/python-jsonpath-rw
 
 pool_field_map = {
@@ -35,7 +35,9 @@ def get_pools(project, field_map=pool_field_map):
     for row in data[field_map['row']]:
         fields = {key: row[val] for key, val in field_map['fields'].items() if val}
         fields['data'] = row
-        pools.append(Pool(**fields))
+        pool = Pool(**fields)
+        pool.name = '{}_{}'.format(project.id, pool.name)
+        pools.append(pool)
     return pools
 
 def get_samples(project, field_map=sample_field_map):
@@ -57,17 +59,18 @@ def get_libraries(project, field_map=library_field_map):
     schema = project.submission_schema
     data = project.submission_data
     samples = []
-    libraries = []
+    # libraries = []
     for row in data[field_map['row']]:
         fields = {key: row[val] for key, val in field_map['fields'].items()}
         fields['data'] = row
         fields['project'] = project
+        fields['type'] = Sample.TYPE_LIBRARY
         sample = Sample(**fields)
         sample.id = '{}_{}'.format(project.id,sample.name)
         samples.append(sample)
-        library = Library(id=sample.id, sample=sample)
-        libraries.append(library)
-    return (samples, libraries)
+        # library = Library(id=sample.id, sample=sample)
+        # libraries.append(library)
+    return samples
 
 def create_project_samples(project):
     data = project.submission_data
@@ -77,8 +80,8 @@ def create_project_samples(project):
     if 'pools' in data and isinstance(data['pools'], list):
         pools = get_pools(project)
     if 'libraries' in data and isinstance(data['libraries'], list):
-        samples, libraries = get_libraries(project)
-    return (pools, samples, libraries)
+        samples = get_libraries(project)
+    return (pools, samples)
 
 
 """

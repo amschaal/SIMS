@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from sims.models import Project, Machine, Run, Sample, Adapter, Library, Pool, RunPool,\
+from sims.models import Project, Machine, Run, Sample, Adapter, Pool, RunPool,\
     AdapterDB
 from django.conf import settings
 
@@ -33,8 +33,11 @@ class ModelRelatedField(serializers.RelatedField):
 
 class ProjectSerializer(serializers.ModelSerializer):
     submission_url = serializers.SerializerMethodField()
+    # num_samples = serializers.SerializerMethodField()
     def get_submission_url(self, obj):
         return settings.SUBMISSION_SYSTEM_URLS['submission'].format(id=obj.submission_id)
+    # def get_num_samples(self, obj):
+    #     return obj.samples.count()
     class Meta:
         model = Project
         exclude = []
@@ -53,29 +56,37 @@ class RunSerializer(serializers.ModelSerializer):
         model = Run
         exclude = []
 
-class LibrarySerializer(serializers.ModelSerializer):
-    project = serializers.SerializerMethodField()
-    def get_project(self, obj):
-        return obj.sample.project_id
-    class Meta:
-        model = Library
-        exclude = []
-
 class BasePoolSerializer(serializers.ModelSerializer):
 #     libraries = LibrarySerializer(many=True, read_only=True)
     class Meta:
         model = Pool
         exclude = []
 
-class PoolSerializer(BasePoolSerializer):
-    libraries = LibrarySerializer(many=True, read_only=True)
-    pools = BasePoolSerializer(many=True, read_only=True)
+
 
 class RunPoolSerializer(serializers.ModelSerializer):
 #     pool = PoolSerializer(many=True, read_only=True)
     class Meta:
         model = RunPool
         exclude = []
+
+class SampleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Sample
+        exclude = []
+
+class LibrarySerializer(SampleSerializer):
+    class Meta:
+        exclude = []
+
+class AdapterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Adapter
+        exclude = []
+
+class PoolSerializer(BasePoolSerializer):
+    samples = SampleSerializer(many=True, read_only=True)
+    pools = BasePoolSerializer(many=True, read_only=True)
 
 class RunPoolDetailSerializer(serializers.ModelSerializer):
 #     pool = PoolSerializer(read_only=True)
@@ -104,16 +115,6 @@ class RunDetailSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Run
-        exclude = []
-
-class SampleSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Sample
-        exclude = []
-
-class AdapterSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Adapter
         exclude = []
 
 class AdapterDBSerializer(serializers.ModelSerializer):

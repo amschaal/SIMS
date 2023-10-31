@@ -1,9 +1,9 @@
 from rest_framework import viewsets, status
-from sims.api.serializers import RunSerializer,RunDetailSerializer, MachineSerializer,\
-    ProjectSerializer, SampleSerializer, PoolSerializer, LibrarySerializer,\
+from sims.api.serializers import LibrarySerializer, RunSerializer,RunDetailSerializer, MachineSerializer,\
+    ProjectSerializer, SampleSerializer, PoolSerializer, \
     AdapterSerializer, RunPoolSerializer, RunPoolDetailSerializer,\
     AdapterDBSerializer
-from sims.models import Run, Machine, Project, Sample, Pool, Library, Adapter,\
+from sims.models import Run, Machine, Project, Sample, Pool, Adapter,\
     RunPool, AdapterDB
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -16,9 +16,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
     filterset_fields = {
         'id':['icontains','exact'],
         'samples__id': ['exact'],
-        'samples__libraries__id': ['exact'],
-        'samples__libraries__pools__id': ['exact'],
-        'samples__libraries__pools__run_pools__run__id': ['exact']
+        'samples__id': ['exact'],
+        'samples__pools__id': ['exact'],
+        'samples__pools__run_pools__run__id': ['exact']
         }
     search_fields = ('id', 'submission_id', 'pi_first_name', 'pi_last_name', 'pi_email', 'first_name', 'last_name', 'email')
     ordering_fields = ['id', 'submitted', 'submission_id']
@@ -52,8 +52,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'])
     def process_samples(self, request, pk=None):
         project = self.get_object()
-        pools, samples, libraries = project.process_samples()
-        return Response({'project': ProjectSerializer(project).data, 'new_pools': PoolSerializer(pools, many=True).data, 'new_samples': SampleSerializer(samples, many=True).data, 'new_libraries': LibrarySerializer(libraries, many=True).data})
+        pools, samples = project.process_samples()
+        return Response({'project': ProjectSerializer(project).data, 'new_pools': PoolSerializer(pools, many=True).data, 'new_samples': SampleSerializer(samples, many=True).data})
         # return Response({'samples':SampleSerializer(samples, many=True).data})
 
 class SampleViewSet(viewsets.ModelViewSet):
@@ -61,6 +61,8 @@ class SampleViewSet(viewsets.ModelViewSet):
         'name':['icontains','exact'],
         'id':['icontains','exact'],
         'project__id':['icontains','exact'],
+        'pools__id': ['exact'],
+        'pools__run_pools__run__id': ['exact']
         }
     search_fields = ('id', 'project__id')
     serializer_class = SampleSerializer
@@ -69,15 +71,15 @@ class SampleViewSet(viewsets.ModelViewSet):
 class LibraryViewSet(viewsets.ModelViewSet):
     filterset_fields = {
         'id':['icontains','exact'],
-        'sample__name':['icontains','exact'],
-        'sample__id':['icontains','exact'],
-        'sample__project__id':['icontains','exact'],
+        'name':['icontains','exact'],
+        'id':['icontains','exact'],
+        'project__id':['icontains','exact'],
         'pools__id': ['exact'],
         'pools__run_pools__run__id': ['exact']
         }
-    search_fields = ('id', 'sample__project__id', 'barcode')
+    search_fields = ('id', 'project__id', 'barcode')
     serializer_class = LibrarySerializer
-    queryset = Library.objects.select_related('sample', 'sample__project').distinct()
+    queryset = Sample.objects.select_related('sample', 'sample__project').filter(type=Sample.TYPE_LIBRARY).distinct()
     @action(detail=False, methods=['get','post'])
     def check_adapters(self, request):
         libs = request.data.get('libraries',[]) # [{'id': 'library_id', 'adapter_db': '...', 'adapter': '...'}, ...]
@@ -112,7 +114,7 @@ class LibraryViewSet(viewsets.ModelViewSet):
     def check_libraries(self, request):
         libs = request.data.get('library_ids',[])
         min_distance = request.data.get('min_distance',2)
-        libraries = Library.objects.filter(id__in=libs)
+        libraries = Sample.objects.filter(id__in=libs)
         return self.check_compatibility(LibrarySerializer(libraries, many=True).data, min_distance=min_distance)
     def check_compatibility(self, libraries, min_distance=2, errors={}):
         conflicts = get_all_conflicts(libraries, min_distance=min_distance)
@@ -121,9 +123,9 @@ class LibraryViewSet(viewsets.ModelViewSet):
 class PoolViewSet(viewsets.ModelViewSet):
     filterset_fields = {
         'name':['icontains','exact'],
-        'libraries__id':['exact'],
-        'libraries__sample__id':['exact'],
-        'libraries__sample__project__id':['exact'],
+        'samples__id':['exact'],
+        'samples__id':['exact'],
+        'samples__project__id':['exact'],
         'pooled__id':['exact'],
         'pools__id':['exact'],
         'run_pools__run__id':['exact']
@@ -131,21 +133,21 @@ class PoolViewSet(viewsets.ModelViewSet):
     serializer_class = PoolSerializer
     queryset = Pool.objects.distinct()
     @action(detail=True, methods=['get','post'])
-    def add_libraries(self, request, pk=None):
-        return self.update_libraries(request, 'add')
+    def add_samples(self, request, pk=None):
+        return self.update_samples(request, 'add')
     @action(detail=True, methods=['get','post'])
-    def remove_libraries(self, request, pk=None):
-        return self.update_libraries(request, 'remove')
-    def update_libraries(self, request, action):
+    def remove_samples(self, request, pk=None):
+        return self.update_samples(request, 'remove')
+    def update_samples(self, request, action):
         pool = self.get_object()
         data = request.data
-        libraries = list(Library.objects.filter(id__in=data.get('libraries',[])))
-        libraries += list(Library.objects.filter(sample__project__id__in=data.get('projects',[])))
+        samples = list(Sample.objects.filter(id__in=data.get('samples',[])))
+        samples += list(Sample.objects.filter(project__id__in=data.get('projects',[])))
         if action == 'add':
-            pool.libraries.add(*libraries)
+            pool.samples.add(*samples)
         elif action == 'remove':
-            pool.libraries.remove(*libraries)
-        return Response({'libraries': LibrarySerializer(pool.libraries.all(),many=True).data})
+            pool.samples.remove(*samples)
+        return Response({'samples': SampleSerializer(pool.samples.all(),many=True).data})
     @action(detail=True, methods=['get','post'])
     def add_pools(self, request, pk=None):
         return self.update_pools(request, 'add')
@@ -217,15 +219,15 @@ class RunViewSet(viewsets.ModelViewSet):
         'machine__name':['icontains'],
         'description':['icontains'],
         'run_pools__pool__id':['exact'],
-        'run_pools__pool__libraries__id':['exact'],
-        'run_pools__pool__libraries__sample__id':['exact'],
-        'run_pools__pool__libraries__sample__project__id':['exact'],
+        'run_pools__pool__samples__id':['exact'],
+        'run_pools__pool__samples__sample__id':['exact'],
+        'run_pools__pool__samples__sample__project__id':['exact'],
         }#,'lanes__pool__library__name':['icontains'],'lanes__pool__name':['icontains']
     ordering_fields = ['created', 'name', 'machine__name']
     search_fields = ('name', 'description', 'machine__name')
     def get_queryset(self):
         if self.action == 'retrieve':
-            return Run.objects.distinct().prefetch_related('run_pools', 'run_pools__pool__libraries')
+            return Run.objects.distinct().prefetch_related('run_pools', 'run_pools__pool__samples')
         return Run.objects.distinct()
     def get_serializer_class(self):
         if hasattr(self, 'action_serializers'):
@@ -246,7 +248,7 @@ class RunPoolViewSet(viewsets.ModelViewSet):
     }
     def get_queryset(self):
         if self.action == 'retrieve':
-            return RunPool.objects.distinct().prefetch_related('pool__libraries')
+            return RunPool.objects.distinct().prefetch_related('pool__samples')
         return RunPool.objects.distinct()
     def get_serializer_class(self):
         if hasattr(self, 'action_serializers'):
