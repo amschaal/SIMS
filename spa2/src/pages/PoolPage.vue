@@ -6,19 +6,19 @@
         v-model="tab"
       >
         <q-tab name="details" label="Details"/>
-        <q-tab name="libraries" label="Libraries"/>
+        <q-tab name="samples" label="Samples"/>
         <q-tab name="pools" label="Pools"/>
         <q-tab name="runs" label="Runs"/>
       </q-tabs>
       <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="details">
-            <Pool :pool="pool"/>
+            <Pool :pool="pool" v-if="pool.id"/>
           </q-tab-panel>
-          <q-tab-panel name="libraries">
-            <TableDialog :table-component="LibrariesTable" :options="{'selection': 'multiple'}" ref="libraries" :on-select="addLibraries"/>
-            <q-btn label="Add libraries" color="primary" @click="open('libraries')" class="on-left"/>
-            <q-btn label="Remove selected" color="negative" @click="removeLibraries" />
-            <LibrariesTable :filters="`pools__id=${id}`" ref="libraries_table" :options="{'selection': 'multiple'}"/>
+          <q-tab-panel name="samples">
+            <TableDialog :table-component="SamplesTable" :options="{'selection': 'multiple'}" ref="samples" :on-select="addSamples"/>
+            <q-btn label="Add samples" color="primary" @click="open('samples')" class="on-left"/>
+            <q-btn label="Remove selected" color="negative" @click="removeSamples" />
+            <SamplesTable :filters="`pools__id=${id}`" ref="samples_table" :options="{'selection': 'multiple'}"/>
           </q-tab-panel>
           <q-tab-panel name="pools">
             <TableDialog :table-component="PoolsTable" :options="{'selection': 'multiple'}" ref="pools" :on-select="addPools"/>
@@ -38,7 +38,7 @@
 
 <script>
 import Pool from '../components/details/Pool.vue'
-import LibrariesTable from '../components/tables/LibrariesTable.vue'
+import SamplesTable from '../components/tables/SamplesTable.vue'
 import PoolsTable from '../components/tables/PoolsTable.vue'
 import RunsTable from '../components/tables/RunsTable.vue'
 import TableDialog from '../components/dialogs/TableDialog.vue'
@@ -51,40 +51,40 @@ export default {
     return {
       pool: {},
       tab: 'details',
-      LibrariesTable,
+      SamplesTable,
       PoolsTable
     }
   },
   methods: {
-    addLibraries (libraries) {
-      libraries = libraries.map(l => l.id)
-      console.log('addLibraries', libraries)
+    addSamples (samples) {
+      samples = samples.map(l => l.id)
+      console.log('addSamples', samples)
       const self = this
       this.$api
-        .post(`/api/pools/${self.id}/add_libraries/`, { libraries })
+        .post(`/api/pools/${self.id}/add_samples/`, { samples })
         .then(function (response) {
-          self.$q.notify('Libraries added.')
-          self.$refs.libraries_table.$refs.table.refresh()
+          self.$q.notify('Samples added.')
+          self.$refs.samples_table.$refs.table.refresh()
         })
         .catch(function (error) {
           console.log(error.response)
-          self.$q.notify({ color: 'negative', message: 'Failed to add libraries.' })
+          self.$q.notify({ color: 'negative', message: 'Failed to add samples.' })
         })
     },
-    removeLibraries (libraries) {
-      libraries = this.$refs.libraries_table.$refs.table.selected.map(l => l.id)
-      console.log('removeLibraries', libraries)
+    removeSamples (samples) {
+      samples = this.$refs.samples_table.$refs.table.selected.map(l => l.id)
+      console.log('removeSamples', samples)
       const self = this
       this.$api
-        .post(`/api/pools/${self.id}/remove_libraries/`, { libraries })
+        .post(`/api/pools/${self.id}/remove_samples/`, { samples })
         .then(function (response) {
-          self.$q.notify('Libraries removed.')
-          self.$refs.libraries_table.$refs.table.selected = []
-          self.$refs.libraries_table.$refs.table.refresh()
+          self.$q.notify('Samples removed.')
+          self.$refs.samples_table.$refs.table.selected = []
+          self.$refs.samples_table.$refs.table.refresh()
         })
         .catch(function (error) {
           console.log(error.code)
-          self.$q.notify({ color: 'negative', message: 'Failed to remove libraries.' })
+          self.$q.notify({ color: 'negative', message: 'Failed to remove samples.' })
         })
     },
     addPools (pools) {
@@ -130,7 +130,7 @@ export default {
   },
   components: {
     Pool,
-    LibrariesTable,
+    SamplesTable,
     PoolsTable,
     RunsTable,
     TableDialog,

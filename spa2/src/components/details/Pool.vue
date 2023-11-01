@@ -9,10 +9,10 @@
     </div>
     <div class="row" v-if="instance.libraries && instance.libraries.length > 0">
       <div class="col-12">
-        <b>Libraries: </b>
-        <span v-for="(l, i) in instance.libraries" :key="i">
-          <router-link :to="{ name: 'library', params: {id: l.id} }">{{l.id}}</router-link>
-          <span v-if="i != (instance.libraries.length - 1)">, </span>
+        <b>Samples: </b>
+        <span v-for="(s, i) in instance.samples" :key="i">
+          <router-link :to="{ name: 'sample', params: {id: s.id} }">{{s.id}}</router-link>
+          <span v-if="i != (instance.samples.length - 1)">, </span>
         </span>
       </div>
     </div>

@@ -19,9 +19,9 @@
             {{props.row.pools.map(p => p.name).join(', ')}}
           </q-tooltip>
         </q-td>
-        <q-td key="libraries" :props="props">{{ props.row.libraries.length }}
-          <q-tooltip v-if="props.row.libraries.length > 0">
-            {{props.row.libraries.map(p => p.id).join(', ')}}
+        <q-td key="samples" :props="props">{{ props.row.samples.length }}
+          <q-tooltip v-if="props.row.samples.length > 0">
+            {{props.row.samples.map(p => p.id).join(', ')}}
           </q-tooltip>
         </q-td>
         <q-td key="description" :props="props">{{ props.row.description }}</q-td>
@@ -41,7 +41,7 @@ export default {
         { name: 'created', label: 'Created', field: 'created', sortable: true },
         { name: 'id', label: 'ID', field: 'id', sortable: true },
         { name: 'pools', label: 'Pools', field: 'pools', sortable: false },
-        { name: 'libraries', label: 'Libraries', field: 'libraries', sortable: false },
+        { name: 'samples', label: 'Samples', field: 'samples', sortable: false },
         { name: 'description', label: 'Description', field: 'description', sortable: false }
       ],
       // visibleColumns: ['id', 'project'],
