@@ -6,14 +6,14 @@
         v-model="tab"
       >
         <q-tab name="details" label="Details"/>
-        <q-tab name="libraries" label="Libraries"/>
+        <q-tab name="samples" label="Derivatives"/>
       </q-tabs>
       <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="details">
             <Sample :instance="sample" v-if="sample.id"/>
           </q-tab-panel>
-          <q-tab-panel name="libraries">
-            <LibrariesTable :filters="`sample__id=${id}`"/>
+          <q-tab-panel name="samples">
+            <SamplesTable :filters="`samples__id=${id}`"/>
           </q-tab-panel>
         </q-tab-panels>
   </q-page>
@@ -24,7 +24,7 @@
 
 <script>
 import Sample from '../components/details/Sample.vue'
-import LibrariesTable from '../components/tables/LibrariesTable.vue'
+import SamplesTable from '../components/tables/SamplesTable.vue'
 import DeleteButton from '../components/DeleteButton.vue'
 export default {
   name: 'SamplePage',
@@ -45,7 +45,7 @@ export default {
       })
   },
   components: {
-    LibrariesTable,
+    SamplesTable,
     DeleteButton,
     Sample
   }

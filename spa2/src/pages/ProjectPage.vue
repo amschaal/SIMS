@@ -28,7 +28,7 @@
             <SamplesTable :filters="`project__id=${id}`" ref="samples"/>
           </q-tab-panel>
           <q-tab-panel name="runs">
-            <RunsTable :filters="`run_pools__pool__libraries__sample__project__id=${id}`"/>
+            <RunsTable :filters="`run_pools__pool__samples__project__id=${id}`"/>
           </q-tab-panel>
 
         </q-tab-panels>

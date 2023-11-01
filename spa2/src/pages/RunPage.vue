@@ -6,7 +6,7 @@
         v-model="tab"
       >
         <q-tab name="details" label="Details"/>
-        <q-tab name="libraries" label="Libraries"/>
+        <q-tab name="samples" label="Samples"/>
         <q-tab name="pools" label="Pools"/>
       </q-tabs>
       <q-tab-panels v-model="tab" animated>
@@ -14,9 +14,9 @@
             <div class="text-h6">Run</div>
             <RunDetailForm :model="run"/>
           </q-tab-panel>
-          <q-tab-panel name="libraries">
-            <div class="text-h6">Libraries</div>
-            <LibrariesTable :filters="`pools__run_pools__run__id=${id}`"/>
+          <q-tab-panel name="samples">
+            <div class="text-h6">Samples</div>
+            <SamplesTable :filters="`pools__run_pools__run__id=${id}`"/>
           </q-tab-panel>
           <q-tab-panel name="pools">
             <div class="text-h6">Pools</div>
@@ -31,7 +31,7 @@
 
 <script>
 import RunDetailForm from '../components/forms/RunDetailForm.vue'
-import LibrariesTable from '../components/tables/LibrariesTable.vue'
+import SamplesTable from '../components/tables/SamplesTable.vue'
 import PoolsTable from '../components/tables/PoolsTable.vue'
 import DeleteButton from '../components/DeleteButton.vue'
 export default {
@@ -52,7 +52,7 @@ export default {
       })
   },
   components: {
-    LibrariesTable,
+    SamplesTable,
     PoolsTable,
     RunDetailForm,
     DeleteButton

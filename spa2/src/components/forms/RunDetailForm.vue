@@ -33,9 +33,9 @@
             <span v-if="p.pool">
               <q-btn label="Clear" size="sm" color="negative" @click="clearLane(p)" class="on-left"/>
               <router-link :to="{ name: 'pool', params: { id: p.pool.id }}">{{p.pool.name}}</router-link>
-              <span v-if="p.pool.libraries.length > 0"> ({{p.pool.libraries.length}} libraries)
+              <span v-if="p.pool.samples.length > 0"> ({{p.pool.samples.length}} samples)
                 <q-tooltip>
-                  {{p.pool.libraries.map(l => l.id).join(', ')}}
+                  {{p.pool.samples.map(s => s.id).join(', ')}}
                 </q-tooltip>
               </span>
               <span v-if="p.pool.pools.length > 0"> ({{p.pool.pools.length}} pools)

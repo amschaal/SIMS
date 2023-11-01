@@ -7,7 +7,7 @@
     <div class="row" v-if="instance.description">
       <div class="col-12"><b>Description: </b>{{instance.description}}</div>
     </div>
-    <div class="row" v-if="instance.libraries && instance.libraries.length > 0">
+    <div class="row" v-if="instance.samples && instance.samples.length > 0">
       <div class="col-12">
         <b>Samples: </b>
         <span v-for="(s, i) in instance.samples" :key="i">
