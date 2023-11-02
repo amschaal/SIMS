@@ -28,7 +28,7 @@ class Submission(object):
         from sims.models import Project
         if Project.objects.filter(submission_id=self.id).first():
             raise Exception('Submission "{0}" has already been imported.'.format(self.id))
-        project = Project.objects.create(id=self.internal_id, 
+        project = Project.objects.create(id=self.internal_id or self.id, 
                                          submission_id=self.id, 
                                          submitted=self.submitted,
                                          first_name=self.first_name,

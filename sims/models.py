@@ -175,6 +175,7 @@ class Sample(models.Model):
     TYPE_LIBRARY = 'LIBRARY'
     id = models.CharField(max_length=50,primary_key=True)
     type = models.CharField(max_length=25, null=True)
+    sample = models.ForeignKey('self', related_name='samples', null=True, on_delete=models.RESTRICT) #derived from
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="samples",null=True,blank=True)
     name = models.CharField(max_length=50,db_index=True)
     imported = models.DateTimeField(auto_now=True,db_index=True)
