@@ -219,7 +219,7 @@ import sampleWidgetFactory from './aggrid/widgets.js'
 
 export default {
   name: 'AgSchema',
-  props: ['modelValue', 'type', 'schema', 'editable', 'allowExamples', 'allowForceSave', 'submission', 'tableWarnings', 'tableErrors'],
+  props: ['modelValue', 'type', 'schema', 'editable', 'allowExamples', 'allowForceSave', 'submission', 'tableWarnings', 'tableErrors', 'admin'],
   data () {
     return {
       opened: false,
@@ -305,7 +305,7 @@ export default {
       return {}
     },
     openSamplesheet () {
-      console.log('openSamplesheet!!!', this.type, this.value, this)
+      console.log('openSamplesheet!!!', this.type, this.value)
       // var self = this
       // if (this.submission && this.submission.data) {
       //   this.errors = this.submission.data.errors && this.submission.data.errors.sample_data ? this.submission.data.errors.sample_data : {}
@@ -395,14 +395,14 @@ export default {
       // var columnDefs = [{ headerName: '', lockPosition: true, valueGetter: this.rowIndex, cellClass: 'locked-col', width: 60, suppressNavigable: true, pinned: 'left' }]
       if (schema.order) {
         for (const i in schema.order) {
-          if (!this.editable || this.$store.getters.isStaff || !schema.properties[schema.order[i]].internal) { // (!this.editable || this.$store.getters.isStaff || !schema.properties[schema.order[i]].internal)
+          if (!this.editable || this.admin || !schema.properties[schema.order[i]].internal) { // (!this.editable || this.$store.getters.isStaff || !schema.properties[schema.order[i]].internal)
             col = this.getColDef(schema.order[i], schema.properties[schema.order[i]], schema)
             columnDefs.push(col)
           }
         }
       } else {
         Object.keys(schema.properties).array.forEach(prop => {
-          if (this.editable || !schema.properties[prop].internal) { // (!this.editable || this.$store.getters.isStaff || !schema.properties[prop].internal)
+          if (this.editable || this.admin || !schema.properties[prop].internal) { // (!this.editable || this.$store.getters.isStaff || !schema.properties[prop].internal)
             col = this.getColDef(prop, schema.properties[prop], schema)
             columnDefs.push(col)
           }
@@ -525,7 +525,7 @@ export default {
         // options._schema = JSON.parse(JSON.stringify(schema))
         // Object.freeze(options)
         const widget = new WidgetClass(id, options)
-        return { headerName: header, headerTooltip: tooltip, field: id, cellEditorFramework: WidgetClass.component, cellEditorParams: { definition, widget_options: widget.getOptions() }, cellClass, tooltipValueGetter: cellTooltip, pinned: definition.pinned } // values: definition.enum, widget: definition.widget,
+        return { headerName: header, headerTooltip: tooltip, field: id, cellEditor: WidgetClass.component, cellEditorParams: { definition, widget_options: widget.getOptions() }, cellClass, tooltipValueGetter: cellTooltip, pinned: definition.pinned } // values: definition.enum, widget: definition.widget,
       }
       switch (definition.type) {
         case 'table':
@@ -534,20 +534,20 @@ export default {
           // const _options = { _schema: JSON.parse(JSON.stringify(definition.schema)) }
           Object.freeze(options)
           // var widget = new WidgetClass(id, options)
-          return { headerName: header, headerTooltip: tooltip, field: id, cellEditorFramework: GridComponent, cellEditorParams: { definition, widget_options: { _schema: JSON.parse(JSON.stringify(definition.schema)) } }, cellClass, tooltipValueGetter: cellTooltip, pinned: definition.pinned }
+          return { headerName: header, headerTooltip: tooltip, field: id, cellEditor: GridComponent, cellEditorParams: { definition, widget_options: { _schema: JSON.parse(JSON.stringify(definition.schema)) } }, cellClass, tooltipValueGetter: cellTooltip, pinned: definition.pinned }
         case 'string':
           if (definition.enum) {
-            // console.log('enum', {headerName: header, headerTooltip: tooltip, field: id, cellEditorFramework: SelectComponent, cellEditorParams: {definition: definition, widget_options: {multiple: definition.multiple}}, cellClass: cellClass, tooltip: cellTooltip, pinned: definition.pinned})
-            // return {headerName: header, headerTooltip: tooltip, field: id, cellEditorFramework: AutocompleteComponent, cellEditorParams: {values: definition.enum, widget: definition.widget, definition: definition}, cellClass: cellClass, tooltip: cellTooltip, pinned: definition.pinned} // cellEditor: 'agRichSelectCellEditor', cellEditorParams: {values: definition.enum}
-            // return {headerName: header, headerTooltip: tooltip, field: id, cellEditor: 'agRichSelectCellEditor', cellEditorParams: {values: definition.enum}, cellClass: cellClass, tooltip: cellTooltip, pinned: definition.pinned} // cellEditor: 'agRichSelectCellEditor', cellEditorParams: {values: definition.enum} // cellEditorFramework: AutocompleteComponent
-            return { headerName: header, headerTooltip: tooltip, field: id, cellEditorFramework: SelectComponent, cellEditorParams: { definition, widget_options: { multiple: definition.multiple } }, cellClass, tooltipValueGetter: cellTooltip, pinned: definition.pinned }
+            // console.log('enum', {headerName: header, headerTooltip: tooltip, field: id, cellEditor: SelectComponent, cellEditorParams: {definition: definition, widget_options: {multiple: definition.multiple}}, cellClass: cellClass, tooltip: cellTooltip, pinned: definition.pinned})
+            // return {headerName: header, headerTooltip: tooltip, field: id, cellEditor: AutocompleteComponent, cellEditorParams: {values: definition.enum, widget: definition.widget, definition: definition}, cellClass: cellClass, tooltip: cellTooltip, pinned: definition.pinned} // cellEditor: 'agRichSelectCellEditor', cellEditorParams: {values: definition.enum}
+            // return {headerName: header, headerTooltip: tooltip, field: id, cellEditor: 'agRichSelectCellEditor', cellEditorParams: {values: definition.enum}, cellClass: cellClass, tooltip: cellTooltip, pinned: definition.pinned} // cellEditor: 'agRichSelectCellEditor', cellEditorParams: {values: definition.enum} // cellEditor: AutocompleteComponent
+            return { headerName: header, headerTooltip: tooltip, field: id, cellEditor: SelectComponent, cellEditorParams: { definition, widget_options: { multiple: definition.multiple } }, cellClass, tooltipValueGetter: cellTooltip, pinned: definition.pinned }
           } else {
             return { headerName: header, headerTooltip: tooltip, field: id, type: 'text', cellClass, tooltipValueGetter: cellTooltip, pinned: definition.pinned }
           }
         case 'number':
-          return { headerName: header, headerTooltip: tooltip, field: id, cellEditorFramework: NumericComponent, cellClass, tooltipValueGetter: cellTooltip, dataType: 'numeric', pinned: definition.pinned }
+          return { headerName: header, headerTooltip: tooltip, field: id, cellEditor: NumericComponent, cellClass, tooltipValueGetter: cellTooltip, dataType: 'numeric', pinned: definition.pinned }
         case 'boolean':
-          return { headerName: header, headerTooltip: tooltip, field: id, type: 'checkbox', cellEditorFramework: BooleanComponent, cellClass, tooltipValueGetter: cellTooltip, dataType: 'boolean', pinned: definition.pinned }
+          return { headerName: header, headerTooltip: tooltip, field: id, type: 'checkbox', cellEditor: BooleanComponent, cellClass, tooltipValueGetter: cellTooltip, dataType: 'boolean', pinned: definition.pinned }
         case 'array':
           def = { headerName: header, field: id, type: 'dropdown', cellClass, tooltipValueGetter: cellTooltip, pinned: definition.pinned }
           if (definition.items && definition.items.enum) {
