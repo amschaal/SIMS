@@ -17,7 +17,10 @@
     "@quasar/extras": "^1.16.4",
     "quasar": "^2.6.0",
     "vue": "^3.0.0",
-    "vue-router": "^4.0.0"
+    "vue-router": "^4.0.0",
+    "ag-grid-community": "^30.2.1",
+    "ag-grid-enterprise": "^30.2.1",
+    "ag-grid-vue3": "^30.2.1"
   },
   "devDependencies": {
     "eslint": "^8.10.0",

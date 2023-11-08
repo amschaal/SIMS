@@ -257,7 +257,7 @@ export default {
         suppressRowClickSelection: true,
         // checkboxSelection: function () { return true },
         processCellFromClipboard (params) {
-          switch (params.column.colDef.dataType) {
+          switch (params.column.colDef.cellDataType) {
             case 'boolean':
               if (params.value === 'true' || params.value === 'True' || params.value === true) {
                 return true
@@ -545,9 +545,9 @@ export default {
             return { headerName: header, headerTooltip: tooltip, field: id, type: 'text', cellClass, tooltipValueGetter: cellTooltip, pinned: definition.pinned }
           }
         case 'number':
-          return { headerName: header, headerTooltip: tooltip, field: id, cellEditor: NumericComponent, cellClass, tooltipValueGetter: cellTooltip, dataType: 'numeric', pinned: definition.pinned }
+          return { headerName: header, headerTooltip: tooltip, field: id, cellEditor: NumericComponent, cellClass, tooltipValueGetter: cellTooltip, cellDataType: 'number', pinned: definition.pinned }
         case 'boolean':
-          return { headerName: header, headerTooltip: tooltip, field: id, type: 'checkbox', cellEditor: BooleanComponent, cellClass, tooltipValueGetter: cellTooltip, dataType: 'boolean', pinned: definition.pinned }
+          return { headerName: header, headerTooltip: tooltip, field: id, type: 'checkbox', cellEditor: BooleanComponent, cellClass, tooltipValueGetter: cellTooltip, cellDataType: 'boolean', pinned: definition.pinned }
         case 'array':
           def = { headerName: header, field: id, type: 'dropdown', cellClass, tooltipValueGetter: cellTooltip, pinned: definition.pinned }
           if (definition.items && definition.items.enum) {
@@ -650,12 +650,12 @@ export default {
       for (let i = 0; i < number; i++) {
         rows.push({})
       }
-      this.gridOptions.api.updateRowData({ add: rows })
+      this.gridOptions.api.applyTransaction({ add: rows })
       // console.log('addRow', this.getRowData())
     },
     removeRows () {
       const selectedData = this.gridOptions.api.getSelectedRows()
-      this.gridOptions.api.updateRowData({ remove: selectedData })
+      this.gridOptions.api.applyTransaction({ remove: selectedData })
       // this.errors = {}
       this.gridOptions.api.redrawRows()
       // this.validate(false)
