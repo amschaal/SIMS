@@ -9,6 +9,7 @@ from django.core.validators import MaxValueValidator
 
 
 
+
 class Machine(models.Model):
     type = models.CharField(max_length=25, null=True)
     name = models.CharField(max_length=50,db_index=True)
@@ -165,10 +166,11 @@ class Project(models.Model):
     comments = models.TextField(null=True, blank=True)
     # plugin_data = JSONField(default=dict)s = models.TextField(null=True,blank=True)
     def process_samples(self):
-        from sims.transform import create_project_samples
+        from sims.transform import create_project_samples, pool_samples
         pools, samples = create_project_samples(self)
         pools = Pool.objects.bulk_create(pools)
         samples = Sample.objects.bulk_create(samples)
+        pool_samples(self, pools, samples)
         # libraries = Library.objects.bulk_create(libraries)
         return (pools, samples)
 

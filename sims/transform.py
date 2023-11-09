@@ -75,13 +75,21 @@ def get_libraries(project, field_map=library_field_map):
 def create_project_samples(project):
     data = project.submission_data
     pools, samples, libraries = [], [], []
-    if 'samples' in data and isinstance(data['samples'], list):
-        samples = get_samples(project)
     if 'pools' in data and isinstance(data['pools'], list):
         pools = get_pools(project)
+    if 'samples' in data and isinstance(data['samples'], list):
+        samples = get_samples(project)
     if 'libraries' in data and isinstance(data['libraries'], list):
         samples = get_libraries(project)
     return (pools, samples)
+
+def pool_samples(project, pools, samples, pool_id_column = 'pool_name'):
+    for pool in pools:
+        pool_samples = []
+        for sample in samples:
+            if pool.data.get(pool_id_column) and sample.data.get(pool_id_column) == pool.data.get(pool_id_column):
+                pool_samples.append(sample)
+        pool.samples.add(*pool_samples)
 
 
 """
