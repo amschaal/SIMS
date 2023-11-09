@@ -1,3 +1,4 @@
+from django.utils import timezone
 import urllib.request, json
 from django.conf import settings
 from sims.models import Project, Sample
@@ -31,6 +32,7 @@ class Submission(object):
         project = Project.objects.create(id=self.internal_id or self.id, 
                                          submission_id=self.id, 
                                          submitted=self.submitted,
+                                         created=timezone.now(),
                                          first_name=self.first_name,
                                          last_name=self.last_name,
                                          email=self.email,
@@ -59,8 +61,11 @@ class Submission(object):
     def get_sample_id(project, sample):
         return '{}_{}'.format(project.id,sample.get('sample_name'))
     @staticmethod
-    def get_submission(id):
-        URL = settings.SUBMISSION_SYSTEM_URLS['api']['submission'].format(id=id)
+    def get_submission(id_or_url):
+        if '://' in id_or_url:
+            URL = id_or_url.replace('/submissions/', '/server/api/submissions/')
+        else:
+            URL = settings.SUBMISSION_SYSTEM_URLS['api']['submission'].format(id=id)
         print('URL', URL)
         with urllib.request.urlopen(URL) as url:
             data = url if isinstance(url, str) else url.read().decode('utf-8')

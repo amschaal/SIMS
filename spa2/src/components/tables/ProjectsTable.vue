@@ -1,7 +1,7 @@
 <template>
     <BaseTable
       :columns="columns"
-      :visible-columns="['id', 'submission_id', 'type', 'submitted', 'pi_name']"
+      :visible-columns="['id', 'submission_id', 'type', 'created', 'submitted', 'pi_name']"
       api-url="/api/projects/"
       :options="combined_options"
       :filters="filters"
@@ -13,6 +13,7 @@
           <q-td auto-width v-if="combined_options.selection === 'multiple' || combined_options.selection === 'single'">
             <q-checkbox dense v-model="props.selected" />
           </q-td>
+          <q-td key="created" :props="props">{{ $filters.formatDate(props.row.created) }}</q-td>
           <q-td key="id" :props="props"><router-link :to="{ name: 'project', params: { id: props.row.id }}">{{ props.row.id }}</router-link></q-td>
           <q-td key="submission_id" :props="props"><a :href="props.row.submission_url">{{ props.row.submission_id }}</a></q-td>
           <q-td key="type" :props="props">{{ props.row.type.name }}</q-td>
@@ -38,6 +39,7 @@ export default {
   data () {
     return {
       columns: [
+        { name: 'created', label: 'Created', field: 'created', sortable: true },
         { name: 'id', label: 'ID', field: 'id', sortable: true },
         { name: 'submission_id', label: 'Submission ID', field: 'id', sortable: true },
         { name: 'type', label: 'Type', field: 'row.type.name', sortable: false },

@@ -139,6 +139,7 @@ class Project(models.Model):
 #     cancelled = models.DateTimeField(null=True, blank=True)
 #     completed = models.DateTimeField(null=True, blank=True)
     submitted = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(auto_now_add=True)
 #     confirmed = models.DateTimeField(null=True, blank=True)
 #     updated = models.DateTimeField(auto_now=True)
     first_name = models.CharField(max_length=50)
