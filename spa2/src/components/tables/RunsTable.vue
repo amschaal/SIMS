@@ -23,10 +23,21 @@
 
 <script>
 import BaseTable from './BaseTable.vue'
+import _ from 'lodash'
 export default {
   name: 'RunsTable',
   props: ['filters', 'options'],
   data () {
+    const options = {
+      title: 'Runs',
+      pagination: {
+        sortBy: 'created',
+        descending: true,
+        page: 1,
+        rowsPerPage: 10,
+        rowsNumber: 10
+      }
+    }
     return {
       columns: [
         { name: 'created', label: 'Created', field: 'created', sortable: true },
@@ -35,13 +46,11 @@ export default {
         { name: 'description', label: 'Description', field: 'description', sortable: false }
       ],
       // visibleColumns: ['id', 'project'],
-      combined_options: this.options ? this.options : {}
+      combined_options: _.merge(options, this.options)
       // options: { 'title': 'Samples' }
     }
   },
   mounted: function () {
-    this.combined_options = this.options ? this.options : {}
-    this.combined_options.title = 'Runs'
   },
   components: {
     BaseTable
