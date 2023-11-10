@@ -58,23 +58,28 @@
 </style>
 
 <script>
+import _ from 'lodash'
+
 export default {
   name: 'BaseTable',
   props: ['apiUrl', 'columns', 'visibleColumns', 'options', 'filters'],
   data () {
+    const options = {
+      pagination: this.options && this.options.pagination ? this.options.pagination : {
+        sortBy: 'id',
+        descending: false,
+        page: 1,
+        rowsPerPage: 10,
+        rowsNumber: 10
+      }
+    }
     return {
       selected: [],
       selection: this.options && this.options.selection ? this.options.selection : 'none',
       filter: '',
       loading: false,
       tableColumns: this.visibleColumns,
-      pagination: {
-        sortBy: 'id',
-        descending: false,
-        page: 1,
-        rowsPerPage: 10,
-        rowsNumber: 10
-      },
+      pagination: _.merge(options.pagination, this.options.pagination),
       // columns: [
       //   // {
       //   //   name: 'desc',

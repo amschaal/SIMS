@@ -33,10 +33,21 @@
 
 <script>
 import BaseTable from './BaseTable.vue'
+import _ from 'lodash'
 export default {
   name: 'ProjectsTable',
   props: ['filters', 'options'],
   data () {
+    const options = {
+      title: 'Projects',
+      pagination: {
+        sortBy: 'created',
+        descending: true,
+        page: 1,
+        rowsPerPage: 10,
+        rowsNumber: 10
+      }
+    }
     return {
       columns: [
         { name: 'created', label: 'Created', field: 'created', sortable: true },
@@ -50,14 +61,21 @@ export default {
         { name: 'pi_email', label: 'PI Email', field: 'pi_email', sortable: true }
         // { name: 'num_samples', label: 'Samples', field: 'num_samples', sortable: false }
       ],
-      combined_options: this.options ? this.options : {}
+      combined_options: _.merge(options, this.options)
       // visibleColumns: ['id', 'submission_id', 'type', 'submitted', 'pi_name'],
       // options: { 'title': 'Projects' }
     }
   },
   mounted: function () {
     // this.combined_options = this.options ? this.options : {}
-    this.combined_options.title = 'Projects'
+    // this.combined_options.title = 'Projects'
+    // this.combined_options.pagination = {
+    //   sortBy: 'created',
+    //   descending: true,
+    //   page: 1,
+    //   rowsPerPage: 10,
+    //   rowsNumber: 10
+    // }
   },
   // mounted () {
   //   // get initial data from server (1st page)
