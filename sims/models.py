@@ -59,6 +59,7 @@ class RunPool(models.Model):
 class Pool(models.Model):
     name = models.CharField(max_length=100,unique=True,db_index=True)
     description = models.TextField(null=True,blank=True,db_index=True)
+    data_import = models.ForeignKey('DataImport', null=True, on_delete=models.CASCADE)
     created = models.DateField(auto_now=True,db_index=True)
     data = JSONField(default=dict)
     pools = models.ManyToManyField(
@@ -174,6 +175,11 @@ class Project(models.Model):
         # libraries = Library.objects.bulk_create(libraries)
         return (pools, samples)
 
+class DataImport(models.Model):
+    project = models.OneToOneField(Project, on_delete=models.CASCADE)
+    imported = models.DateTimeField(auto_now_add=True)
+    data = models.JSONField(default=dict)
+
 class Sample(models.Model):
     TYPE_LIBRARY = 'LIBRARY'
     id = models.CharField(max_length=50,primary_key=True)
@@ -182,6 +188,7 @@ class Sample(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="samples",null=True,blank=True)
     name = models.CharField(max_length=50,db_index=True)
     imported = models.DateTimeField(auto_now=True,db_index=True)
+    data_import = models.ForeignKey(DataImport, null=True, on_delete=models.CASCADE)
     data = JSONField(null=True,blank=True)
     # fields below are for library only
     adapter = models.ForeignKey('Adapter', on_delete=models.PROTECT,null=True,blank=True,related_name='samples')
