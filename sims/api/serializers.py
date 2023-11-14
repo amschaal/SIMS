@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from sims.models import Project, Machine, Run, Sample, Adapter, Pool, RunPool,\
+from sims.models import DataImport, Project, Machine, Run, Sample, Adapter, Pool, RunPool,\
     AdapterDB
 from django.conf import settings
 
@@ -30,12 +30,20 @@ class ModelRelatedField(serializers.RelatedField):
         return None
     def to_representation(self, value):
         return self.serializer(value).data
+    
+class DataImportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DataImport
+        exclude = []
 
 class ProjectSerializer(serializers.ModelSerializer):
     submission_url = serializers.SerializerMethodField()
+    dataimport = DataImportSerializer() #  serializers.SerializerMethodField()
     # num_samples = serializers.SerializerMethodField()
     def get_submission_url(self, obj):
         return settings.SUBMISSION_SYSTEM_URLS['submission'].format(id=obj.submission_id)
+    # def get_data_import(self, obj):
+        # return DataImportSerializer(obj.data_import)
     # def get_num_samples(self, obj):
     #     return obj.samples.count()
     class Meta:

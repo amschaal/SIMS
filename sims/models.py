@@ -6,6 +6,7 @@ from datetime import datetime
 from django.db.models import JSONField
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator
+from django.utils import timezone
 
 
 
@@ -114,7 +115,7 @@ class PoolLibrary(models.Model):
 
 class SamplePool(models.Model):
     pool = models.ForeignKey(Pool, on_delete=models.CASCADE)
-    sample = models.ForeignKey('Sample', on_delete=models.PROTECT)
+    sample = models.ForeignKey('Sample', on_delete=models.CASCADE)
     class Meta:
         unique_together = (('pool','sample'))
 
@@ -166,19 +167,23 @@ class Project(models.Model):
     data = JSONField(default=dict)
     comments = models.TextField(null=True, blank=True)
     # plugin_data = JSONField(default=dict)s = models.TextField(null=True,blank=True)
-    def process_samples(self):
-        from sims.transform import create_project_samples, pool_samples
-        pools, samples = create_project_samples(self)
-        pools = Pool.objects.bulk_create(pools)
-        samples = Sample.objects.bulk_create(samples)
-        pool_samples(self, pools, samples)
-        # libraries = Library.objects.bulk_create(libraries)
-        return (pools, samples)
 
 class DataImport(models.Model):
     project = models.OneToOneField(Project, on_delete=models.CASCADE)
-    imported = models.DateTimeField(auto_now_add=True)
+    imported = models.DateTimeField(null=True)
     data = models.JSONField(default=dict)
+    def process(self):
+        if not self.imported:
+            from sims.transform import create_project_samples, pool_samples
+            pools, samples = create_project_samples(self.project, self)
+            pools = Pool.objects.bulk_create(pools)
+            samples = Sample.objects.bulk_create(samples)
+            pool_samples(self.project, pools, samples)
+            self.imported = timezone.now()
+            self.data = self.project.submission_data
+            self.save()
+            # libraries = Library.objects.bulk_create(libraries)
+            return (pools, samples)
 
 class Sample(models.Model):
     TYPE_LIBRARY = 'LIBRARY'

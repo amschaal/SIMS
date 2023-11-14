@@ -3,10 +3,11 @@ from sims.api.serializers import LibrarySerializer, RunSerializer,RunDetailSeria
     ProjectSerializer, SampleSerializer, PoolSerializer, \
     AdapterSerializer, RunPoolSerializer, RunPoolDetailSerializer,\
     AdapterDBSerializer
-from sims.models import Run, Machine, Project, Sample, Pool, Adapter,\
+from sims.models import DataImport, Run, Machine, Project, Sample, Pool, Adapter,\
     RunPool, AdapterDB
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.exceptions import APIException
 from django.conf import settings
 from sims.submission import Submission
 from tools.barcodes import get_all_conflicts
@@ -52,7 +53,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'])
     def process_samples(self, request, pk=None):
         project = self.get_object()
-        pools, samples = project.process_samples()
+        if hasattr(project, 'dataimport'):
+            raise APIException('Project already has data import')
+        data_import = DataImport(project=project)
+        data_import.save()
+        pools, samples = data_import.process()
         return Response({'project': ProjectSerializer(project).data, 'new_pools': PoolSerializer(pools, many=True).data, 'new_samples': SampleSerializer(samples, many=True).data})
         # return Response({'samples':SampleSerializer(samples, many=True).data})
 

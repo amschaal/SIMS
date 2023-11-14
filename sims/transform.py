@@ -28,7 +28,7 @@ library_field_map = {
     'data': '*' # * indicates all fields should be kept in data, None -> none, ['field1','field2'] for a list of fields to retain
 }
 
-def get_pools(project, field_map=pool_field_map):
+def get_pools(project, data_import, field_map=pool_field_map):
     schema = project.submission_schema
     data = project.submission_data
     pools = []
@@ -37,10 +37,11 @@ def get_pools(project, field_map=pool_field_map):
         fields['data'] = row
         pool = Pool(**fields)
         pool.name = '{}_{}'.format(project.id, pool.name)
+        pool.data_import = data_import
         pools.append(pool)
     return pools
 
-def get_samples(project, field_map=sample_field_map):
+def get_samples(project, data_import, field_map=sample_field_map):
     # need to handle pools
     schema = project.submission_schema
     data = project.submission_data
@@ -51,10 +52,11 @@ def get_samples(project, field_map=sample_field_map):
         fields['project'] = project
         sample = Sample(**fields)
         sample.id = '{}_{}'.format(project.id,sample.name)
+        sample.data_import = data_import
         samples.append(sample)
     return samples
 
-def get_libraries(project, field_map=library_field_map):
+def get_libraries(project, data_import, field_map=library_field_map):
     # This is just for testing, and will probably go as libraries may become just a type of sample
     schema = project.submission_schema
     data = project.submission_data
@@ -66,21 +68,22 @@ def get_libraries(project, field_map=library_field_map):
         fields['project'] = project
         fields['type'] = Sample.TYPE_LIBRARY
         sample = Sample(**fields)
+        sample.data_import = data_import
         sample.id = '{}_{}'.format(project.id,sample.name)
         samples.append(sample)
         # library = Library(id=sample.id, sample=sample)
         # libraries.append(library)
     return samples
 
-def create_project_samples(project):
+def create_project_samples(project, data_import):
     data = project.submission_data
     pools, samples, libraries = [], [], []
     if 'pools' in data and isinstance(data['pools'], list):
-        pools = get_pools(project)
+        pools = get_pools(project, data_import)
     if 'samples' in data and isinstance(data['samples'], list):
-        samples = get_samples(project)
+        samples = get_samples(project, data_import)
     if 'libraries' in data and isinstance(data['libraries'], list):
-        samples = get_libraries(project)
+        samples = get_libraries(project, data_import)
     return (pools, samples)
 
 def pool_samples(project, pools, samples, pool_id_column = 'pool_name'):
