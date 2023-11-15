@@ -13,6 +13,23 @@
           <q-tab-panel name="details">
             <div class="text-h6">Project</div>
             <Project :project="project" :id="id"/>
+            <q-list bordered class="rounded-borders">
+            <q-expansion-item
+              expand-separator
+              icon="list"
+              label="Details"
+              caption="Full import details"
+            >
+              <q-card>
+                <q-card-section>
+                  <h4 v-if="project.dataimport">Imported {{$filters.formatDate(project.dataimport.imported)}}</h4>
+                  <q-btn v-else label="Import Pools/Samples" @click="updateSamples"/>
+                  <CustomFields v-model="project.submission_data" :schema="project.submission_schema" ref="submission_fields" v-if="project.submission_schema" :modify="false" :warnings="{}"/>
+                </q-card-section>
+              </q-card>
+            </q-expansion-item>
+            </q-list>
+            <!-- <CustomFields v-model="submission.submission_data" :schema="submission_schema" ref="submission_fields" :warnings="submission.warnings ? submission.warnings.submission_data : {}" v-if="submission_schema" :modify="false"/> -->
           </q-tab-panel>
           <q-tab-panel name="samples" class="q-pa-sm q-gutter-sm">
             <!-- {{project.sample_data.length}} -->
@@ -24,7 +41,6 @@
             <!-- <TableDialog table-component="SamplesTable" ref="dialog"/> -->
             <!-- <TableDialog :table-component="SamplesTable" :options="{'selection': 'multiple'}" ref="dialog"/>
             <q-btn label="Samples" color="primary" @click="openDialog" /> -->
-            <q-btn label="Import Samples" @click="updateSamples"/>
             <SamplesTable :filters="`project__id=${id}`" ref="samples"/>
           </q-tab-panel>
           <q-tab-panel name="runs">
@@ -43,6 +59,7 @@ import Project from '../components/details/Project.vue'
 import SamplesTable from '../components/tables/SamplesTable.vue'
 import RunsTable from '../components/tables/RunsTable.vue'
 import DeleteButton from '../components/DeleteButton.vue'
+import CustomFields from 'assets/jsonschema/forms/customFields.vue'
 // import TableDialog from '../components/dialogs/TableDialog.vue'
 export default {
   name: 'ProjectPage',
@@ -52,7 +69,7 @@ export default {
       project: {},
       tab: 'details',
       openSampleDialog: false,
-      SamplesTable: SamplesTable
+      SamplesTable
     }
   },
   mounted: function () {
@@ -84,13 +101,18 @@ export default {
           self.$q.notify(message)
           self.$refs.samples.$refs.table.refresh()
         })
+        .catch(function (error) {
+          // console.log('error', error)
+          self.$q.notify({ color: 'negative', message: 'Failed to import data. Detail: ' + error.response.data.detail })
+        })
     }
   },
   components: {
     SamplesTable,
     RunsTable,
     DeleteButton,
-    Project
+    Project,
+    CustomFields
     // TableDialog
   }
 }
