@@ -7,6 +7,7 @@
       >
         <q-tab name="details" label="Details"/>
         <q-tab name="samples" label="Derivatives"/>
+        <q-tab name="runs" label="Runs"/>
       </q-tabs>
       <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="details">
@@ -14,6 +15,9 @@
           </q-tab-panel>
           <q-tab-panel name="samples">
             <SamplesTable :filters="`samples__id=${id}`"/>
+          </q-tab-panel>
+          <q-tab-panel name="runs">
+            <RunsTable :filters="`run_pools__pool__samples__id=${id}`"/>
           </q-tab-panel>
         </q-tab-panels>
   </q-page>
@@ -26,6 +30,7 @@
 import Sample from '../components/details/Sample.vue'
 import SamplesTable from '../components/tables/SamplesTable.vue'
 import DeleteButton from '../components/DeleteButton.vue'
+import RunsTable from 'src/components/tables/RunsTable.vue'
 export default {
   name: 'SamplePage',
   props: ['id'],
@@ -47,7 +52,8 @@ export default {
   components: {
     SamplesTable,
     DeleteButton,
-    Sample
+    Sample,
+    RunsTable
   }
 }
 </script>
