@@ -234,7 +234,7 @@ export default {
         enableRangeSelection: true,
         defaultColDef: {
           editable: this.cellEditable,
-          suppressSorting: true, // deprecated
+          // suppressSorting: true, // deprecated
           sortable: false, // newer version
           suppressMenu: true // let's keep it simple
         },
@@ -253,8 +253,8 @@ export default {
         },
         onPinnedRowDataChanged: this.expandDescriptionRow,
         onCellFocused: this.onCellFocused,
-        suppressMultiRangeSelection: true,
-        suppressRowClickSelection: true,
+        // suppressMultiRangeSelection: true,
+        // suppressRowClickSelection: true,
         // checkboxSelection: function () { return true },
         processCellFromClipboard (params) {
           switch (params.column.colDef.cellDataType) {
@@ -268,7 +268,9 @@ export default {
             default:
               return params.value
           }
-        }
+        },
+        rowGroupPanelSuppressSort: true,
+        rowSelection: 'multiple'
       },
       errors: {},
       warnings: {},
@@ -421,6 +423,7 @@ export default {
         columnDefs[0].checkboxSelection = true
       }
       columnDefs.push({ field: '_row_type', hide: true })
+      console.log('columnDefs', columnDefs)
       return columnDefs
     },
     getColDescriptions (schema) {
@@ -542,14 +545,14 @@ export default {
             // return {headerName: header, headerTooltip: tooltip, field: id, cellEditor: 'agRichSelectCellEditor', cellEditorParams: {values: definition.enum}, cellClass: cellClass, tooltip: cellTooltip, pinned: definition.pinned} // cellEditor: 'agRichSelectCellEditor', cellEditorParams: {values: definition.enum} // cellEditor: AutocompleteComponent
             return { headerName: header, headerTooltip: tooltip, field: id, cellEditor: SelectComponent, cellEditorParams: { definition, widget_options: { multiple: definition.multiple } }, cellClass, tooltipValueGetter: cellTooltip, pinned: definition.pinned }
           } else {
-            return { headerName: header, headerTooltip: tooltip, field: id, type: 'text', cellClass, tooltipValueGetter: cellTooltip, pinned: definition.pinned }
+            return { headerName: header, headerTooltip: tooltip, field: id, cellDataType: 'text', cellClass, tooltipValueGetter: cellTooltip, pinned: definition.pinned }
           }
         case 'number':
           return { headerName: header, headerTooltip: tooltip, field: id, cellEditor: NumericComponent, cellClass, tooltipValueGetter: cellTooltip, cellDataType: 'number', pinned: definition.pinned }
         case 'boolean':
-          return { headerName: header, headerTooltip: tooltip, field: id, type: 'checkbox', cellEditor: BooleanComponent, cellClass, tooltipValueGetter: cellTooltip, cellDataType: 'boolean', pinned: definition.pinned }
+          return { headerName: header, headerTooltip: tooltip, field: id, cellEditor: BooleanComponent, cellClass, tooltipValueGetter: cellTooltip, cellDataType: 'boolean', pinned: definition.pinned }
         case 'array':
-          def = { headerName: header, field: id, type: 'dropdown', cellClass, tooltipValueGetter: cellTooltip, pinned: definition.pinned }
+          def = { headerName: header, field: id, cellClass, tooltipValueGetter: cellTooltip, pinned: definition.pinned }
           if (definition.items && definition.items.enum) {
             def.source = definition.items.enum
           }
