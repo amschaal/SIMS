@@ -1,9 +1,15 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <template>
   <div class="row">
+    <!-- Fields: {{ fields }} -->
+    Data: {{ data }}
+    Value: {{ value }}
+    <!-- <q-input v-model="data.foo"/> -->
       <!-- <q-editor ng-model="foo" v-if="false"/> -->
       <div v-for="v in fields" :key="v.variable" class="field q-mb-md q-pb-lg q-pl-sm q-pr-sm" v-bind:class="colWidth(v.variable)">
         <div >
+          <!-- variable:{{ v.variable }}
+          {{ widgetClass(v).component }} -->
           <!-- v-if="$store.getters.isStaff || !v.schema.internal" -->
           <span v-if="v.schema.type=='table'">
             <!-- :error="sample_data_error"
@@ -33,6 +39,7 @@
                   :ref="v.variable"
                   :table-warnings="getTableWarnings(v)"
                   :table-errors="getTableErrors(v)"
+                  :admin="true"
                   />
                 <q-btn :label="table_button_label(v)"  @click="openTable(v)" />
               </template>
@@ -58,22 +65,12 @@
               :hint="v.schema.description"
               borderless
             >
-            <!-- {{widget(v).getOptions()}} {{widget(v).getDefault()}} value: "{{value[v.variable]}}" -->
-              <!-- <q-input v-model="value[v.variable]" type="text" stack-label :label="v.schema.title ? v.schema.title : v.variable"/> -->
-              <!-- @change="val => {setValue('change', value, v.variable, val, $event)}" -->
               <component :is="widgetClass(v).component"
-              :value="value[v.variable] || widget(v).getDefault()"
-              @input="val => {setValue('input', value, v.variable, val)}"
+                :modelValue="data[v.variable] || widget(v).getDefault()"
+                @update:model-value="val => {setValue('input', value, v.variable, val, $event)}"
                 v-bind="widget(v).getOptions()"
               />
 
-    <!--
-    stack-label :label="v.schema.title ? v.schema.title : v.variable"
-    v-model="value[v.variable]"
-    :value="value[v.variable] || widgetClass(v).default"
-    @change="val => { value[v.variable] = val }"
-    @change="val => {setValue('change', value, v.variable, val, $event)}"
-    -->
             <template v-slot:hint v-if="v.schema.description">
               {{v.schema.description}}
             </template>
@@ -84,8 +81,8 @@
             </q-field>
             <component
               :is="widgetClass(v).component"
-              :value="value[v.variable] || widget(v).getDefault()"
-              @input="val => {setValue('input', value, v.variable, val)}"
+              :modelValue="data[v.variable] || widget(v).getDefault()"
+              @update:model-value="val => {setValue('input', value, v.variable, val, $event)}"
               v-bind="widget(v).getOptions()"
               v-else
               bottom-slots
@@ -100,7 +97,6 @@
               <div v-if="hasWarning(v.variable)" class="warning">{{getWarning(v)}}</div>
             </template>
           </component>
-            <!-- {{widget(v).getOptions()}}|{{widgetClass(v).component}}|{{value}}|{{v.variable}}|{{value[v.variable]}}|{{widget(v).getDefault()}} -->
           </span>
         </div>
     </div>
@@ -110,7 +106,7 @@
 
 <script>
 import widgetFactory from '../forms/widgets.js'
-import { QSelect, QOptionGroup, QCheckbox } from 'quasar'
+import { QSelect, QOptionGroup, QCheckbox, QInput } from 'quasar'
 import AgSchema from '../agschema.vue'
 // import _ from 'lodash'
 
@@ -125,7 +121,7 @@ export default {
     console.log('setting up', props.schema, props)
   },
   mounted () {
-    console.log('customFields', this.schema, this.value)
+    console.log('customFields Mounted', this.schema, this.modelValue)
   },
   methods: {
     widgetClass (v) {
@@ -170,11 +166,14 @@ export default {
     },
     setValue (type, value, variable, val, e) {
       if (value.cancelBubble) {
+        alert('cancel bubble')
         value.cancelBubble = true
       } else if (!value.target) {
-        this.$set(value, variable, val)
+        console.log('set', this.value[variable], val)
+        // this.value[variable] = val
+        this.data[variable] = val
       }
-      console.log('setValue', type, value, variable, val, e)
+      console.log('setValue', type, value, variable, val, e, this.value)
     },
     openTable (v) {
       console.log('refs', this.$refs, v, this.$refs[v.variable][0])
@@ -213,6 +212,7 @@ export default {
     QSelect,
     QOptionGroup,
     QCheckbox,
+    QInput,
     AgSchema // AgSchema: () => import('../agschema.vue')
     // AgSchema: () => import('../agschema.vue')
   },
