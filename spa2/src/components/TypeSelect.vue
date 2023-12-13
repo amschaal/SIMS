@@ -1,34 +1,27 @@
 <template>
-    <div class="q-pa-md" style="max-width: 300px">
-        {{ options }}
-      <div class="q-gutter-md">
-        <q-badge color="secondary" multi-line>
-          Model: "{{ model }}"
-        </q-badge>
-        <q-select outlined v-model="model" :options="options" label="Type"
-            option-value="id"
-            option-label="name"
-            option-disable="inactive"
-            map-options
-            @update:model-value="val => selected(val)"
-        />
-      </div>
-    </div>
-  </template>
+    <q-select outlined v-model="model" :options="options" label="Type"
+        option-value="id"
+        option-label="name"
+        option-disable="inactive"
+        map-options
+        @update:model-value="val => selected(val)"
+    />
+</template>
 
 <script>
 export default {
-//   props: ['id', 'instance'],
+  props: ['modelValue'],
   data () {
     return {
-      model: this.instance,
+      model: this.modelValue,
       options: []
     }
   },
   methods: {
     selected (val) {
-      console.log('selection', val)
+      console.log('selection', val.id)
       this.$emit('schema', val.schema)
+      this.$emit('update:model-value', val.id)
     }
   },
   mounted: function () {
