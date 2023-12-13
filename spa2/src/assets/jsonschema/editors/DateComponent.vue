@@ -5,7 +5,7 @@
         <template v-slot:append>
           <q-icon name="event" class="cursor-pointer">
             <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-              <q-date v-model="date" @input="onInput" mask="YYYY-MM-DD"/>
+              <q-date v-model="date" @update:model-value="onInput" mask="YYYY-MM-DD"/>
             </q-popup-proxy>
           </q-icon>
         </template>
@@ -17,19 +17,20 @@
 // import Vue from 'vue'
 
 export default {
-  props: ['value'],
+  props: ['modelValue'],
   data () {
     return {
-      date: this.value
+      date: this.modelValue
     }
   },
   methods: {
     getValue () {
-      return this.value.substr(0, 10)
+      return this.modelValue.substr(0, 10)
     },
     onInput () {
+      console.log('date', this.date)
       this.$refs.qDateProxy.hide()
-      this.$emit('input', this.date)
+      this.$emit('update:model-value', this.date)
       // this.close()
     },
     close () {

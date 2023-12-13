@@ -4,22 +4,23 @@
       filled
       type="textarea"
       style="width:100%"
-      @input="onInput"
+      @update:model-value="onInput"
     />
 </template>
 <script>
 // import Vue from 'vue'
 
 export default {
-  props: ['value'],
+  props: ['modelValue'],
   data () {
     return {
-      text: this.value
+      text: this.modelValue
     }
   },
   methods: {
     onInput () {
-      this.$emit('input', this.text)
+      alert('changed')
+      this.$emit('update:model-value', this.text)
     }
   },
   mounted () {
