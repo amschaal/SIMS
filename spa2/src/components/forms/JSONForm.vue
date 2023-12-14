@@ -1,10 +1,15 @@
 <template>
   <div class="q-pa-sm q-gutter-sm">
+    <TypeSelect v-model="model.type" @schema="schema => changeSchema(schema)" />
     <slot name="content" v-bind:errors="error_messages" v-bind:has_error="has_error" v-bind:_errors="errors" v-bind:model="model">
       Override me
       Data: {{model}}
       Errors: {{errors}}
     </slot>
+    <fieldset>
+      <legend>Custom fields</legend>
+      <CustomFields v-model="model.data" :schema="schema" ref="custom_fields" v-if="schema" :modify="true" :errors="errors.data" :warnings="{}"/>
+    </fieldset>
     <slot name="buttons" v-bind:submit="submit">
       <q-btn label="Submit" color="primary" @click="submit" v-if="!hideButtons"/>
     </slot>
@@ -12,11 +17,16 @@
 </template>
 <script>
 import _ from 'lodash'
+import TypeSelect from '../TypeSelect.vue'
+import CustomFields from 'src/assets/jsonschema/forms/customFields.vue'
+
 export default {
-  props: ['model', 'apiUrl', 'apiMethod', 'onSuccess', 'onError', 'hideButtons'],
+  props: ['apiUrl', 'apiMethod', 'onSuccess', 'onError', 'hideButtons'],
   data () {
     return {
-      errors: {}
+      errors: {},
+      schema: {},
+      model: { data: { foo: 'baz' }, type: 'machine_illumina_hiseq' }
       // data: this.model
     }
   },
@@ -41,6 +51,9 @@ export default {
             }
           }
         })
+    },
+    changeSchema (schema) {
+      this.schema = schema
     }
   },
   computed: {
@@ -56,6 +69,8 @@ export default {
   //
   // },
   components: {
+    TypeSelect,
+    CustomFields
     // BaseDialog
   }
 }
