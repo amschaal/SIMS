@@ -88,6 +88,7 @@
                 @click="removeRows"
               />
               <q-btn
+                v-if="validateUrl"
                 label="Validate"
                 @click="validate(false)"
               />
@@ -98,11 +99,20 @@
                 class="float-right"
               />
               <q-btn
+                v-if="validateUrl"
                 color="positive"
                 label="Save"
                 @click="validate(true)"
                 class="float-right"
               />
+              <q-btn
+                v-else
+                color="positive"
+                label="Save"
+                @click="save()"
+                class="float-right"
+              />
+
           </div>
           <div v-else>
             <q-btn
@@ -219,7 +229,7 @@ import sampleWidgetFactory from './aggrid/widgets.js'
 
 export default {
   name: 'AgSchema',
-  props: ['modelValue', 'type', 'schema', 'editable', 'allowExamples', 'allowForceSave', 'submission', 'tableWarnings', 'tableErrors', 'admin'],
+  props: ['modelValue', 'type', 'schema', 'editable', 'allowExamples', 'allowForceSave', 'submission', 'tableWarnings', 'tableErrors', 'admin', 'validateUrl'],
   data () {
     return {
       opened: false,
@@ -564,6 +574,7 @@ export default {
     },
     save () {
       this.$emit('input', this.getRowData(false))
+      this.$emit('update:model-value', this.getRowData(false))
       this.$emit('warnings', this.warnings)
       this.$emit('errors', this.errors)
       this.close()
@@ -573,7 +584,7 @@ export default {
       console.log('validate', this.type, this.sample_schema, save)
       const self = this
       // this.$axios.post('/api/submission_types/' + this.type.id + '/validate_data/', {data: this.getRowData(true)})
-      this.$axios.post('/api/validate/', { sample_schema: this.sample_schema, data: this.getRowData(true) })
+      this.$axios.post(this.validateUrl, { sample_schema: this.sample_schema, data: this.getRowData(true) })
         .then(function (response) {
           // console.log(response)
           self.errors = {}
