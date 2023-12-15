@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from djson.serializers import DjsonTypeModelSerializer, JSONSchemaField, JsonSchemaValidator
+from djson.tests import TEST_SCHEMA
 from sims.models import DataImport, Project, Machine, Run, Sample, Adapter, Pool, RunPool,\
     AdapterDB
 from django.conf import settings
@@ -51,7 +53,14 @@ class ProjectSerializer(serializers.ModelSerializer):
         exclude = []
 #         read_only_fields = ('id',)
 
-class MachineSerializer(serializers.ModelSerializer):
+def get_schema_func(validator):
+    # raise Exception('get_schema_func', validator.serializer.initial_data)
+    return validator.schema if validator.schema else TEST_SCHEMA
+
+class MachineSerializer(DjsonTypeModelSerializer):
+    # data = JSONSchemaField(schema=TEST_SCHEMA, required=True)
+    # data = JSONSchemaField(required=True, get_schema_func=get_schema_func)
+    # data = serializers.JSONField(required=False, validators=[JsonSchemaValidator(schema='sdflsdf')])
     class Meta:
         model = Machine
         exclude = []

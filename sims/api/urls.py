@@ -1,4 +1,5 @@
 from rest_framework import routers
+from djson.api.views import ModelTypeViewset
 from sims.api.views import ProjectViewSet, SampleViewSet, PoolViewSet,\
     LibraryViewSet, AdapterViewSet, RunViewSet, MachineViewSet, RunPoolViewSet,\
     AdapterDBViewset
@@ -13,5 +14,7 @@ router.register(r'adapter_db', AdapterDBViewset)
 router.register(r'runs', RunViewSet)
 router.register(r'run_pools', RunPoolViewSet)
 router.register(r'machines', MachineViewSet)
+router.register(r'model_types', ModelTypeViewset)
+
 
 urlpatterns = router.urls
