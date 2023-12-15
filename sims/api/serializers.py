@@ -58,6 +58,7 @@ def get_schema_func(validator):
     return validator.schema if validator.schema else TEST_SCHEMA
 
 class MachineSerializer(DjsonTypeModelSerializer):
+# class MachineSerializer(serializers.ModelSerializer):
     # data = JSONSchemaField(schema=TEST_SCHEMA, required=True)
     # data = JSONSchemaField(required=True, get_schema_func=get_schema_func)
     # data = serializers.JSONField(required=False, validators=[JsonSchemaValidator(schema='sdflsdf')])
@@ -65,7 +66,8 @@ class MachineSerializer(DjsonTypeModelSerializer):
         model = Machine
         exclude = []
 
-class RunSerializer(serializers.ModelSerializer):
+class RunSerializer(DjsonTypeModelSerializer):
+# class RunSerializer(serializers.ModelSerializer):
     machine_name = serializers.SerializerMethodField()
     def get_machine_name(self, obj):
         return obj.machine.name
@@ -113,7 +115,8 @@ class RunPoolDetailSerializer(serializers.ModelSerializer):
         exclude = []
         read_only_fields =('run',)
 
-class RunDetailSerializer(serializers.ModelSerializer):
+class RunDetailSerializer(DjsonTypeModelSerializer):
+    # class RunDetailSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         run_pools = validated_data.pop('run_pools')
         for rp in run_pools:
@@ -123,7 +126,8 @@ class RunDetailSerializer(serializers.ModelSerializer):
             run_pool.save()
         print('Run pools')
         print(run_pools)
-        return instance
+        return super().update(instance, validated_data)
+        # return instance
 #         album = Album.objects.create(**validated_data)
 #         for track_data in tracks_data:
 #             Track.objects.create(album=album, **track_data)

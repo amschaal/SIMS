@@ -8,11 +8,12 @@ from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator
 from django.utils import timezone
 
+from djson.models import DjsonModel, DjsonTypeModel
 
 
 
-class Machine(models.Model):
-    type = models.CharField(max_length=25, null=True)
+
+class Machine(DjsonTypeModel):
     name = models.CharField(max_length=50,db_index=True)
     description = models.TextField(null=True,blank=True)
     num_lanes = models.PositiveSmallIntegerField()
@@ -21,8 +22,8 @@ class Machine(models.Model):
     def __str__(self):
         return self.__unicode__()
 
-class Run(models.Model):
-    type = models.CharField(max_length=25, null=True)
+class Run(DjsonTypeModel):
+    # type = models.CharField(max_length=25, null=True)
     name = models.CharField(max_length=100,blank=True,null=True,db_index=True)
     created = models.DateTimeField(auto_now_add=True)
     machine = models.ForeignKey(Machine, on_delete=models.PROTECT)
