@@ -1,9 +1,7 @@
 <template>
-    <q-select outlined v-model="model" :options="options" label="Type"
+    <q-select outlined v-model="model" :options="options" label="Type" ref="select"
         option-value="id"
         option-label="name"
-        option-disable="inactive"
-        map-options
         @update:model-value="val => selected(val)"
     />
 </template>
@@ -19,7 +17,6 @@ export default {
   },
   methods: {
     selected (val) {
-      console.log('selection', val.id)
       this.$emit('schema', val.schema)
       this.$emit('update:model-value', val.id)
     }
@@ -29,6 +26,10 @@ export default {
       .get('/api/model_types/')
       .then(response => {
         this.options = response.data.results
+        const opt = this.options.find(opt => opt.id === this.model)
+        if (opt && opt.schema) {
+          this.$emit('schema', opt.schema)
+        }
       })
   }
 }
