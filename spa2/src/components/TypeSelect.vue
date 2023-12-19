@@ -3,12 +3,14 @@
         option-value="id"
         option-label="name"
         @update:model-value="val => selected(val)"
+        :error-message="error_messages.type"
+        :error="has_error.type"
     />
 </template>
 
 <script>
 export default {
-  props: ['modelValue'],
+  props: ['modelValue', 'error_messages', 'has_error'],
   data () {
     return {
       model: this.modelValue,
