@@ -58,12 +58,12 @@ class RunPool(models.Model):
 #     def all_libraries(self):
 #         return Library.objects
 
-class Pool(models.Model):
+class Pool(DjsonTypeModel):
     name = models.CharField(max_length=100,unique=True,db_index=True)
     description = models.TextField(null=True,blank=True,db_index=True)
     data_import = models.ForeignKey('DataImport', null=True, on_delete=models.CASCADE)
     created = models.DateField(auto_now=True,db_index=True)
-    data = JSONField(default=dict)
+    # data = JSONField(default=dict)
     pools = models.ManyToManyField(
         'self',
         through='PoolPool',

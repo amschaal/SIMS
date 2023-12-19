@@ -75,7 +75,7 @@ class RunSerializer(DjsonTypeModelSerializer):
         model = Run
         exclude = []
 
-class BasePoolSerializer(serializers.ModelSerializer):
+class BasePoolSerializer(DjsonTypeModelSerializer):
 #     libraries = LibrarySerializer(many=True, read_only=True)
     class Meta:
         model = Pool
