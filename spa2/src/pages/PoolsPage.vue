@@ -1,8 +1,10 @@
 <template>
   <q-page class="q-pa-sm q-gutter-sm">
     <h4 class="text-center">Pools</h4>
-    <PoolFormDialog ref="pool_form" :model="{}" :onSuccess="poolCreated"/>
+    <!-- <PoolFormDialog ref="pool_form_old" :model="{}" :onSuccess="poolCreated"/> -->
+    <BaseFormDialog ref="pool_form" :form-component="PoolForm" :model="{}" title="Create Pool" :on-success="poolCreated"/>
     <q-btn label="Create Pool" color="primary" @click="openPoolDialog"/>
+    <!-- <q-btn label="Create Pool" color="primary" @click="openPoolDialog"/> -->
     <PoolsTable/>
   </q-page>
 </template>
@@ -12,16 +14,21 @@
 
 <script>
 import PoolsTable from '../components/tables/PoolsTable.vue'
-import PoolFormDialog from '../components/dialogs/PoolFormDialog.vue'
+// import PoolFormDialog from '../components/dialogs/PoolFormDialog.vue'
+import PoolForm from '../components/forms/PoolForm.vue'
+import BaseFormDialog from '../components/dialogs/BaseFormDialog.vue'
 export default {
+  props: [],
+  data () {
+    return {
+      PoolForm
+    }
+  },
   methods: {
     openPoolDialog () {
-      console.log(this.$refs.pool_form.$refs)
-      this.$refs.pool_form.$refs.dialog.open()
+      this.$refs.pool_form.open()
     },
     poolCreated (request) {
-      console.log('pool!', request.data)
-      console.log('still here', this.$q, this.$refs)
       this.$q.notify('Pool created.')
       this.$router.push({ name: 'pool', params: { id: request.data.id } })
       this.$refs.pool_form.$refs.dialog.close()
@@ -29,7 +36,8 @@ export default {
   },
   components: {
     PoolsTable,
-    PoolFormDialog
+    // PoolFormDialog,
+    BaseFormDialog
   }
 }
 </script>

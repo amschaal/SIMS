@@ -2,7 +2,7 @@
   <div class="q-pa-sm q-gutter-sm">
     <!-- MODEL: {{ model }}
     DATA: {{ data }} -->
-    <TypeSelect v-model="data.type" @schema="schema => changeSchema(schema)" :error_messages="error_messages" :has_error="has_error"/>
+    <TypeSelect v-model="data.type" @schema="schema => changeSchema(schema)" :error_messages="error_messages" :has_error="has_error" v-if="data"/>
     <slot name="content" v-bind:errors="error_messages" v-bind:has_error="has_error" v-bind:_errors="errors" v-bind:model="model">
       Override me
       Data: {{model}}

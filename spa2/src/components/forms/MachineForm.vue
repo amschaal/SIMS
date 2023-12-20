@@ -6,6 +6,7 @@
     :on-success="onSuccess"
     :on-error="onError"
     :hide-buttons="hideButtons"
+    :model="model"
   >
     <template v-slot:content="{ model, _errors, has_error }">
       Errors: {{ _errors }}
