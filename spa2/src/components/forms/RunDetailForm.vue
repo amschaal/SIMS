@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <template>
-  <BaseForm
+  <JSONForm
     :model="model"
     ref="form"
     api-method="put"
@@ -8,8 +8,10 @@
     :on-success="onSuccess"
     :on-error="onError"
     :hide-buttons="hideButtons"
+    v-if="model"
   >
-    <template v-slot:content="{ data, errors, has_error, _errors }">
+    <template v-slot:content="{ model, has_error, _errors }">
+      <!-- inner model: {{ model }} -->
       <q-select outlined v-model="model.machine" :options="options" label="Machine"
         :error-message="errors.machine"
         :error="has_error.machine"
@@ -22,7 +24,7 @@
         :error-message="errors.name"
         :error="has_error.name"
         />
-      <q-input outlined v-model="model.description" label="Description" />{{ data }}
+      <q-input outlined v-model="model.description" label="Description" />
       <TableDialog :table-component="PoolsTable" :options="{'selection': 'single'}" ref="pools_dialog" :on-select="onSelect"/>
       <table class="full-width">
         <thead><th>Index</th><th>Pool</th><th>Description</th></thead>
@@ -57,20 +59,19 @@
       </tbody>
       </table>
     </template>
-  </BaseForm>
+  </JSONForm>
 </template>
 <script>
-import BaseForm from './BaseForm.vue'
 import TableDialog from '../dialogs/TableDialog.vue'
 import PoolsTable from '../tables/PoolsTable.vue'
 import _ from 'lodash'
+import JSONForm from './JSONForm.vue'
 export default {
   props: ['hideButtons', 'model'], // 'onSuccess', 'onError',
   data () {
     return {
       currentLane: null,
       errors: {},
-      data: {},
       options: [
       ],
       PoolsTable
@@ -110,8 +111,8 @@ export default {
     }
   },
   components: {
-    BaseForm,
-    TableDialog
+    TableDialog,
+    JSONForm
   }
 }
 </script>

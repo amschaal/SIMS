@@ -1,5 +1,5 @@
 <template>
-  <BaseForm
+  <JSONForm
     :model="model"
     ref="form"
     api-method="post"
@@ -23,16 +23,16 @@
         />
       <q-input outlined v-model="model.description" label="Description" />
     </template>
-  </BaseForm>
+  </JSONForm>
 </template>
 <script>
-import BaseForm from './BaseForm.vue'
+import JSONForm from './JSONForm.vue'
+
 export default {
-  props: ['onSuccess', 'onError', 'hideButtons'],
+  props: ['onSuccess', 'onError', 'hideButtons', 'model'],
   data () {
     return {
       errors: {},
-      model: {},
       options: [
       ]
     }
@@ -45,7 +45,7 @@ export default {
       })
   },
   components: {
-    BaseForm
+    JSONForm
   }
 }
 </script>

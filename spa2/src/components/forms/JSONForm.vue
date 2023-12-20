@@ -23,7 +23,9 @@ import TypeSelect from '../TypeSelect.vue'
 import CustomFields from 'src/assets/jsonschema/forms/customFields.vue'
 
 export default {
-  props: ['apiUrl', 'apiMethod', 'onSuccess', 'onError', 'hideButtons', 'model'],
+  props: {
+    apiUrl: String, apiMethod: String, onSuccess: Function, onError: Function, hideButtons: Boolean, model: { type: Object, default () { return {} } }
+  },
   data () {
     return {
       errors: {},
