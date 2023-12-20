@@ -12,7 +12,7 @@
       <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="details">
             <div class="text-h6">Run</div>
-            <RunDetailForm :model="run"/>
+            <RunDetailForm :model="run" v-if="run.id"/>
           </q-tab-panel>
           <q-tab-panel name="samples">
             <div class="text-h6">Samples</div>
