@@ -36,6 +36,18 @@
          style="min-width: 150px"
        />
      </template>
+     <template v-slot:header="props">
+      <q-tr :props="props">
+        <q-th auto-width v-if="options.controlColumn"/>
+        <q-th
+          v-for="col in props.cols"
+          :key="col.name"
+          :props="props"
+        >
+          {{ col.label }}
+        </q-th>
+      </q-tr>
+    </template>
      <template v-slot:body="props">
         <slot name="body" v-bind:props="props">
           <q-tr :props="props">

@@ -1,11 +1,18 @@
 <template>
   <div>
     <div class="row">
+      <div class="col-md-4 col-sm-12"><b>Type: </b>{{instance.type}}</div>
       <div class="col-md-4 col-sm-12"><b>Name: </b>{{instance.name}}</div>
       <div class="col-md-4 col-sm-12"><b>Created: </b>{{instance.created}}</div>
     </div>
     <div class="row" v-if="instance.description">
       <div class="col-12"><b>Description: </b>{{instance.description}}</div>
+    </div>
+    <div class="row" v-if="instance.data && instance.schema">
+      <fieldset class="row">
+        <legend>{{ instance.type }} fields</legend>
+        <DisplayFields v-model="instance.data" :schema="instance.schema" v-if="instance.schema && instance.data"/>
+      </fieldset>
     </div>
     <div class="row" v-if="instance.samples && instance.samples.length > 0">
       <div class="col-12">
@@ -32,6 +39,7 @@
 </style>
 
 <script>
+import DisplayFields from 'src/assets/jsonschema/displayFields.vue'
 export default {
   name: 'PoolDetail',
   props: ['id', 'pool'],
@@ -50,6 +58,7 @@ export default {
           self.instance = response.data
         })
     }
-  }
+  },
+  components: { DisplayFields }
 }
 </script>
