@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <template>
   <JSONForm
-    :model="model"
+    v-model="model"
     ref="form"
     api-method="put"
     :api-url="`/api/runs/${model.id}/`"
@@ -67,11 +67,13 @@ import PoolsTable from '../tables/PoolsTable.vue'
 import _ from 'lodash'
 import JSONForm from './JSONForm.vue'
 export default {
-  props: ['hideButtons', 'model'], // 'onSuccess', 'onError',
+  props: ['hideButtons', 'modelValue'], // 'onSuccess', 'onError',
+  emits: ['update:modelValue'],
   data () {
     return {
       currentLane: null,
       errors: {},
+      model: this.modelValue,
       options: [
       ],
       PoolsTable
@@ -80,6 +82,7 @@ export default {
   methods: {
     onSuccess: function () {
       this.$q.notify('Run updated.')
+      this.$emit('update:modelValue', this.model)
     },
     onError: function () {
       this.$q.notify({ color: 'negative', message: 'Error updating run.' })

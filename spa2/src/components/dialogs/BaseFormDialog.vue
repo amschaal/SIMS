@@ -1,7 +1,7 @@
 <template>
   <BaseDialog ref="dialog" :title="title">
     <template v-slot:content>
-      <component :is="formComponent" :onSuccess="onSuccess" :onError="onError" :hide-buttons="true" :model="data" ref="form">
+      <component :is="formComponent" :onSuccess="onSuccess" :onError="onError" :hide-buttons="true" :model="data" ref="form" v-model="data">
         <template v-slot:buttons>Nothing here</template>Dood
       </component>
     </template>
@@ -14,21 +14,23 @@
 <script>
 import BaseDialog from './BaseDialog.vue'
 // import Vue from 'vue'
-// import _ from 'lodash'
+import _ from 'lodash'
 export default {
-  props: ['formComponent', 'title', 'onSuccess', 'onError', 'model'],
+  props: ['formComponent', 'title', 'onSuccess', 'onError', 'model', 'modelValue'],
+  emits: ['update:modelValue'],
   data () {
     return {
       errors: {},
-      data: this.model
+      data: this.modelValue
     }
   },
   methods: {
-    open () {
+    open (data) {
+      this.data = _.cloneDeep(data)
       this.$refs.dialog.open()
     },
     submit () {
-      this.$refs.form.$refs.form.submit()
+      this.$refs.form.$refs.form.submit(response => this.$emit('update:modelValue', response.data))
     }
   },
   // mounted: function () {
