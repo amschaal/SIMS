@@ -574,7 +574,7 @@ export default {
     },
     save () {
       this.$emit('input', this.getRowData(false))
-      this.$emit('update:model-value', this.getRowData(false))
+      this.$emit('update:modelValue', this.getRowData(false))
       this.$emit('warnings', this.warnings)
       this.$emit('errors', this.errors)
       this.close()

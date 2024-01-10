@@ -27,14 +27,15 @@
 </template>
 <script>
 import JSONForm from './JSONForm.vue'
-
+import _ from 'lodash'
 export default {
-  props: ['onSuccess', 'onError', 'hideButtons', 'model'],
+  props: ['onSuccess', 'onError', 'hideButtons', 'modelValue'],
   data () {
     return {
       errors: {},
       options: [
-      ]
+      ],
+      model: _.cloneDeep(this.modelValue)
     }
   },
   mounted: function () {

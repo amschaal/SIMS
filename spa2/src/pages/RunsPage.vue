@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-pa-sm q-gutter-sm">
     <h4 class="text-center">Runs</h4>
-    <BaseFormDialog ref="run_form" :form-component="RunForm" title="Create Run" :on-success="runCreated" :on-error="runError" :model="{}"/>
+    <BaseFormDialog ref="run_form" :form-component="RunForm" title="Create Run" :on-success="runCreated" :on-error="runError"/>
     <q-btn label="Create Run" color="primary" @click="createRun"/>
     <!-- <RunForm/> -->
     <RunsTable/>

@@ -4,7 +4,7 @@
       filled
       type="textarea"
       style="width:100%"
-      @update:model-value="onInput"
+      @update:modelValue="onInput"
     />
 </template>
 <script>
@@ -19,8 +19,7 @@ export default {
   },
   methods: {
     onInput () {
-      alert('changed')
-      this.$emit('update:model-value', this.text)
+      this.$emit('update:modelValue', this.text)
     }
   },
   mounted () {

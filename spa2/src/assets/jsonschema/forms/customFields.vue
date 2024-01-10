@@ -1,9 +1,10 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <template>
-  <div class="row">
+  <span>
     <!-- Fields: {{ fields }} -->
     Data: {{ data }}
     Value: {{ value }}
+    Errors: {{ errors }}
     <!-- <q-input v-model="data.foo"/> -->
       <!-- <q-editor ng-model="foo" v-if="false"/> -->
       <div v-for="v in fields" :key="v.variable" class="field q-mb-md q-pb-lg q-pl-sm q-pr-sm" v-bind:class="colWidth(v.variable)">
@@ -11,7 +12,7 @@
           <!-- variable:{{ v.variable }}
           {{ widgetClass(v).component }} -->
           <!-- v-if="$store.getters.isStaff || !v.schema.internal" -->
-          <span v-if="v.schema.type=='table'">
+          <span v-if="v.schema.type=='table' || v.schema.type == 'array'">
             <!-- :error="sample_data_error"
             bottom-slots :error-message="sample_data_error_label"
             :warning="sample_data_warning"
@@ -31,7 +32,7 @@
                 v-on:errors="updateErrors" -->
                 <!-- :editable="modify && ($store.getters.isStaff || !v.schema.internal)" -->
                 <AgSchema
-                  v-model="value[v.variable]"
+                  v-model="data[v.variable]"
                   :schema="v.schema.schema"
                   :editable="modify"
                   :allow-examples="true"
@@ -55,12 +56,14 @@
             <span><q-tooltip v-if="warnings && warnings[v.variable]">{{warnings ? getWarning(v) : ''}}</q-tooltip><q-icon v-if="warnings && warnings[v.variable]" size="14px" name="warning" color="orange"/> {{widget(v).formatValue(value[v.variable],'None')}}</span>
           </span>
           <span v-else>
+            <!-- {{ widgetClass(v).component }} -->
             <q-field
               v-if="['q-input', 'q-select', 'q-file'].indexOf(widgetClass(v).component) == -1"
               bottom-slots
               :error="hasError(v.variable) || hasWarning(v.variable)"
               :label="v.schema.title ? v.schema.title : v.variable"
               stack-label
+              outlined
               orientation="vertical"
               :hint="v.schema.description"
               borderless
@@ -89,6 +92,7 @@
               :error="hasError(v.variable) || hasWarning(v.variable)"
               :label="v.schema.title ? v.schema.title : v.variable"
               stack-label
+              outlined
               :hint="v.schema.description"
               map-options emit-value
             >
@@ -100,7 +104,7 @@
           </span>
         </div>
     </div>
-  </div>
+  </span>
 
 </template>
 
@@ -169,7 +173,7 @@ export default {
         alert('cancel bubble')
         value.cancelBubble = true
       } else if (!value.target) {
-        console.log('set', this.value[variable], val)
+        // console.log('set', this.value[variable], val)
         // this.value[variable] = val
         this.data[variable] = val
       }
