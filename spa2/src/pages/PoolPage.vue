@@ -12,7 +12,12 @@
       </q-tabs>
       <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="details">
-            <Pool :pool="pool" v-if="pool.id"/>
+            <Pool :instance="pool" v-if="pool.id"/>
+            <!-- <PoolForm :model="pool" v-if="pool.id && modify" :on-success="onModifySuccess"/> -->
+            <BaseFormDialog ref="pool_form" :form-component="PoolForm" title="Create Pool" v-model="pool" v-if="pool.id"/>
+            <q-btn label="Modify" color="primary" @click="open('pool_form')" v-if="pool.id"/>
+            <!-- <q-btn label="Cancel" @click="modify=false" v-if="modify"/>
+            <q-btn label="Modify" @click="modify=true" v-if="!modify"/> -->
           </q-tab-panel>
           <q-tab-panel name="samples">
             <TableDialog :table-component="SamplesTable" :options="{'selection': 'multiple'}" ref="samples" :on-select="addSamples"/>
@@ -43,6 +48,8 @@ import PoolsTable from '../components/tables/PoolsTable.vue'
 import RunsTable from '../components/tables/RunsTable.vue'
 import TableDialog from '../components/dialogs/TableDialog.vue'
 import DeleteButton from '../components/DeleteButton.vue'
+import PoolForm from 'src/components/forms/PoolForm.vue'
+import BaseFormDialog from '../components/dialogs/BaseFormDialog.vue'
 // import PoolFormDialog from '../components/forms/PoolFormDialog.vue'
 export default {
   name: 'PoolPage',
@@ -50,9 +57,11 @@ export default {
   data () {
     return {
       pool: {},
+      modify: false,
       tab: 'details',
       SamplesTable,
-      PoolsTable
+      PoolsTable,
+      PoolForm
     }
   },
   methods: {
@@ -116,8 +125,13 @@ export default {
           self.$q.notify({ color: 'negative', message: 'Failed to remove pools.' })
         })
     },
+    onModifySuccess (request) {
+      this.$q.notify('Pool updated.')
+      this.modify = false
+    },
     open (table) {
-      this.$refs[table].open()
+      console.log('table', this.$refs, this.$refs[table])
+      this.$refs[table].open(this.pool)
     }
   },
   mounted: function () {
@@ -134,8 +148,9 @@ export default {
     PoolsTable,
     RunsTable,
     TableDialog,
-    DeleteButton
-    // PoolFormDialog
+    DeleteButton,
+    BaseFormDialog
+    // PoolForm // PoolFormDialog
   }
 }
 </script>

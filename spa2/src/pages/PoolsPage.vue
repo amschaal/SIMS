@@ -2,7 +2,7 @@
   <q-page class="q-pa-sm q-gutter-sm">
     <h4 class="text-center">Pools</h4>
     <!-- <PoolFormDialog ref="pool_form_old" :model="{}" :onSuccess="poolCreated"/> -->
-    <BaseFormDialog ref="pool_form" :form-component="PoolForm" :model="{}" title="Create Pool" :on-success="poolCreated"/>
+    <BaseFormDialog ref="pool_form" :form-component="PoolForm" title="Create Pool" :on-success="poolCreated"/>
     <q-btn label="Create Pool" color="primary" @click="openPoolDialog"/>
     <!-- <q-btn label="Create Pool" color="primary" @click="openPoolDialog"/> -->
     <PoolsTable/>

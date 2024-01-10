@@ -1,9 +1,9 @@
 <template>
   <JSONForm
-    :model="model"
+    v-model="model"
     ref="form"
-    :api-method="model.id ? 'put' : 'post'"
-    :api-url="model.id ? `/api/pools/${model.id}/` : '/api/pools/'"
+    :api-method="model && model.id ? 'put' : 'post'"
+    :api-url="model && model.id ? `/api/pools/${model.id}/` : '/api/pools/'"
     :on-success="onSuccess || onSuccessMethod"
     :on-error="onError || onErrorMethod"
     :hide-buttons="hideButtons"
@@ -24,11 +24,12 @@
 import JSONForm from './JSONForm.vue'
 
 export default {
-  props: ['onSuccess', 'onError', 'hideButtons', 'model'],
+  props: ['onSuccess', 'onError', 'hideButtons', 'modelValue'],
+  emits: ['update:modelValue'],
   data () {
     return {
       errors: {},
-      // model: {},
+      model: this.modelValue,
       options: [
       ]
     }
@@ -41,10 +42,12 @@ export default {
     },
     onSuccessMethod (request) {
       console.log('pool!', request)
+      this.$emit('update:modelValue', this.model)
       this.$q.notify(this.model.id ? 'Pool updated.' : 'Pool created.')
     }
   },
   mounted: function () {
+    console.log('poolForm', this.modelValue)
   },
   components: {
     JSONForm

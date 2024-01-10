@@ -2,7 +2,7 @@
     <q-select outlined v-model="model" :options="options" label="Type" ref="select"
         option-value="id"
         option-label="name"
-        @update:model-value="val => selected(val)"
+        @update:modelValue="val => selected(val)"
         :error-message="error_messages.type"
         :error="has_error.type"
     />
@@ -11,6 +11,7 @@
 <script>
 export default {
   props: ['modelValue', 'error_messages', 'has_error'],
+  emits: ['update:modelValue'],
   data () {
     return {
       model: this.modelValue,
@@ -20,7 +21,7 @@ export default {
   methods: {
     selected (val) {
       this.$emit('schema', val.schema)
-      this.$emit('update:model-value', val.id)
+      this.$emit('update:modelValue', val.id)
     }
   },
   mounted: function () {
