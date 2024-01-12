@@ -10,9 +10,6 @@ from django.utils import timezone
 
 from djson.models import DjsonModel, DjsonTypeModel
 
-
-
-
 class Machine(DjsonTypeModel):
     name = models.CharField(max_length=50,db_index=True)
     description = models.TextField(null=True,blank=True)
@@ -62,6 +59,7 @@ class Pool(DjsonTypeModel):
     name = models.CharField(max_length=100,unique=True,db_index=True)
     description = models.TextField(null=True,blank=True,db_index=True)
     data_import = models.ForeignKey('DataImport', null=True, on_delete=models.CASCADE)
+    submission_data = JSONField(default=dict)
     created = models.DateField(auto_now=True,db_index=True)
     # data = JSONField(default=dict)
     pools = models.ManyToManyField(
@@ -186,16 +184,17 @@ class DataImport(models.Model):
             # libraries = Library.objects.bulk_create(libraries)
             return (pools, samples)
 
-class Sample(models.Model):
+class Sample(DjsonTypeModel):
     TYPE_LIBRARY = 'LIBRARY'
     id = models.CharField(max_length=50,primary_key=True)
-    type = models.CharField(max_length=25, null=True)
+    physical_type = models.CharField(max_length=25, null=True)
     sample = models.ForeignKey('self', related_name='samples', null=True, on_delete=models.RESTRICT) #derived from
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="samples",null=True,blank=True)
     name = models.CharField(max_length=50,db_index=True)
     imported = models.DateTimeField(auto_now=True,db_index=True)
     data_import = models.ForeignKey(DataImport, null=True, on_delete=models.CASCADE)
-    data = JSONField(null=True,blank=True)
+    # data = JSONField(null=True,blank=True)
+    submission_data = JSONField(default=dict)
     # fields below are for library only
     adapter = models.ForeignKey('Adapter', on_delete=models.PROTECT,null=True,blank=True,related_name='samples')
     barcodes = JSONField(default=dict, null=True)
