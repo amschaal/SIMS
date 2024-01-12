@@ -1,7 +1,7 @@
 <template>
   <BaseDialog ref="dialog" :title="title">
     <template v-slot:content>
-      <component :is="formComponent" :onSuccess="onSuccess" :onError="onError" :hide-buttons="true" :model="data" ref="form" v-model="data">
+      <component :is="formComponent" :onSuccess="success" :onError="onError" :hide-buttons="true" :model="data" ref="form" v-model="data">
         <template v-slot:buttons>Nothing here</template>Dood
       </component>
     </template>
@@ -28,6 +28,15 @@ export default {
     open (data) {
       this.data = _.cloneDeep(data)
       this.$refs.dialog.open()
+    },
+    close () {
+      this.$refs.dialog.close()
+    },
+    success (data) {
+      if (this.onSuccess) {
+        this.onSuccess(data)
+      }
+      this.close()
     },
     submit () {
       this.$refs.form.$refs.form.submit(response => this.$emit('update:modelValue', response.data))
