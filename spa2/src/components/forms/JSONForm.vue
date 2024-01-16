@@ -31,7 +31,7 @@ export default {
       errors: {},
       schema: {},
       // model: { data: { foo: 'baz' }, type: 'machine_illumina_hiseq' }
-      data: _.cloneDeep(this.modelValue)
+      data: this.modelValue// _.cloneDeep(this.modelValue)
     }
   },
   methods: {
@@ -48,7 +48,7 @@ export default {
           if (onSuccess) {
             onSuccess(response)
           }
-          this.$refs.dialog.close()
+          this.$parent.$parent.$refs.dialog.close()
         })
         .catch(function (error) {
           if (error.response && error.response.data) {
@@ -77,6 +77,7 @@ export default {
     if (this.data && !this.data.data) {
       this.data.data = {}
     }
+    console.log('JSONForm', this)
   },
   components: {
     TypeSelect,
