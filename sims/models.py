@@ -58,7 +58,7 @@ class RunPool(models.Model):
 class Pool(DjsonTypeModel):
     name = models.CharField(max_length=100,unique=True,db_index=True)
     description = models.TextField(null=True,blank=True,db_index=True)
-    data_import = models.ForeignKey('DataImport', null=True, on_delete=models.CASCADE)
+    data_import = models.ForeignKey('DataImport', null=True, on_delete=models.CASCADE, related_name='pools')
     submission_data = JSONField(default=dict)
     created = models.DateField(auto_now=True,db_index=True)
     # data = JSONField(default=dict)
@@ -168,8 +168,20 @@ class Project(models.Model):
     # plugin_data = JSONField(default=dict)s = models.TextField(null=True,blank=True)
 
 class DataImport(models.Model):
-    project = models.OneToOneField(Project, on_delete=models.CASCADE)
+    project = models.OneToOneField(Project, on_delete=models.SET_NULL, null=True)
     imported = models.DateTimeField(null=True)
+    submission_id = models.CharField(max_length=50, unique=True, editable=False, null=True)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    email = models.EmailField(max_length=75)
+    phone = models.CharField(max_length=20)
+    pi_first_name = models.CharField(max_length=50)
+    pi_last_name = models.CharField(max_length=50)
+    pi_email = models.EmailField(max_length=75)
+    pi_phone = models.CharField(max_length=20)
+    institute = models.CharField(max_length=75)
+    type = models.JSONField(default=dict)
+    schema = models.JSONField(default=dict)
     data = models.JSONField(default=dict)
     def process(self):
         if not self.imported:
@@ -192,7 +204,7 @@ class Sample(DjsonTypeModel):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="samples",null=True,blank=True)
     name = models.CharField(max_length=50,db_index=True)
     imported = models.DateTimeField(auto_now=True,db_index=True)
-    data_import = models.ForeignKey(DataImport, null=True, on_delete=models.CASCADE)
+    data_import = models.ForeignKey(DataImport, null=True, on_delete=models.CASCADE, related_name='samples')
     # data = JSONField(null=True,blank=True)
     submission_data = JSONField(default=dict)
     # fields below are for library only

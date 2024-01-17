@@ -2,9 +2,10 @@ from rest_framework import routers
 from djson.api.views import ModelTypeViewset
 from sims.api.views import ProjectViewSet, SampleViewSet, PoolViewSet,\
     LibraryViewSet, AdapterViewSet, RunViewSet, MachineViewSet, RunPoolViewSet,\
-    AdapterDBViewset
+    AdapterDBViewset, SubmissionViewSet
 
 router = routers.SimpleRouter()
+router.register(r'submissions', SubmissionViewSet)
 router.register(r'projects', ProjectViewSet)
 router.register(r'samples', SampleViewSet)
 router.register(r'pools', PoolViewSet)

@@ -1,5 +1,5 @@
 from rest_framework import viewsets, status
-from sims.api.serializers import LibrarySerializer, RunSerializer,RunDetailSerializer, MachineSerializer,\
+from sims.api.serializers import DataImportSerializer, LibrarySerializer, RunSerializer,RunDetailSerializer, MachineSerializer,\
     ProjectSerializer, SampleSerializer, PoolSerializer, \
     AdapterSerializer, RunPoolSerializer, RunPoolDetailSerializer,\
     AdapterDBSerializer
@@ -11,6 +11,19 @@ from rest_framework.exceptions import APIException
 from django.conf import settings
 from sims.submission import Submission
 from tools.barcodes import get_all_conflicts
+
+class SubmissionViewSet(viewsets.ModelViewSet):
+    serializer_class = DataImportSerializer
+    filterset_fields = {
+        'id':['icontains','exact'],
+        'samples__id': ['exact'],
+        'samples__id': ['exact'],
+        'samples__pools__id': ['exact'],
+        'samples__pools__run_pools__run__id': ['exact']
+        }
+    search_fields = ('id', 'submission_id', 'pi_first_name', 'pi_last_name', 'pi_email', 'first_name', 'last_name', 'email')
+    ordering_fields = ['id', 'submitted', 'submission_id', 'created']
+    queryset = DataImport.objects.distinct()
 
 class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
@@ -85,7 +98,7 @@ class LibraryViewSet(viewsets.ModelViewSet):
         }
     search_fields = ('id', 'project__id', 'barcode')
     serializer_class = LibrarySerializer
-    queryset = Sample.objects.select_related('sample', 'sample__project').filter(type=Sample.TYPE_LIBRARY).distinct()
+    queryset = Sample.objects.select_related('sample', 'sample__project').filter(physical_type=Sample.TYPE_LIBRARY).distinct()
     @action(detail=False, methods=['get','post'])
     def check_adapters(self, request):
         libs = request.data.get('libraries',[]) # [{'id': 'library_id', 'adapter_db': '...', 'adapter': '...'}, ...]
