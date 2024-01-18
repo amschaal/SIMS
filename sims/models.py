@@ -170,6 +170,7 @@ class Project(models.Model):
 class DataImport(models.Model):
     project = models.OneToOneField(Project, on_delete=models.SET_NULL, null=True)
     imported = models.DateTimeField(null=True)
+    submitted = models.DateTimeField(null=True)
     submission_id = models.CharField(max_length=50, unique=True, editable=False, null=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -180,6 +181,7 @@ class DataImport(models.Model):
     pi_email = models.EmailField(max_length=75)
     pi_phone = models.CharField(max_length=20)
     institute = models.CharField(max_length=75)
+    comments = models.TextField(null=True, blank=True)
     type = models.JSONField(default=dict)
     schema = models.JSONField(default=dict)
     data = models.JSONField(default=dict)

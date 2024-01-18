@@ -25,6 +25,32 @@ class Submission(object):
         self.biocore = data['biocore']
         self.data = data['data']
         self.comments = data['comments']
+    def import_submission(self):
+        from sims.models import DataImport
+        if DataImport.objects.filter(submission_id=self.id).first():
+            raise Exception('Submission "{0}" has already been imported.'.format(self.id))
+        submission = DataImport.objects.create(
+                                        #  id=self.internal_id or self.id, 
+                                         submission_id=self.id, 
+                                         submitted=self.submitted,
+                                         imported=timezone.now(),
+                                         first_name=self.first_name,
+                                         last_name=self.last_name,
+                                         email=self.email,
+                                         pi_first_name = self.pi_first_name,
+                                         pi_last_name = self.pi_last_name,
+                                         pi_email=self.pi_email,
+                                         institute=self.institute,
+                                         type=self.type,
+                                         schema=self.submission_schema,
+                                        #  sample_schema=self.sample_schema,
+                                         data=self.submission_data,
+                                        #  sample_data=self.sample_data,
+                                        #  biocore=self.biocore,
+                                        #  data=self.data,
+                                         comments=self.comments
+                                         )
+        return submission
     def create_project(self):
         from sims.models import Project
         if Project.objects.filter(submission_id=self.id).first():

@@ -24,6 +24,19 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     search_fields = ('id', 'submission_id', 'pi_first_name', 'pi_last_name', 'pi_email', 'first_name', 'last_name', 'email')
     ordering_fields = ['id', 'submitted', 'submission_id', 'created']
     queryset = DataImport.objects.distinct()
+    @action(detail=False, methods=['get','post'])
+    def import_submission(self, request):
+        id = request.data.get('id').strip()
+#         url = settings.SUBMISSION_SYSTEM_URLS['submission'].format(id=id)
+        try:
+            submission = Submission.get_submission(id)
+        except Exception as e:
+            return Response({'message': 'Error: unable to retrieve submission with ID "{}": {}'.format(id,e)},status=status.HTTP_400_BAD_REQUEST)
+        try:
+            data_import = submission.import_submission()
+        except Exception as e:
+            return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'id':id,'submission':submission._data, 'import': DataImportSerializer(data_import).data})
 
 class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
@@ -37,19 +50,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
     search_fields = ('id', 'submission_id', 'pi_first_name', 'pi_last_name', 'pi_email', 'first_name', 'last_name', 'email')
     ordering_fields = ['id', 'submitted', 'submission_id', 'created']
     queryset = Project.objects.distinct()
-    @action(detail=False, methods=['get','post'])
-    def import_submission(self, request):
-        id = request.data.get('id').strip()
-#         url = settings.SUBMISSION_SYSTEM_URLS['submission'].format(id=id)
-        try:
-            submission = Submission.get_submission(id)
-        except Exception as e:
-            return Response({'message': 'Error: unable to retrieve submission with ID "{}": {}'.format(id,e)},status=status.HTTP_400_BAD_REQUEST)
-        try:
-            project = submission.create_project()
-        except Exception as e:
-            return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({'id':id,'submission':submission._data, 'project': ProjectSerializer(project).data})
     @action(detail=True, methods=['post'])
     def update_samples(self, request, pk=None):
         project = self.get_object()
