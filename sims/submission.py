@@ -4,7 +4,7 @@ from django.conf import settings
 from sims.models import Project, Sample
 from django.conf.urls.static import static
 
-class Submission(object):
+class SubmissionImporter(object):
     def __init__(self, data):
         self._data = data
         self.id = data['id']
@@ -26,10 +26,10 @@ class Submission(object):
         self.data = data['data']
         self.comments = data['comments']
     def import_submission(self):
-        from sims.models import DataImport
-        if DataImport.objects.filter(submission_id=self.id).first():
+        from sims.models import Submission
+        if Submission.objects.filter(submission_id=self.id).first():
             raise Exception('Submission "{0}" has already been imported.'.format(self.id))
-        submission = DataImport.objects.create(
+        submission = Submission.objects.create(
                                         #  id=self.internal_id or self.id,
                                          id=self.id,
                                          submission_id=self.internal_id or self.id, 

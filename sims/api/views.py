@@ -1,19 +1,19 @@
 from rest_framework import viewsets, status
-from sims.api.serializers import DataImportSerializer, LibrarySerializer, RunSerializer,RunDetailSerializer, MachineSerializer,\
+from sims.api.serializers import SubmissionSerializer, LibrarySerializer, RunSerializer,RunDetailSerializer, MachineSerializer,\
     ProjectSerializer, SampleSerializer, PoolSerializer, \
     AdapterSerializer, RunPoolSerializer, RunPoolDetailSerializer,\
     AdapterDBSerializer
-from sims.models import DataImport, Run, Machine, Project, Sample, Pool, Adapter,\
+from sims.models import Submission, Run, Machine, Project, Sample, Pool, Adapter,\
     RunPool, AdapterDB
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.exceptions import APIException
 from django.conf import settings
-from sims.submission import Submission
+from sims.submission import SubmissionImporter
 from tools.barcodes import get_all_conflicts
 
 class SubmissionViewSet(viewsets.ModelViewSet):
-    serializer_class = DataImportSerializer
+    serializer_class = SubmissionSerializer
     filterset_fields = {
         'id':['icontains','exact'],
         'samples__id': ['exact'],
@@ -23,24 +23,24 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         }
     search_fields = ('id', 'submission_id', 'pi_first_name', 'pi_last_name', 'pi_email', 'first_name', 'last_name', 'email')
     ordering_fields = ['id', 'submitted', 'submission_id', 'created']
-    queryset = DataImport.objects.distinct()
+    queryset = Submission.objects.distinct()
     @action(detail=False, methods=['get','post'])
     def import_submission(self, request):
         id = request.data.get('id').strip()
 #         url = settings.SUBMISSION_SYSTEM_URLS['submission'].format(id=id)
         try:
-            submission = Submission.get_submission(id)
+            submission_importer = SubmissionImporter.get_submission(id)
         except Exception as e:
             return Response({'message': 'Error: unable to retrieve submission with ID "{}": {}'.format(id,e)},status=status.HTTP_400_BAD_REQUEST)
         try:
-            data_import = submission.import_submission()
+            submission = submission_importer.import_submission()
         except Exception as e:
             return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({'id':id,'submission':submission._data, 'import': DataImportSerializer(data_import).data})
+        return Response({'id':id,'submission':submission_importer._data, 'import': SubmissionSerializer(submission).data})
     @action(detail=True, methods=['post'])
     def process(self, request, pk=None):
         instance = self.get_object()
-        if instance.processed:
+        if getattr(instance,'project',None):
             raise APIException('Submission has already been processed')
         project, pools, samples = instance.process()
         return Response({'project': ProjectSerializer(project).data, 'new_pools': PoolSerializer(pools, many=True).data, 'new_samples': SampleSerializer(samples, many=True).data})
@@ -62,11 +62,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project = self.get_object()
 #         url = settings.SUBMISSION_SYSTEM_URLS['submission'].format(id=id)
         try:
-            submission = Submission.get_submission(project.submission_id)
+            submission_importer = SubmissionImporter.get_submission(project.submission_id)
         except:
             return Response({'message': 'Error: unable to retrieve submission with ID "{0}"'.format(id)},status=status.HTTP_400_BAD_REQUEST)
         try:
-            samples = submission.update_samples(project, import_only=True)
+            samples = submission_importer.update_samples(project, import_only=True)
         except Exception as e:
             return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'project': ProjectSerializer(project).data, 'new_samples': SampleSerializer(samples, many=True).data})
