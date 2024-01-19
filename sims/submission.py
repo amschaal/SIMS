@@ -30,8 +30,9 @@ class Submission(object):
         if DataImport.objects.filter(submission_id=self.id).first():
             raise Exception('Submission "{0}" has already been imported.'.format(self.id))
         submission = DataImport.objects.create(
-                                        #  id=self.internal_id or self.id, 
-                                         submission_id=self.id, 
+                                        #  id=self.internal_id or self.id,
+                                         id=self.id,
+                                         submission_id=self.internal_id or self.id, 
                                          submitted=self.submitted,
                                          imported=timezone.now(),
                                          first_name=self.first_name,

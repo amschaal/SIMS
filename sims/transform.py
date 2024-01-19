@@ -28,23 +28,23 @@ library_field_map = {
     'data': '*' # * indicates all fields should be kept in data, None -> none, ['field1','field2'] for a list of fields to retain
 }
 
-def get_pools(project, data_import, field_map=pool_field_map):
-    schema = project.submission_schema
-    data = project.submission_data
+def get_pools(project, submission, field_map=pool_field_map):
+    schema = submission.schema
+    data = submission.data
     pools = []
     for row in data[field_map['row']]:
         fields = {key: row[val] for key, val in field_map['fields'].items() if val}
         fields['data'] = row
         pool = Pool(**fields)
         pool.name = '{}_{}'.format(project.id, pool.name)
-        pool.data_import = data_import
+        pool.submission = submission
         pools.append(pool)
     return pools
 
-def get_samples(project, data_import, field_map=sample_field_map):
+def get_samples(project, submission, field_map=sample_field_map):
     # need to handle pools
-    schema = project.submission_schema
-    data = project.submission_data
+    schema = submission.schema
+    data = submission.data
     samples = []
     for row in data[field_map['row']]:
         fields = {key: row[val] for key, val in field_map['fields'].items()}
@@ -52,14 +52,14 @@ def get_samples(project, data_import, field_map=sample_field_map):
         fields['project'] = project
         sample = Sample(**fields)
         sample.id = '{}_{}'.format(project.id,sample.name)
-        sample.data_import = data_import
+        sample.submission = submission
         samples.append(sample)
     return samples
 
-def get_libraries(project, data_import, field_map=library_field_map):
+def get_libraries(project, submission, field_map=library_field_map):
     # This is just for testing, and will probably go as libraries may become just a type of sample
-    schema = project.submission_schema
-    data = project.submission_data
+    schema = submission.schema
+    data = submission.data
     samples = []
     # libraries = []
     for row in data[field_map['row']]:
@@ -68,23 +68,59 @@ def get_libraries(project, data_import, field_map=library_field_map):
         fields['project'] = project
         fields['type'] = Sample.TYPE_LIBRARY
         sample = Sample(**fields)
-        sample.data_import = data_import
+        sample.submission = submission
         sample.id = '{}_{}'.format(project.id,sample.name)
         samples.append(sample)
         # library = Library(id=sample.id, sample=sample)
         # libraries.append(library)
     return samples
 
-def create_project_samples(project, data_import):
-    data = project.submission_data
-    pools, samples, libraries = [], [], []
+# def create_project_samples(project, data_import):
+#     data = project.submission_data
+#     pools, samples, libraries = [], [], []
+#     if 'pools' in data and isinstance(data['pools'], list):
+#         pools = get_pools(project, data_import)
+#     if 'samples' in data and isinstance(data['samples'], list):
+#         samples = get_samples(project, data_import)
+#     if 'libraries' in data and isinstance(data['libraries'], list):
+#         samples = get_libraries(project, data_import)
+#     return (pools, samples)
+
+# type = JSONField()
+#     submission_schema = JSONField(null=True,blank=True)
+#     sample_schema = JSONField(null=True,blank=True)
+#     submission_data = JSONField(default=dict)
+#     sample_data = JSONField(null=True,blank=True)
+#     biocore = models.BooleanField(default=False)
+# #     participants = models.ManyToManyField(User,blank=True)
+#     data = JSONField(default=dict)
+#     comments = models.TextField(null=True, blank=True)
+def import_submission(submission):
+    project = Project(
+        id=submission.submission_id or submission.id,
+        # submission_id=submission.submission_id,
+        first_name=submission.first_name,
+        last_name=submission.last_name,
+        email=submission.email,
+        phone=submission.phone,
+        pi_first_name=submission.pi_first_name,
+        pi_last_name=submission.pi_last_name,
+        pi_email=submission.pi_email,
+        pi_phone=submission.pi_phone,
+        institute=submission.institute,
+        comments=submission.comments,
+        data=submission.data,
+        submission=submission
+        )
+    data = submission.data
+    pools, samples = [], []
     if 'pools' in data and isinstance(data['pools'], list):
-        pools = get_pools(project, data_import)
+        pools = get_pools(project, submission)
     if 'samples' in data and isinstance(data['samples'], list):
-        samples = get_samples(project, data_import)
+        samples = get_samples(project, submission)
     if 'libraries' in data and isinstance(data['libraries'], list):
-        samples = get_libraries(project, data_import)
-    return (pools, samples)
+        samples = get_libraries(project, submission)
+    return (project, pools, samples)
 
 def pool_samples(project, pools, samples, pool_id_column = 'pool_name'):
     for pool in pools:

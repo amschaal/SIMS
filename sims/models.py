@@ -58,7 +58,7 @@ class RunPool(models.Model):
 class Pool(DjsonTypeModel):
     name = models.CharField(max_length=100,unique=True,db_index=True)
     description = models.TextField(null=True,blank=True,db_index=True)
-    data_import = models.ForeignKey('DataImport', null=True, on_delete=models.CASCADE, related_name='pools')
+    submission = models.ForeignKey('DataImport', null=True, on_delete=models.CASCADE, related_name='pools')
     submission_data = JSONField(default=dict)
     created = models.DateField(auto_now=True,db_index=True)
     # data = JSONField(default=dict)
@@ -135,7 +135,7 @@ class PoolPool(models.Model):
 #===============================================================================
 class Project(models.Model):
     id = models.CharField(max_length=50, primary_key=True, editable=False)
-    submission_id = models.CharField(max_length=50, unique=True, editable=False)
+    # submission_id = models.CharField(max_length=50, unique=True, editable=False)
 #     status = models.CharField(max_length=50, null=True)#models.ForeignKey(SubmissionStatus,null=True,on_delete=models.SET_NULL)
 #     locked = models.BooleanField(default=False)
 #     cancelled = models.DateTimeField(null=True, blank=True)
@@ -156,7 +156,7 @@ class Project(models.Model):
 #     payment_type = models.CharField(max_length=50,choices=PAYMENT_CHOICES)
 #     payment_info = models.CharField(max_length=250,null=True,blank=True)
 #     type = models.ForeignKey(SubmissionType,related_name="submissions", on_delete=models.PROTECT)
-    type = JSONField()
+    type = JSONField(default=dict)
     submission_schema = JSONField(null=True,blank=True)
     sample_schema = JSONField(null=True,blank=True)
     submission_data = JSONField(default=dict)
@@ -165,11 +165,14 @@ class Project(models.Model):
 #     participants = models.ManyToManyField(User,blank=True)
     data = JSONField(default=dict)
     comments = models.TextField(null=True, blank=True)
+    submission = models.OneToOneField('DataImport', null=True, on_delete=models.SET_NULL, related_name='project')
     # plugin_data = JSONField(default=dict)s = models.TextField(null=True,blank=True)
 
 class DataImport(models.Model):
-    project = models.OneToOneField(Project, on_delete=models.SET_NULL, null=True)
+    id = models.CharField(max_length=50, primary_key=True, editable=False)
+    # project = models.OneToOneField(Project, on_delete=models.SET_NULL, null=True)
     imported = models.DateTimeField(null=True)
+    processed = models.DateTimeField(null=True)
     submitted = models.DateTimeField(null=True)
     submission_id = models.CharField(max_length=50, unique=True, editable=False, null=True)
     first_name = models.CharField(max_length=50)
@@ -186,17 +189,18 @@ class DataImport(models.Model):
     schema = models.JSONField(default=dict)
     data = models.JSONField(default=dict)
     def process(self):
-        if not self.imported:
-            from sims.transform import create_project_samples, pool_samples
-            pools, samples = create_project_samples(self.project, self)
+        if not self.processed:
+            from sims.transform import import_submission, pool_samples
+            project, pools, samples = import_submission(self)
+            project.save()
             pools = Pool.objects.bulk_create(pools)
             samples = Sample.objects.bulk_create(samples)
-            pool_samples(self.project, pools, samples)
-            self.imported = timezone.now()
-            self.data = self.project.submission_data
+            pool_samples(project, pools, samples)
+            self.processed = timezone.now()
+            # self.data = self.project.submission_data
             self.save()
             # libraries = Library.objects.bulk_create(libraries)
-            return (pools, samples)
+            return (project, pools, samples)
 
 class Sample(DjsonTypeModel):
     TYPE_LIBRARY = 'LIBRARY'
@@ -206,7 +210,7 @@ class Sample(DjsonTypeModel):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="samples",null=True,blank=True)
     name = models.CharField(max_length=50,db_index=True)
     imported = models.DateTimeField(auto_now=True,db_index=True)
-    data_import = models.ForeignKey(DataImport, null=True, on_delete=models.CASCADE, related_name='samples')
+    submission = models.ForeignKey(DataImport, null=True, on_delete=models.CASCADE, related_name='samples')
     # data = JSONField(null=True,blank=True)
     submission_data = JSONField(default=dict)
     # fields below are for library only

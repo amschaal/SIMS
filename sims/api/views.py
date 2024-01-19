@@ -37,6 +37,13 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         except Exception as e:
             return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'id':id,'submission':submission._data, 'import': DataImportSerializer(data_import).data})
+    @action(detail=True, methods=['post'])
+    def process(self, request, pk=None):
+        instance = self.get_object()
+        if instance.processed:
+            raise APIException('Submission has already been processed')
+        project, pools, samples = instance.process()
+        return Response({'project': ProjectSerializer(project).data, 'new_pools': PoolSerializer(pools, many=True).data, 'new_samples': SampleSerializer(samples, many=True).data})
 
 class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
@@ -63,16 +70,16 @@ class ProjectViewSet(viewsets.ModelViewSet):
         except Exception as e:
             return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'project': ProjectSerializer(project).data, 'new_samples': SampleSerializer(samples, many=True).data})
-    @action(detail=True, methods=['post'])
-    def process_samples(self, request, pk=None):
-        project = self.get_object()
-        if hasattr(project, 'dataimport'):
-            raise APIException('Project already has data import')
-        data_import = DataImport(project=project)
-        data_import.save()
-        pools, samples = data_import.process()
-        return Response({'project': ProjectSerializer(project).data, 'new_pools': PoolSerializer(pools, many=True).data, 'new_samples': SampleSerializer(samples, many=True).data})
-        # return Response({'samples':SampleSerializer(samples, many=True).data})
+    # @action(detail=True, methods=['post'])
+    # def process_samples(self, request, pk=None):
+    #     project = self.get_object()
+    #     if hasattr(project, 'dataimport'):
+    #         raise APIException('Project already has data import')
+    #     data_import = DataImport(project=project)
+    #     data_import.save()
+    #     pools, samples = data_import.process()
+    #     return Response({'project': ProjectSerializer(project).data, 'new_pools': PoolSerializer(pools, many=True).data, 'new_samples': SampleSerializer(samples, many=True).data})
+    #     # return Response({'samples':SampleSerializer(samples, many=True).data})
 
 class SampleViewSet(viewsets.ModelViewSet):
     filterset_fields = {
@@ -81,7 +88,8 @@ class SampleViewSet(viewsets.ModelViewSet):
         'project__id':['icontains','exact'],
         'pools__id': ['exact'],
         'pools__run_pools__run__id': ['exact'],
-        'samples__id': ['exact']
+        'samples__id': ['exact'],
+        'submission__id': ['exact']
         }
     search_fields = ('id', 'project__id')
     serializer_class = SampleSerializer
@@ -94,7 +102,8 @@ class LibraryViewSet(viewsets.ModelViewSet):
         'id':['icontains','exact'],
         'project__id':['icontains','exact'],
         'pools__id': ['exact'],
-        'pools__run_pools__run__id': ['exact']
+        'pools__run_pools__run__id': ['exact'],
+        'submission__id': ['exact']
         }
     search_fields = ('id', 'project__id', 'barcode')
     serializer_class = LibrarySerializer

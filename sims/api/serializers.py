@@ -40,7 +40,7 @@ class DataImportSerializer(serializers.ModelSerializer):
 
 class ProjectSerializer(serializers.ModelSerializer):
     submission_url = serializers.SerializerMethodField()
-    dataimport = DataImportSerializer() #  serializers.SerializerMethodField()
+    submission = DataImportSerializer() #  serializers.SerializerMethodField()
     # num_samples = serializers.SerializerMethodField()
     def get_submission_url(self, obj):
         return settings.SUBMISSION_SYSTEM_URLS['submission'].format(id=obj.submission_id)
