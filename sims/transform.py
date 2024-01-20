@@ -38,6 +38,7 @@ def get_pools(project, submission, field_map=pool_field_map):
         pool = Pool(**fields)
         pool.name = '{}_{}'.format(project.id, pool.name)
         pool.submission = submission
+        pool.project = project
         pools.append(pool)
     return pools
 
@@ -66,7 +67,7 @@ def get_libraries(project, submission, field_map=library_field_map):
         fields = {key: row[val] for key, val in field_map['fields'].items()}
         fields['data'] = row
         fields['project'] = project
-        fields['type'] = Sample.TYPE_LIBRARY
+        fields['physical_type'] = Sample.TYPE_LIBRARY
         sample = Sample(**fields)
         sample.submission = submission
         sample.id = '{}_{}'.format(project.id,sample.name)

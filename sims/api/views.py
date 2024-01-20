@@ -54,7 +54,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         'samples__pools__id': ['exact'],
         'samples__pools__run_pools__run__id': ['exact']
         }
-    search_fields = ('id', 'submission_id', 'pi_first_name', 'pi_last_name', 'pi_email', 'first_name', 'last_name', 'email')
+    search_fields = ('id', 'submission__id', 'pi_first_name', 'pi_last_name', 'pi_email', 'first_name', 'last_name', 'email')
     ordering_fields = ['id', 'submitted', 'submission_id', 'created']
     queryset = Project.objects.distinct()
     @action(detail=True, methods=['post'])
@@ -156,7 +156,9 @@ class PoolViewSet(viewsets.ModelViewSet):
         'samples__project__id':['exact'],
         'pooled__id':['exact'],
         'pools__id':['exact'],
-        'run_pools__run__id':['exact']
+        'run_pools__run__id':['exact'],
+        'project__id':['icontains','exact'],
+        'submission__id': ['exact']
         }
     serializer_class = PoolSerializer
     queryset = Pool.objects.distinct()

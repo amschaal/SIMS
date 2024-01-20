@@ -98,4 +98,4 @@ class SubmissionImporter(object):
             data = url if isinstance(url, str) else url.read().decode('utf-8')
             data = json.loads(data)#url.read().decode()
             print(data)
-            return Submission(data)
+            return SubmissionImporter(data)
