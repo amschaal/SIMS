@@ -34,7 +34,7 @@ def get_pools(project, submission, field_map=pool_field_map):
     pools = []
     for row in data[field_map['row']]:
         fields = {key: row[val] for key, val in field_map['fields'].items() if val}
-        fields['data'] = row
+        fields['submission_data'] = row
         pool = Pool(**fields)
         pool.name = '{}_{}'.format(project.id, pool.name)
         pool.submission = submission
@@ -49,7 +49,7 @@ def get_samples(project, submission, field_map=sample_field_map):
     samples = []
     for row in data[field_map['row']]:
         fields = {key: row[val] for key, val in field_map['fields'].items()}
-        fields['data'] = row
+        fields['submission_data'] = row
         fields['project'] = project
         sample = Sample(**fields)
         sample.id = '{}_{}'.format(project.id,sample.name)
@@ -65,7 +65,7 @@ def get_libraries(project, submission, field_map=library_field_map):
     # libraries = []
     for row in data[field_map['row']]:
         fields = {key: row[val] for key, val in field_map['fields'].items()}
-        fields['data'] = row
+        fields['submission_data'] = row
         fields['project'] = project
         fields['physical_type'] = Sample.TYPE_LIBRARY
         sample = Sample(**fields)
@@ -110,7 +110,7 @@ def import_submission(submission):
         pi_phone=submission.pi_phone,
         institute=submission.institute,
         comments=submission.comments,
-        data=submission.data,
+        submission_data=submission.data,
         submission=submission
         )
     data = submission.data

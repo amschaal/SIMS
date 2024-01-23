@@ -134,7 +134,7 @@ class PoolPool(models.Model):
 # Data may be imported and updated from submission system.
 # This helps create local DB FKs as well as make submissions quickly searchable instead of using API.
 #===============================================================================
-class Project(models.Model):
+class Project(DjsonTypeModel):
     id = models.CharField(max_length=50, primary_key=True, editable=False)
     # submission_id = models.CharField(max_length=50, unique=True, editable=False)
 #     status = models.CharField(max_length=50, null=True)#models.ForeignKey(SubmissionStatus,null=True,on_delete=models.SET_NULL)
@@ -157,14 +157,14 @@ class Project(models.Model):
 #     payment_type = models.CharField(max_length=50,choices=PAYMENT_CHOICES)
 #     payment_info = models.CharField(max_length=250,null=True,blank=True)
 #     type = models.ForeignKey(SubmissionType,related_name="submissions", on_delete=models.PROTECT)
-    type = JSONField(default=dict)
+    # type = JSONField(default=dict)
     submission_schema = JSONField(null=True,blank=True)
-    sample_schema = JSONField(null=True,blank=True)
+    # sample_schema = JSONField(null=True,blank=True)
     submission_data = JSONField(default=dict)
-    sample_data = JSONField(null=True,blank=True)
-    biocore = models.BooleanField(default=False)
+    # sample_data = JSONField(null=True,blank=True)
+    # biocore = models.BooleanField(default=False)
 #     participants = models.ManyToManyField(User,blank=True)
-    data = JSONField(default=dict)
+    # data = JSONField(default=dict)
     comments = models.TextField(null=True, blank=True)
     submission = models.OneToOneField('Submission', null=True, on_delete=models.SET_NULL, related_name='project')
     # plugin_data = JSONField(default=dict)s = models.TextField(null=True,blank=True)
