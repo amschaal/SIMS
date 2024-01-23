@@ -13,6 +13,7 @@
       <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="details">
             <Pool :instance="pool" v-if="pool.id"/>
+            <SubmissionData :data="pool.submission_data"/>
             <!-- <PoolForm :model="pool" v-if="pool.id && modify" :on-success="onModifySuccess"/> -->
             <BaseFormDialog ref="pool_form" :form-component="PoolForm" title="Create Pool" v-model="pool" v-if="pool.id"/>
             <q-btn label="Modify" color="primary" @click="open('pool_form')" v-if="pool.id"/>
@@ -50,6 +51,8 @@ import TableDialog from '../components/dialogs/TableDialog.vue'
 import DeleteButton from '../components/DeleteButton.vue'
 import PoolForm from 'src/components/forms/PoolForm.vue'
 import BaseFormDialog from '../components/dialogs/BaseFormDialog.vue'
+import SubmissionData from 'src/components/details/SubmissionData.vue'
+
 // import PoolFormDialog from '../components/forms/PoolFormDialog.vue'
 export default {
   name: 'PoolPage',
@@ -149,7 +152,8 @@ export default {
     RunsTable,
     TableDialog,
     DeleteButton,
-    BaseFormDialog
+    BaseFormDialog,
+    SubmissionData
     // PoolForm // PoolFormDialog
   }
 }

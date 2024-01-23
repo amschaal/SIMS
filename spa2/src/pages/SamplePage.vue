@@ -12,6 +12,7 @@
       <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="details">
             <Sample :instance="sample" v-if="sample.id"/>
+            <SubmissionData :data="sample.submission_data"/>
           </q-tab-panel>
           <q-tab-panel name="samples">
             <SamplesTable :filters="`samples__id=${id}`"/>
@@ -31,6 +32,8 @@ import Sample from '../components/details/Sample.vue'
 import SamplesTable from '../components/tables/SamplesTable.vue'
 import DeleteButton from '../components/DeleteButton.vue'
 import RunsTable from 'src/components/tables/RunsTable.vue'
+import SubmissionData from 'src/components/details/SubmissionData.vue'
+
 export default {
   name: 'SamplePage',
   props: ['id'],
@@ -53,7 +56,8 @@ export default {
     SamplesTable,
     DeleteButton,
     Sample,
-    RunsTable
+    RunsTable,
+    SubmissionData
   }
 }
 </script>
