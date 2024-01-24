@@ -15,8 +15,9 @@
           </q-td>
           <q-td key="created" :props="props">{{ $filters.formatDate(props.row.created) }}</q-td>
           <q-td key="id" :props="props"><router-link :to="{ name: 'project', params: { id: props.row.id }}">{{ props.row.id }}</router-link></q-td>
-          <q-td key="submission_id" :props="props"><a :href="props.row.submission_url">{{ props.row.submission_id }}</a></q-td>
-          <q-td key="type" :props="props">{{ props.row.type.name }}</q-td>
+          <q-td key="submission" :props="props"><router-link :to="{ name: 'submission', params: { id: props.row.submission.id }}" v-if="props.row.submission">{{ props.row.submission.id }}</router-link></q-td>
+          <!-- <q-td key="submission" :props="props">foo</q-td> -->
+          <q-td key="type" :props="props">{{ props.row.type }}</q-td>
           <q-td key="submitted" :props="props">{{ $filters.formatDate(props.row.submitted) }}</q-td>
           <q-td key="name" :props="props">{{ props.row.first_name }} {{ props.row.last_name }}</q-td>
           <q-td key="email" :props="props">{{ props.row.email }}</q-td>
@@ -52,7 +53,7 @@ export default {
       columns: [
         { name: 'created', label: 'Created', field: 'created', sortable: true },
         { name: 'id', label: 'ID', field: 'id', sortable: true },
-        { name: 'submission_id', label: 'Submission ID', field: 'id', sortable: true },
+        { name: 'submission', label: 'Submission', field: 'submission', sortable: false },
         { name: 'type', label: 'Type', field: 'row.type.name', sortable: false },
         { name: 'submitted', label: 'Submitted', field: 'submitted', sortable: true },
         { name: 'name', label: 'Submitter', field: 'name' },

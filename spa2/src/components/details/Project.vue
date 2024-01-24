@@ -4,8 +4,8 @@
       <!-- {{ project }} -->
       <div class="row">
         <div class="col-md-4 col-sm-12"><b>Project ID: </b>{{project.id}}</div>
-        <div class="col-md-4 col-sm-12"><b>Submission ID: </b><a :href="project.submission_id">{{project.submission_id}}</a></div>
-        <div class="col-md-4 col-sm-12"><b>Type: </b>{{project.type.name}}</div>
+        <div class="col-md-4 col-sm-12" v-if="project.submission"><b>Submission: </b><router-link :to="{ name: 'submission', params: { id: project.submission.id }}">{{ project.submission.id }}</router-link></div>
+        <div class="col-md-4 col-sm-12"><b>Type: </b>{{project.type}}</div>
       </div>
       <div class="row">
         <div class="col-md-4 col-sm-12"><b>PI: </b>{{project.pi_first_name}} {{project.pi_last_name}} ({{project.pi_email}})</div>

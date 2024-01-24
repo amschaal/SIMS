@@ -4,6 +4,7 @@
       <div class="col-md-4 col-sm-12"><b>Type: </b>{{pool.type}}</div>
       <div class="col-md-4 col-sm-12"><b>Name: </b>{{pool.name}}</div>
       <div class="col-md-4 col-sm-12"><b>Created: </b>{{pool.created}}</div>
+      <div class="col-md-4 col-sm-12"><b>Project: </b><router-link :to="{ name: 'project', params: { id: pool.project }}">{{pool.project}}</router-link></div>
     </div>
     <div class="row" v-if="pool.description">
       <div class="col-12"><b>Description: </b>{{pool.description}}</div>

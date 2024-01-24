@@ -8,9 +8,9 @@
       <div class="col-md-4 col-sm-12"><b>Name: </b>{{sample.name}}</div>
       <div class="col-md-4 col-sm-12"><b>Imported: </b>{{$filters.formatDate(sample.imported)}}</div>
     </div>
-    <div class="row">
+    <!-- <div class="row">
       <div class="col-12" v-for="(v, k) in sample.data" :key="k"><b>{{k}}: </b>{{v}}</div>
-    </div>
+    </div> -->
   </div>
 </template>
 
