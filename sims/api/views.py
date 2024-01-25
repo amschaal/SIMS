@@ -3,6 +3,7 @@ from sims.api.serializers import SubmissionSerializer, LibrarySerializer, RunSer
     ProjectSerializer, SampleSerializer, PoolSerializer, \
     AdapterSerializer, RunPoolSerializer, RunPoolDetailSerializer,\
     AdapterDBSerializer
+from sims.coreomics.api import get_submission_types
 from sims.models import Submission, Run, Machine, Project, Sample, Pool, Adapter,\
     RunPool, AdapterDB
 from rest_framework.decorators import action
@@ -292,3 +293,9 @@ class MachineViewSet(viewsets.ModelViewSet):
     filterset_fields = {'name':['icontains'],'description':['icontains']}
 #     filter_fields = {'machine__name':['icontains'],'description':['icontains']}#,'lanes__pool__library__name':['icontains'],'lanes__pool__name':['icontains']
     queryset = Machine.objects.distinct()
+
+class SubmissionTypeViewSet(viewsets.ViewSet):
+    @action(detail=False, methods=['get'])
+    def get_submission_types(self, request):
+        data = get_submission_types()
+        return Response(data)
