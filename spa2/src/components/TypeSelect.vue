@@ -10,7 +10,7 @@
 
 <script>
 export default {
-  props: ['modelValue', 'error_messages', 'has_error'],
+  props: ['modelValue', 'error_messages', 'has_error', 'emit_object'],
   emits: ['update:modelValue'],
   data () {
     return {
@@ -21,7 +21,7 @@ export default {
   methods: {
     selected (val) {
       this.$emit('schema', val.schema)
-      this.$emit('update:modelValue', val.id)
+      this.$emit('update:modelValue', this.emit_object ? val : val.id)
     }
   },
   mounted: function () {
