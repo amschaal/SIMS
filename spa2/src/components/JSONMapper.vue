@@ -1,54 +1,48 @@
 <template>
-  <q-page class="flex flex-center">
-    From: <SubmissionTypeSelect v-model="submission_type"/>
-    To: <TypeSelect v-model="type" :emit_object="true" :error_messages="{}" :has_error="false"/><br>
-    <!-- Submission Type: {{ submission_type }} -->
-    <div v-if="submission_type">
-    Variables: {{  schema_to_variables(submission_type.submission_schema) }}
-    <!-- <q-markup-table flat bordered>
+    <q-markup-table flat bordered>
       <thead>
-        <tr><th colspan="2">Source</th><th>Destination</th><th></th><th></th></tr>
+        <tr><th colspan="3">Source</th><th colspan="3">Destination</th><th></th><th></th></tr>
         <tr>
-          <th class="text-left">Variable</th>
+          <th class="text-left">Source Variable</th>
+          <th class="text-left">Type</th>
           <th class="text-left">Name</th>
-          <th></th>
-          <th></th>
+          <th class="text-left">Destination Variable</th>
+          <th class="text-left">Type</th>
+          <th class="text-left">Name</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="variable in schema_to_variables(submission_type.submission_schema)" :key="variable">
           <td class="text-left">{{variable}}</td>
+          <td class="text-left">{{submission_type.submission_schema.properties[variable].type}}</td>
           <td class="text-left">{{submission_type.submission_schema.properties[variable].title}}</td>
           <td> <q-select outlined v-model="mapping[variable]" :options="getOptions(type, mapping, submission_type.submission_schema.properties[variable].type)" label="Select Variable"
                 option-value="id"
                 option-label="label"
                 emit-value
+                @update:modelValue="val => selected(val)"
                 />
+                <!-- <MappingTable :submission_type="submission_type" :type="type" v-model="mapping[variable]" v-if="submission_type.submission_schema.properties[variable].type === 'table'"/> -->
           </td>
-          <td></td>
+          <td><span v-if="mapping[variable]">{{type.schema.properties[mapping[variable]].type}}</span></td>
+          <td><span v-if="mapping[variable]">{{type.schema.properties[mapping[variable]].title}}</span></td>
         </tr>
       </tbody>
-    </q-markup-table> -->
-    <JSONMapper v-model="mapping" :submission_type="submission_type" :type="type" v-if="submission_type && type"/>
-    {{ mapping }}
-  </div>
-  </q-page>
+    </q-markup-table>
 </template>
 
 <style>
 </style>
 
 <script>
-import JSONMapper from 'src/components/JSONMapper.vue'
-import SubmissionTypeSelect from 'src/components/SubmissionTypeSelect.vue'
-import TypeSelect from 'src/components/TypeSelect.vue'
+// import SubmissionTypeSelect from 'src/components/SubmissionTypeSelect.vue'
+// import TypeSelect from 'src/components/TypeSelect.vue'
 
 export default {
+  props: ['submission_type', 'type', 'modelValue'],
   data () {
     return {
-      submission_type: null,
-      type: null,
-      mapping: {}
+      mapping: this.modelValue
     }
   },
   methods: {
@@ -65,9 +59,12 @@ export default {
         return []
       }
       return this.getAvailableFields(type, mapping, variableType).map(v => ({ id: v, label: type.schema.properties[v].title || v }))
+    },
+    selected () {
+      this.$emit('update:modelValue', this.mapping)
     }
-  },
+  }
   // name: 'PageIndex',
-  components: { SubmissionTypeSelect, TypeSelect, JSONMapper }
+  // components: { SubmissionTypeSelect, TypeSelect }
 }
 </script>
