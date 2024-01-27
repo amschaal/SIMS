@@ -11,7 +11,7 @@
 <script>
 export default {
   props: ['modelValue', 'error_messages', 'has_error', 'emit_object'],
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'schema'],
   data () {
     return {
       model: this.modelValue,
