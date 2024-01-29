@@ -169,6 +169,17 @@ class Project(DjsonTypeModel):
     submission = models.OneToOneField('Submission', null=True, on_delete=models.SET_NULL, related_name='project')
     # plugin_data = JSONField(default=dict)s = models.TextField(null=True,blank=True)
 
+class SubmissionType(models.Model):
+    lab_id = models.SlugField()
+    updated = models.DateTimeField(auto_now=True)
+    active = models.BooleanField(default=True)
+    name = models.CharField(max_length=100)
+    description = models.TextField(null=True,blank=True)
+    sort_order = models.PositiveIntegerField(default=1)
+    prefix = models.CharField(max_length=15, null=True, blank=True)
+    statuses = JSONField(default=list)
+    submission_schema = JSONField(null=True)
+
 class Submission(models.Model):
     id = models.CharField(max_length=50, primary_key=True, editable=False)
     # project = models.OneToOneField(Project, on_delete=models.SET_NULL, null=True)
