@@ -1,7 +1,7 @@
 <template>
     <q-markup-table flat bordered>
       <thead>
-        <tr><th colspan="3">Source</th><th colspan="3">Destination</th><th></th><th></th></tr>
+        <tr><th colspan="3">Source</th><th colspan="3">Destination <q-btn label="I'm feeling lucky!" v-on:click="autoAssign()"></q-btn></th><th></th><th></th></tr>
         <tr>
           <th class="text-left">Source Variable</th>
           <th class="text-left">Type</th>
@@ -66,6 +66,17 @@ export default {
     },
     selected () {
       this.$emit('update:modelValue', this.mapping)
+    },
+    autoAssign () {
+      const destVariables = this.schema_to_variables(this.destSchema)
+      this.schema_to_variables(this.sourceSchema).forEach(variable => {
+        console.log(variable)
+        if (!this.mapping[variable] && destVariables.indexOf(variable) !== -1) {
+          console.log('assign', variable)
+          this.mapping[variable] = variable
+          this.selected(variable, variable)
+        }
+      })
     }
   }
   // name: 'PageIndex',
