@@ -2,10 +2,10 @@ from rest_framework import viewsets, status
 from sims.api.serializers import SubmissionSerializer, LibrarySerializer, RunSerializer,RunDetailSerializer, MachineSerializer,\
     ProjectSerializer, SampleSerializer, PoolSerializer, \
     AdapterSerializer, RunPoolSerializer, RunPoolDetailSerializer,\
-    AdapterDBSerializer
+    AdapterDBSerializer, SubmissionTypeSerializer
 from sims.coreomics.api import get_submission_types
 from sims.models import Submission, Run, Machine, Project, Sample, Pool, Adapter,\
-    RunPool, AdapterDB
+    RunPool, AdapterDB, SubmissionType
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.exceptions import APIException
@@ -294,8 +294,16 @@ class MachineViewSet(viewsets.ModelViewSet):
 #     filter_fields = {'machine__name':['icontains'],'description':['icontains']}#,'lanes__pool__library__name':['icontains'],'lanes__pool__name':['icontains']
     queryset = Machine.objects.distinct()
 
-class SubmissionTypeViewSet(viewsets.ViewSet):
-    @action(detail=False, methods=['get'])
-    def get_submission_types(self, request):
-        data = get_submission_types()
-        return Response(data)
+class SubmissionTypeViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = SubmissionTypeSerializer
+    model = SubmissionType
+    # filterset_fields = {'name':['icontains'],'description':['icontains']}
+#     filter_fields = {'machine__name':['icontains'],'description':['icontains']}#,'lanes__pool__library__name':['icontains'],'lanes__pool__name':['icontains']
+    queryset = SubmissionType.objects.distinct()
+
+# class SubmissionTypeViewSet(viewsets.ViewSet):
+#     @action(detail=False, methods=['get'])
+#     def get_submission_types(self, request):
+#         data = get_submission_types()
+#         return Response(data)
+#     # @action(detail)

@@ -2,7 +2,7 @@ from rest_framework import serializers
 from djson.serializers import DjsonTypeModelSerializer, JSONSchemaField, JsonSchemaValidator
 from djson.tests import TEST_SCHEMA
 from sims.models import Submission, Project, Machine, Run, Sample, Adapter, Pool, RunPool,\
-    AdapterDB
+    AdapterDB, SubmissionType
 from django.conf import settings
 
 #Allows Creation/Updating of related model fields with OBJECT instead of just id
@@ -142,5 +142,10 @@ class RunDetailSerializer(DjsonTypeModelSerializer):
 class AdapterDBSerializer(serializers.ModelSerializer):
     class Meta:
         model = AdapterDB
+        exclude = []
+
+class SubmissionTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SubmissionType
         exclude = []
 
