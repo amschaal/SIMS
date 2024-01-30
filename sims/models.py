@@ -179,6 +179,7 @@ class SubmissionType(models.Model):
     prefix = models.CharField(max_length=15, null=True, blank=True)
     statuses = JSONField(default=list)
     submission_schema = JSONField(null=True)
+    mapping = JSONField(default=dict)
 
 class Submission(models.Model):
     id = models.CharField(max_length=50, primary_key=True, editable=False)

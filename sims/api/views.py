@@ -297,10 +297,15 @@ class MachineViewSet(viewsets.ModelViewSet):
 class SubmissionTypeViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = SubmissionTypeSerializer
     model = SubmissionType
-    # filterset_fields = {'name':['icontains'],'description':['icontains']}
-#     filter_fields = {'machine__name':['icontains'],'description':['icontains']}#,'lanes__pool__library__name':['icontains'],'lanes__pool__name':['icontains']
-    queryset = SubmissionType.objects.distinct()
-
+    queryset = SubmissionType.objects.all()
+    ordering_fields = ['name', 'lab_id', 'sort_order']
+    @action(detail=True, methods=['post'])
+    def update_mapping(self, request, pk=None):
+        st = self.get_object()
+        mapping = request.data.get('mapping')
+        st.mapping = mapping
+        st.save()
+        return Response(mapping)
 # class SubmissionTypeViewSet(viewsets.ViewSet):
 #     @action(detail=False, methods=['get'])
 #     def get_submission_types(self, request):
