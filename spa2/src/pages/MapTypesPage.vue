@@ -1,6 +1,7 @@
 <template>
-  <q-page class="flex flex-center">
-    From: <SubmissionTypeSelect v-model="submission_type"/>
+  <!-- <q-page class="flex flex-center"> -->
+  <q-page>
+    From: <SubmissionTypeSelect v-model="submission_type" @update:model-value="setMapping(type)"/>
     To: <TypeSelect v-model="type" :emit_object="true" :error_messages="{}" :has_error="false"/><br>
     <!-- Submission Type: {{ submission_type }} -->
     <div v-if="submission_type">
@@ -30,6 +31,7 @@
       </tbody>
     </q-markup-table> -->
     <JSONMapper v-model="mapping" :submission_type="submission_type" :type="type" v-if="submission_type && type"/>
+    <q-btn label="Update Mapping" @click="updateMapping" v-if="submission_type.id"/>
     {{ mapping }}
   </div>
   </q-page>
@@ -42,6 +44,7 @@
 import JSONMapper from 'src/components/JSONMapper.vue'
 import SubmissionTypeSelect from 'src/components/SubmissionTypeSelect.vue'
 import TypeSelect from 'src/components/TypeSelect.vue'
+import _ from 'lodash'
 
 export default {
   data () {
@@ -65,6 +68,27 @@ export default {
         return []
       }
       return this.getAvailableFields(type, mapping, variableType).map(v => ({ id: v, label: type.schema.properties[v].title || v }))
+    },
+    updateMapping () {
+      this.$api
+        .post(`/api/submission_types/${this.submission_type.id}/update_mapping/`, { mapping: this.mapping })
+        .then(response => {
+          this.options = response.data.results
+          this.submission_type.mapping = this.mapping
+        })
+    },
+    setMapping (type) {
+      console.log('setMapping', this.submission_type.mapping, JSON.stringify(this.submission_type.mapping))
+      this.mapping = _.cloneDeep(this.submission_type.mapping)
+    }
+  },
+  watch: {
+    mapping: {
+      handler (val, oldVal) {
+        console.log('MapTypesPage.mapping model value changed ', JSON.stringify(val))
+        console.log('old value', JSON.stringify(oldVal))
+      },
+      deep: true
     }
   },
   // name: 'PageIndex',
