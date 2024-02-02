@@ -24,7 +24,10 @@
                 emit-value
                 @update:modelValue="val => selectMappingType(val, variable)"
                 />
-            <TypeSelect :error_messages="{}" :has_error="{}" v-model="mapping[variable].model_type" @update:model-value="val => selectedModelType(val, variable)" :emit_object="true" v-if="mapping[variable] && mapping[variable].mapping_type === 'model'"/>
+                <!-- :modelValue="pageTitle"
+  @update:modelValue="pageTitle = $event" -->
+            <!-- <TypeSelect :error_messages="{}" :has_error="{}" v-model="mapping[variable].model_type" @update:model-value="val => selectedModelType(val, variable)" :emit_object="true" v-if="mapping[variable] && mapping[variable].mapping_type === 'model'"/> -->
+              <TypeSelect :error_messages="{}" :has_error="{}" :modelValue="mapping[variable].model_type" @update:model-value="val => selectedModelType(val, variable)" :emit_object="true" v-if="mapping[variable] && mapping[variable].mapping_type === 'model'"/>
           </td>
         </tr>
         <tr v-else>
@@ -46,7 +49,7 @@
           <td>Fix: This should actually be mapping to another schema which must be selected.  For example, a schema for "RNA libraries", etc.</td>
           <td colspan="5" >
             <!-- <JSONTableMapper :source-schema="submission_type.submission_schema.properties[variable].schema" :dest-schema="type.schema.properties[mapping[variable].variable].schema" v-model="mapping[variable].mapping"/> -->
-            <JSONTableMapper :source-schema="submission_type.submission_schema.properties[variable].schema" :dest-schema="variable_schemas[variable]" v-model="mapping[variable].mapping"/>
+            <JSONTableMapper :source-schema="submission_type.submission_schema.properties[variable].schema" :dest-schema="variable_schemas[variable]" v-model="mapping[variable].mapping" />
           </td>
         </tr>
       </template>
@@ -71,7 +74,7 @@ export default {
     return {
       mapping: this.modelValue,
       variable_schemas: {},
-      mapping_types: [{ id: 'JSON', label: 'JSON' }, { id: 'Sample', label: 'Sample Model' }, { id: 'Pool', label: 'Pool Model' }]
+      mapping_types: [{ id: 'JSON', label: 'JSON' }, { id: 'samples', label: 'Samples' }, { id: 'pools', label: 'Pools' }]
     }
   },
   methods: {
@@ -91,6 +94,7 @@ export default {
     },
     selected (val, variable) {
       if (this.submission_type.submission_schema.properties[variable].type === 'table') {
+        console.log('selected: overwriting mapping')
         this.mapping[variable] = { variable: val, mapping: {} }
       }
       // console.log(val, variable, this.type.schema.properties, this.mapping[variable].variable)
@@ -99,8 +103,10 @@ export default {
     selectMappingType (val, variable) {
       console.log('selectMappingType', val, variable)
       if (val === 'JSON') {
+        console.log('selectMappingType: overwriting mapping')
         this.mapping[variable] = { variable: val, mapping_type: 'JSON', mapping: {} }
       } else {
+        console.log('selectMappingType: overwriting mapping')
         this.mapping[variable] = { variable: val, mapping_type: 'model', model: val, model_type: null, mapping: {} }
       }
       // if (this.submission_type.submission_schema.properties[variable].type === 'table') {
@@ -118,7 +124,12 @@ export default {
     },
     selectedModelType (type, variable) {
       console.log('selectedModelType', type, variable)
-      this.mapping[variable].mapping = {}
+      // Object.getOwnPropertyNames(this.mapping[variable].mapping).forEach(prop => delete this.mapping[variable].mapping[prop])
+      // this.mapping[variable].mapping = {}
+      if (this.mapping[variable] && this.mapping[variable].model_type !== type.id) {
+        console.log('selectModelType clear mapping')
+        Object.getOwnPropertyNames(this.mapping[variable].mapping).forEach(prop => delete this.mapping[variable].mapping[prop])
+      }
       this.mapping[variable].model_type = type.id
       this.variable_schemas[variable] = type.schema
       // alert(JSON.stringify(this.mapping[variable]))
@@ -134,6 +145,13 @@ export default {
           this.selected(variable, variable)
         }
       })
+    }
+  },
+  watch: {
+    modelValue: function (val) {
+      alert('mapping changed')
+      console.log('JSONMapper model value changed ', val)
+      this.mapping = val
     }
   },
   components: { JSONTableMapper, TypeSelect }

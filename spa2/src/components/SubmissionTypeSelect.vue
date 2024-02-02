@@ -23,9 +23,9 @@ export default {
   },
   mounted: function () {
     this.$api
-      .get('/api/submission_types/get_submission_types/')
+      .get('/api/submission_types/?order_by=sort_order')
       .then(response => {
-        this.options = response.data
+        this.options = response.data.results
       })
   }
 }

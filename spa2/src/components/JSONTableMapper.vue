@@ -24,8 +24,8 @@
                 />
                 <!-- <MappingTable :submission_type="submission_type" :type="type" v-model="mapping[variable]" v-if="submission_type.submission_schema.properties[variable].type === 'table'"/> -->
           </td>
-          <td><span v-if="mapping[variable]">{{destSchema.properties[mapping[variable]].type}}</span></td>
-          <td><span v-if="mapping[variable]">{{destSchema.properties[mapping[variable]].title}}</span></td>
+          <td><span v-if="mapping[variable] && destSchema.properties[mapping[variable]]">{{destSchema.properties[mapping[variable]].type}}</span></td>
+          <td><span v-if="mapping[variable] && destSchema.properties[mapping[variable]]">{{destSchema.properties[mapping[variable]].title}}</span></td>
         </tr>
       </tbody>
     </q-markup-table>
@@ -65,6 +65,7 @@ export default {
       return this.getAvailableFields(schema, mapping, variableType).map(v => ({ id: v, label: schema.properties[v].title || v }))
     },
     selected () {
+      console.log('JSONTableMapper.selected', JSON.stringify(this.mapping))
       this.$emit('update:modelValue', this.mapping)
     },
     autoAssign () {
@@ -77,6 +78,12 @@ export default {
           this.selected(variable, variable)
         }
       })
+    }
+  },
+  watch: {
+    modelValue: function (val) {
+      console.log('JSONTableMapper model value changed ', val)
+      this.mapping = val
     }
   }
   // name: 'PageIndex',

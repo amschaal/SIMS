@@ -20,18 +20,22 @@ export default {
   },
   methods: {
     selected (val) {
+      this.model = val
       this.$emit('schema', val.schema)
       this.$emit('update:modelValue', this.emit_object ? val : val.id)
     }
   },
   mounted: function () {
+    console.log('mount TypeSelect', this.modelValue)
     this.$api
       .get('/api/model_types/')
       .then(response => {
         this.options = response.data.results
         const opt = this.options.find(opt => opt.id === this.model)
         if (opt && opt.schema) {
-          this.$emit('schema', opt.schema)
+          console.log('emit schema', opt.id, opt.schema)
+          // this.$emit('schema', opt.schema)
+          this.selected(opt)
         }
       })
   }
