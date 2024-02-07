@@ -18,9 +18,8 @@
              header-class="text-weight-bold"
             :label="scope.opt.label"
           >
-            <template v-for="child in scope.opt.children">
+            <template v-for="child in scope.opt.children" :key="child.label">
               <q-item
-                :key="child.label"
                 clickable
                 v-ripple
                 v-close-popup
@@ -28,7 +27,8 @@
                 :class="{ 'bg-light-blue-1': model === child.label }"
               >
                 <q-item-section>
-                  <q-item-label v-html="child.label" class="q-ml-md" ></q-item-label>
+                  <q-item-label class="q-ml-md" >{{ child.label }}</q-item-label>
+                  <!-- <q-item-label v-html="child.label" class="q-ml-md" ></q-item-label> -->
                 </q-item-section>
               </q-item>
             </template>
@@ -43,11 +43,13 @@
 </template>
 
 <script>
+import schema from '../schema'
 export default {
-  props: ['schema', 'value'],
+  props: ['schema', 'modelValue'],
+  emits: ['update:modelValue'],
   data () {
     return {
-      model: this.value && this.value.slice ? this.value.slice() : null
+      model: this.modelValue && this.modelValue.slice ? this.modelValue.slice() : null
     }
   },
   methods: {
@@ -56,7 +58,7 @@ export default {
       this.change()
     },
     change () {
-      this.$emit('input', this.model)
+      this.$emit('update:modelValue', this.model)
     },
     getLabel (scope) {
       console.log(scope)
@@ -66,7 +68,7 @@ export default {
       return scope.opt.children.some(c => c.label === this.model)
     },
     getOptions () {
-      var options = [], self = this
+      const options = []
       // {
       //   label: 'American cars',
       //   children: [
@@ -81,9 +83,9 @@ export default {
       //     }
       //   ]
       // },
-      this.$schema.getTableSchemas(this.schema).forEach(function (table) {
-        var tableOptions = { label: table.table }
-        tableOptions['children'] = self.$schema.getNonTables(table.schema).map(function (v) {
+      schema.getTableSchemas(this.schema).forEach(function (table) {
+        const tableOptions = { label: table.table }
+        tableOptions.children = schema.getNonTables(table.schema).map(function (v) {
           return { label: v }
         })
         options.push(tableOptions)

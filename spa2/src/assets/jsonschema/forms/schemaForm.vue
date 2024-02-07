@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-mutating-props -->
 <template>
   <div>
         <div v-if="schema" style="width:100%">
@@ -39,7 +40,7 @@
               </div>
               <div class="col-2">
                 <SchemaDialog v-if="variable.schema.type == 'table'" v-model="variable.schema.schema" :root-schema="rootSchema" :variable="variable"/>
-                <fieldoptions v-else style="display:inline-block" :schema="schema" v-model="schema.properties[variable.variable]" :variable="variable.variable" :type="type" :root-schema="rootSchema"/>
+                <FieldOptions v-else style="display:inline-block" :schema="schema" v-model="schema.properties[variable.variable]" :variable="variable.variable" :type="type" :root-schema="rootSchema"/>
                 <q-btn label="Delete" color="negative" @click="deleteVariable(variable.variable, 'submission_schema')"></q-btn>
               </div>
             </div>
@@ -50,14 +51,14 @@
         label="Add field"
         >
           <q-list>
-            <q-item v-close-popup @click.native="openModal" clickable>
+            <q-item v-close-popup v-on:click="openModal" clickable>
               <q-item-label>
                 <q-item-section label>New</q-item-section>
               </q-item-label>
               <q-item-section right icon="create" color="green" />
             </q-item>
             <q-separator/>
-            <q-item clickable v-for="v in variables" :key="v" v-close-popup @click.native="addExistingVariable(v)">
+            <q-item clickable v-for="v in variables" :key="v" v-close-popup v-on:click="addExistingVariable(v)">
               <q-item-label>
                 <q-item-section label>{{v}}</q-item-section>
               </q-item-label>
@@ -106,21 +107,20 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-
     </div>
 </template>
 
 <script>
-import '../forms/docs-input.styl'
+// import './docs-input.styl'
 // import axios from 'axios'
-import Fieldoptions from '../fieldoptions.vue'
+import FieldOptions from './FieldOptions.vue'
 // import Formatoptions from '../components/formatoptions.vue'
-import Vue from 'vue'
 // import Agschema from '../agschema.vue'
 export default {
   name: 'schemaForm',
+  emits: ['update:modelValue'],
   props: {
-    value: {
+    modelValue: {
       type: Object,
       default: function () { return {} }
     },
@@ -138,10 +138,10 @@ export default {
   },
   data () {
     return {
-      schema: this.value,
+      schema: this.modelValue,
       errors: {},
-      type_options: [{ 'label': 'Text', 'value': 'string' }, { 'label': 'Number', 'value': 'number' }, { 'label': 'True / False', 'value': 'boolean' }, { 'label': 'Table', 'value': 'table' }],
-      width_options: [{ 'label': '100%', 'value': 'col-md-12 col-sm-12 col-xs-auto' }, { 'label': '5/6', 'value': 'col-md-10 col-sm-12 col-xs-auto' }, { 'label': '3/4', 'value': 'col-md-9 col-sm-12 col-xs-auto' }, { 'label': '2/3', 'value': 'col-md-8 col-sm-12 col-xs-auto' }, { 'label': '1/2', 'value': 'col-md-6 col-sm-12 col-xs-auto' }, { 'label': '1/3', 'value': 'col-md-4 col-sm-6 col-xs-auto' }, { 'label': '1/4', 'value': 'col-md-3 col-sm-6 col-xs-auto' }, { 'label': '1/6', 'value': 'col-md-2 col-sm-4 col-xs-auto' }],
+      type_options: [{ label: 'Text', value: 'string' }, { label: 'Number', value: 'number' }, { label: 'True / False', value: 'boolean' }, { label: 'Table', value: 'table' }],
+      width_options: [{ label: '100%', value: 'col-md-12 col-sm-12 col-xs-auto' }, { label: '5/6', value: 'col-md-10 col-sm-12 col-xs-auto' }, { label: '3/4', value: 'col-md-9 col-sm-12 col-xs-auto' }, { label: '2/3', value: 'col-md-8 col-sm-12 col-xs-auto' }, { label: '1/2', value: 'col-md-6 col-sm-12 col-xs-auto' }, { label: '1/3', value: 'col-md-4 col-sm-6 col-xs-auto' }, { label: '1/4', value: 'col-md-3 col-sm-6 col-xs-auto' }, { label: '1/6', value: 'col-md-2 col-sm-4 col-xs-auto' }],
       new_variable: {},
       variable_modal: false,
       variable_re: /^[a-z0-9_]+$/
@@ -149,9 +149,9 @@ export default {
   },
   created: function () {
     console.log('created!!!', this.schema)
-    if (!this.options) {
-      Vue.set(this, 'options', {})
-    }
+    // if (!this.options) {
+    //   this.options = {}
+    // }
     this.setMissingProperties()
   },
   // beforeDestroy: function () {
@@ -159,23 +159,23 @@ export default {
   methods: {
     setMissingProperties () {
       if (!this.schema.properties) {
-        Vue.set(this.schema, 'properties', {})
+        this.schema.properties = {}
       }
       if (!this.schema.order) {
-        Vue.set(this.schema, 'order', [])
+        this.schema.order = []
       }
       if (!this.schema.layout) {
-        Vue.set(this.schema, 'layout', {})
+        this.schema.layout = {}
       }
       if (!this.schema.printing) {
-        Vue.set(this.schema, 'printing', [])
+        this.schema.printing = []
       }
       if (!this.schema.required) {
-        Vue.set(this.schema, 'required', [])
+        this.schema.required = []
       }
     },
     openModal () {
-      this.new_variable = {schema: this.schema}
+      this.new_variable = { schema: this.schema }
       this.variable_modal = true
     },
     variableError (name) {
@@ -186,7 +186,7 @@ export default {
         if (!name.match(this.variable_re)) {
           return 'Variables should only contain lowercase letters, numbers, and underscores'
         }
-        for (var n in this.schema.properties) {
+        for (const n in this.schema.properties) {
           if (n.toLowerCase() === name.toLowerCase()) {
             return 'That variable name exists'
           }
@@ -196,9 +196,9 @@ export default {
     },
     addVariable () {
       if (this.new_variable.type === 'table') {
-        Vue.set(this.schema.properties, this.new_variable.name, {type: this.new_variable.type, internal: false, unique: false, schema: { order: [], properties: {}}, printing: { hidden: false }})
+        this.schema.properties[this.new_variable.name] = { type: this.new_variable.type, internal: false, unique: false, schema: { order: [], properties: {} }, printing: { hidden: false } }
       } else {
-        Vue.set(this.schema.properties, this.new_variable.name, {type: this.new_variable.type, internal: false, unique: false})
+        this.schema.properties[this.new_variable.name] = { type: this.new_variable.type, internal: false, unique: false }
       }
 
       this.schema.order.push(this.new_variable.name)
@@ -210,21 +210,21 @@ export default {
       if (this.schema.properties[v]) {
         this.$q.notify(`Variable "${v}" already exists`)
       } else {
-        Vue.set(this.schema.properties, v, this.options.variables.properties[v])
+        this.schema.properties[v] = this.options.variables.properties[v]
         this.schema.order.push(v)
-        self.$q.notify({message: `Variable "${v}" added.`, type: 'positive'})
+        self.$q.notify({ message: `Variable "${v}" added.`, type: 'positive' })
       }
     },
     move (variable, displacement, schema) {
       console.log('moveUp', variable)
-      var index = this.schema.order.indexOf(variable)
+      const index = this.schema.order.indexOf(variable)
       this.schema.order.splice(index + displacement, 0, this.schema.order.splice(index, 1)[0])
     },
     setNested (path, value) {
-      var props = path.split('.')
+      const props = path.split('.')
       console.log('setNested', props, value)
-      var self = this
-      var last = this
+      const self = this
+      let last = this
 
       props.forEach(function (prop, index) {
         if (!last[prop] && index < props.length - 1) {
@@ -239,9 +239,9 @@ export default {
       })
     },
     getNested (path) {
-      var props = path.split('.')
+      const props = path.split('.')
       console.log('getNested', props)
-      var last = this
+      let last = this
       props.forEach(function (prop, index) {
         if (index < props.length - 1 && !last[prop]) {
           return undefined
@@ -252,7 +252,7 @@ export default {
       })
     },
     deleteVariable (variable, schema) {
-      var self = this
+      const self = this
       this.$q.dialog({
         title: 'Confirm variable deletion',
         message: 'Are you sure you want to delete the variable "' + variable + '"?',
@@ -260,18 +260,18 @@ export default {
         cancel: 'Cancel'
       }).onOk(() => {
         if (self.schema.order) {
-          var index = self.schema.order.indexOf(variable)
+          const index = self.schema.order.indexOf(variable)
           if (index >= 0) {
             self.schema.order.splice(index, 1)
           }
         }
-        Vue.delete(this.schema.properties, variable)
-        self.$q.notify({message: 'Variable "' + variable + '" deleted.', type: 'negative'})
+        delete this.schema.properties[variable]
+        self.$q.notify({ message: 'Variable "' + variable + '" deleted.', type: 'negative' })
       })
     },
     toggleRequired (variable) {
       console.log('toggleRequired', variable)
-      var index = this.schema.required.indexOf(variable.variable)
+      const index = this.schema.required.indexOf(variable.variable)
       if (variable.schema && variable.schema.internal && index >= 0) {
         this.schema.required.splice(index, 1)
       }
@@ -279,7 +279,7 @@ export default {
     fields_sorted_method () {
       console.log('field_sorted', this.schema)
       return this.schema.order.map(function (variable) {
-        return {'variable': variable, 'schema': this.schema.properties[variable]}
+        return { variable, schema: this.schema.properties[variable] }
       })
     }
 
@@ -317,13 +317,13 @@ export default {
       if (!this.schema || !this.schema.order) {
         return []
       }
-      var self = this
+      const self = this
       return this.schema.order.map(function (variable) {
-        return {'variable': variable, 'schema': self.schema.properties[variable]}
+        return { variable, schema: self.schema.properties[variable] }
       })
     },
     variables () {
-      var variables = this.options && this.options.variables && this.options.variables.order ? this.options.variables.order.slice() : []
+      const variables = this.options && this.options.variables && this.options.variables.order ? this.options.variables.order.slice() : []
       variables.sort()
       return variables
     }
@@ -348,11 +348,11 @@ export default {
     schema: {
       handler (newVal, oldVal) {
         // console.log('watch schema', this.schema)
-        this.$emit('input', this.schema)
+        this.$emit('update:modelValue', this.schema)
       },
       deep: true
     },
-    value: {
+    modelValue: {
       handler (newVal, oldVal) {
         this.schema = newVal
         this.setMissingProperties()
@@ -361,7 +361,7 @@ export default {
     }
   },
   components: {
-    Fieldoptions,
+    FieldOptions,
     SchemaDialog: () => import('./SchemaDialog.vue')
     // Formatoptions,
     // Agschema
@@ -372,3 +372,4 @@ export default {
 .inactive {
   color: red;
 }
+</style>
