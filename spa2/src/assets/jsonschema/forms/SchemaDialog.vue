@@ -25,7 +25,8 @@
               <div class="text-h6">Columns</div>
               <Agschema v-model="schema.examples" :schema="schema" :editable="true"  ref="examples" :allow-force-save="false"/>
               <q-btn :label="exampleLabel"  @click="openExamples"/>
-              <schemaForm v-model="schema" :root-schema="rootSchema" :options="{variables: $store.getters.lab.table_variables}" type="table"/>
+              <!-- <schemaForm v-model="schema" :root-schema="rootSchema" :options="{variables: $store.getters.lab.table_variables}" type="table"/> -->
+              <SchemaForm v-if="schema" v-model="schema" :root-schema="rootSchema" type="table"/>
             </q-tab-panel>
             <q-tab-panel name="options">
               <div class="text-h6">Options</div>
@@ -67,11 +68,16 @@
   </div>
 </template>
 
+<!-- <script setup>
+import schemaForm from './schemaForm.vue'
+</script> -->
 <script>
 import _ from 'lodash'
-
+// import schemaForm from './schemaForm.vue'
+import Agschema from '../agschema.vue'
 export default {
-  props: ['value', 'variable', 'rootSchema'],
+  props: ['modelValue', 'variable', 'rootSchema'],
+  emits: ['update:modelValue'],
   data () {
     return {
       opened: false,
@@ -158,10 +164,10 @@ export default {
     setup () {
       this.schema = _.cloneDeep(this.variable.schema.schema)
       if (!this.schema.examples) {
-        this.$set(this.schema, 'examples', [])
+        this.schema.examples = []
       }
       if (!this.schema.printing) {
-        this.$set(this.schema, 'printing', { hidden: false })
+        this.schema.printing = { hidden: false }
       }
     },
     open () {
@@ -169,7 +175,8 @@ export default {
       // this.data = _.cloneDeep(this.value)
       console.log('root', this.$root.validators)
 
-      console.log('openModal', this.value, this.data)
+      console.log('openModal', this.modelValue, this.data)
+      // console.log('SchemaDialog $refs.modal', this.$refs.modal.)
       this.$refs.modal.show()
       // .then(() => {
       //
@@ -191,7 +198,7 @@ export default {
       // this.data = this.hst.table.getSourceData() // this.local_data
       // this.value = this.options
       // var val = _.cloneDeep(this.schema)
-      this.$emit('input', this.schema)
+      this.$emit('update:modelValue', this.schema)
       this.$refs.modal.hide()
       // this.data
     },
@@ -205,8 +212,10 @@ export default {
     }
   },
   components: {
-    schemaForm: () => import('./schemaForm.vue'),
-    Agschema: () => import('../agschema.vue')
+    // schemaForm,
+    Agschema
+    // schemaForm: () => import('./schemaForm.vue')
+    // Agschema: () => import('../agschema.vue')
   }
 }
 

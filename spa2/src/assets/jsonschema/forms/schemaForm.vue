@@ -39,7 +39,7 @@
 
               </div>
               <div class="col-2">
-                <SchemaDialog v-if="variable.schema.type == 'table'" v-model="variable.schema.schema" :root-schema="rootSchema" :variable="variable"/>
+                <SchemaDialog v-if="variable.schema.type === 'table'" v-model="variable.schema.schema" :root-schema="rootSchema" :variable="variable"/>
                 <FieldOptions v-else style="display:inline-block" :schema="schema" v-model="schema.properties[variable.variable]" :variable="variable.variable" :type="type" :root-schema="rootSchema"/>
                 <q-btn label="Delete" color="negative" @click="deleteVariable(variable.variable, 'submission_schema')"></q-btn>
               </div>
@@ -114,6 +114,7 @@
 // import './docs-input.styl'
 // import axios from 'axios'
 import FieldOptions from './FieldOptions.vue'
+import SchemaDialog from './SchemaDialog.vue'
 // import Formatoptions from '../components/formatoptions.vue'
 // import Agschema from '../agschema.vue'
 export default {
@@ -362,7 +363,8 @@ export default {
   },
   components: {
     FieldOptions,
-    SchemaDialog: () => import('./SchemaDialog.vue')
+    SchemaDialog
+    // SchemaDialog: () => import('./SchemaDialog.vue')
     // Formatoptions,
     // Agschema
   }
