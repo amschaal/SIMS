@@ -19,7 +19,15 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/MainLayout.vue') },
+      { path: '', component: () => import('layouts/MainLayout.vue') },
+      // { path: '', component: () => import('pages/IndexPage.vue') },
+      { name: 'submissions', path: 'submissions', component: () => import('pages/SubmissionsPage.vue') },
+      {
+        path: '/submissions/:id/',
+        component: () => import('pages/SubmissionPage.vue'),
+        name: 'submission',
+        props: true
+      },
       { name: 'projects', path: 'projects', component: () => import('pages/ProjectsPage.vue') },
       {
         path: '/projects/:id/',
@@ -60,6 +68,14 @@ const routes = [
         path: '/machines/:id/',
         component: () => import('pages/MachinePage.vue'),
         name: 'machine',
+        props: true
+      },
+      { name: 'map_types', path: 'map_types', component: () => import('pages/MapTypesPage.vue') },
+      { name: 'model_types', path: 'model_types', component: () => import('pages/ModelTypesPage.vue') },
+      {
+        path: '/model_types/:id/',
+        component: () => import('pages/ModelTypePage.vue'),
+        name: 'model_type',
         props: true
       }
     ]
