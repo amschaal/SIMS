@@ -39,7 +39,11 @@ export default {
       this.close()
     },
     submit () {
-      this.$refs.form.$refs.form.submit(response => this.$emit('update:modelValue', response.data))
+      if (this.$refs.form && this.$refs.form.submit) {
+        this.$refs.form.submit(response => this.$emit('update:modelValue', response.data))
+      } else {
+        this.$refs.form.$refs.form.submit(response => this.$emit('update:modelValue', response.data))
+      }
     }
   },
   // mounted: function () {
