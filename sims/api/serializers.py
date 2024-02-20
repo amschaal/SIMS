@@ -39,7 +39,7 @@ class SubmissionSerializer(serializers.ModelSerializer):
         model = Submission
         exclude = []
 
-class ProjectSerializer(serializers.ModelSerializer):
+class ProjectSerializer(DjsonTypeModelSerializer):
     submission_url = serializers.SerializerMethodField()
     submission = SubmissionSerializer() #  serializers.SerializerMethodField()
     # num_samples = serializers.SerializerMethodField()
@@ -90,7 +90,7 @@ class RunPoolSerializer(serializers.ModelSerializer):
         model = RunPool
         exclude = []
 
-class SampleSerializer(serializers.ModelSerializer):
+class SampleSerializer(DjsonTypeModelSerializer):
     class Meta:
         model = Sample
         exclude = []

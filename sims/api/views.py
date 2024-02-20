@@ -12,6 +12,7 @@ from rest_framework.exceptions import APIException
 from django.conf import settings
 from sims.submission import SubmissionImporter
 from tools.barcodes import get_all_conflicts
+from . import mixins
 
 class SubmissionViewSet(viewsets.ModelViewSet):
     serializer_class = SubmissionSerializer
@@ -82,7 +83,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     #     return Response({'project': ProjectSerializer(project).data, 'new_pools': PoolSerializer(pools, many=True).data, 'new_samples': SampleSerializer(samples, many=True).data})
     #     # return Response({'samples':SampleSerializer(samples, many=True).data})
 
-class SampleViewSet(viewsets.ModelViewSet):
+class SampleViewSet(viewsets.ModelViewSet, mixins.JSONSchemaMixin,):
     filterset_fields = {
         'name':['icontains','exact'],
         'id':['icontains','exact'],
@@ -96,7 +97,7 @@ class SampleViewSet(viewsets.ModelViewSet):
     serializer_class = SampleSerializer
     queryset = Sample.objects.distinct()
 
-class LibraryViewSet(viewsets.ModelViewSet):
+class LibraryViewSet(viewsets.ModelViewSet, mixins.JSONSchemaMixin):
     filterset_fields = {
         'id':['icontains','exact'],
         'name':['icontains','exact'],
@@ -149,7 +150,7 @@ class LibraryViewSet(viewsets.ModelViewSet):
         conflicts = get_all_conflicts(libraries, min_distance=min_distance)
         return Response({'conflicts': conflicts, 'errors': errors})
 
-class PoolViewSet(viewsets.ModelViewSet):
+class PoolViewSet(viewsets.ModelViewSet, mixins.JSONSchemaMixin):
     filterset_fields = {
         'name':['icontains','exact'],
         'samples__id':['exact'],
@@ -235,7 +236,7 @@ class AdapterViewSet(viewsets.ReadOnlyModelViewSet):
 #         return viewsets.ModelViewSet.get_serializer_class(self)
 
 
-class RunViewSet(viewsets.ModelViewSet):
+class RunViewSet(mixins.JSONSchemaMixin, viewsets.ModelViewSet):
     action_serializers = {
         'retrieve': RunDetailSerializer,
         'list': RunSerializer,
@@ -306,9 +307,4 @@ class SubmissionTypeViewSet(viewsets.ReadOnlyModelViewSet):
         st.mapping = mapping
         st.save()
         return Response(mapping)
-# class SubmissionTypeViewSet(viewsets.ViewSet):
-#     @action(detail=False, methods=['get'])
-#     def get_submission_types(self, request):
-#         data = get_submission_types()
-#         return Response(data)
-#     # @action(detail)
+
