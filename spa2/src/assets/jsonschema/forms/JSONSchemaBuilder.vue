@@ -39,7 +39,7 @@
 
               </div>
               <div class="col-2">
-                <JSONSchemaBuilderDialog v-if="variable.schema.type === 'table'" v-model="variable.schema.schema" :root-schema="rootSchema" :variable="variable"/>
+                <JSONSchemaBuilderDialog v-if="variable.schema.type === 'array'" v-model="variable.schema.items" :root-schema="rootSchema" :variable="variable"/>
                 <FieldOptions v-else style="display:inline-block" :schema="schema" v-model="schema.properties[variable.variable]" :variable="variable.variable" :type="type" :root-schema="rootSchema"/>
                 <q-btn label="Delete" color="negative" @click="deleteVariable(variable.variable, 'submission_schema')"></q-btn>
               </div>
@@ -197,7 +197,22 @@ export default {
     },
     addVariable () {
       if (this.new_variable.type === 'table') {
-        this.schema.properties[this.new_variable.name] = { type: this.new_variable.type, internal: false, unique: false, schema: { order: [], properties: {} }, printing: { hidden: false } }
+      //   {
+      //   "type": "array",
+      //   "title": "创建日期",
+      //   "items": {
+      //     "type": "object",
+      //     "title": "",
+      //     "properties": {
+      //       "field_2_1": {
+      //         "type": "string",
+      //         "title": ""
+      //       }
+      //     }
+      //   }
+      // }
+        this.schema.properties[this.new_variable.name] = { type: 'array', internal: false, unique: false, items: { type: 'object', order: [], properties: {} }, printing: { hidden: false } }
+        // this.schema.properties[this.new_variable.name] = { type: this.new_variable.type, internal: false, unique: false, schema: { order: [], properties: {} }, printing: { hidden: false } }
       } else {
         this.schema.properties[this.new_variable.name] = { type: this.new_variable.type, internal: false, unique: false }
       }

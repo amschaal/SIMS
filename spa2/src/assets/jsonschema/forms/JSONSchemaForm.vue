@@ -1,7 +1,8 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <template>
   <span>
-    customFields: {{ fields }} schema: {{ schema }}
+    <!-- customFields: {{ fields }} -->
+    <!-- schema: {{ schema }} -->
     <!-- Fields: {{ fields }} -->
     <!-- Data: {{ data }}
     Value: {{ value }}
@@ -10,8 +11,8 @@
       <!-- <q-editor ng-model="foo" v-if="false"/> -->
       <div v-for="v in fields" :key="v.variable" class="field q-mb-md q-pb-lg q-pl-sm q-pr-sm" v-bind:class="colWidth(v.variable)">
         <div >
-          <!-- variable:{{ v.variable }}
-          {{ widgetClass(v).component }} -->
+          variable:{{ v.variable }}
+          {{ widgetClass(v).component }}
           <!-- v-if="$store.getters.isStaff || !v.schema.internal" -->
           <fieldset v-if="v.schema.type=='object'">
             <legend>{{ v.schema.title ? v.schema.title : v.variable }}</legend>
@@ -30,7 +31,7 @@
             :warning="sample_data_warning"
             warning-label="Samples contain warnings" -->
             <q-field
-              v-if="v.schema.schema && v.schema.schema.order && v.schema.schema.order.length"
+              v-if="v.schema.items && v.schema.items.order && v.schema.items.order.length"
               :hint="tableHint(v)"
               class="q-pb-xl q-mb-xl"
               borderless
@@ -45,7 +46,7 @@
                 <!-- :editable="modify && ($store.getters.isStaff || !v.schema.internal)" -->
                 <AgSchema
                   v-model="data[v.variable]"
-                  :schema="v.schema.schema"
+                  :schema="v.schema.items"
                   :editable="modify"
                   :allow-examples="true"
                   :allow-force-save="true"
@@ -200,8 +201,8 @@ export default {
       return (v.schema.title ? v.schema.title : v.variable) + ' (' + (this.value[v.variable] && this.value[v.variable].length ? this.value[v.variable].length : 0) + ')'
     },
     tableHint (v) {
-      if (v.schema.schema.description) {
-        return v.schema.schema.description
+      if (v.schema.items.description) {
+        return v.schema.items.description
       } else {
         return (v.schema.title ? v.schema.title : v.variable) + ': Click on the button above to open the table'
       }
@@ -213,10 +214,8 @@ export default {
       if (!this.schema) {
         return []
       }
-      alert('hi')
       if (this.schema.order || this.schema.properties) {
         const order = this.schema.order || Object.getOwnPropertyNames(this.schema.properties)
-        alert(order)
         return order.map(variable => {
           return { variable, schema: this.schema.properties[variable] }
         })

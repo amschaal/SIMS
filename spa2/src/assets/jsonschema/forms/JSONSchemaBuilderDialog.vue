@@ -162,7 +162,7 @@ export default {
   },
   methods: {
     setup () {
-      this.schema = _.cloneDeep(this.variable.schema.schema)
+      this.schema = _.cloneDeep(this.variable.schema.items)
       if (!this.schema.examples) {
         this.schema.examples = []
       }
