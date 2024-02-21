@@ -1,6 +1,8 @@
 <template>
   <q-page class="q-pa-sm q-gutter-sm">
     JSON Schema Form Test Page
+    <JSONSchemaBuilder v-model="builder_schema" :root-schema="builder_schema" :options="{showWidth: true}" type="submission"/>
+    <q-btn @click="updateSchemaFromBuilder" label="Update"/>
     <q-input
       outlined
       v-model="schema_string"
@@ -27,12 +29,14 @@
 
 <script>
 import JSONSchemaForm from 'src/assets/jsonschema/forms/JSONSchemaForm.vue'
+import _ from 'lodash'
 export default {
   props: [],
   data () {
     return {
       schema_string: '',
-      schema: null,
+      builder_schema: {},
+      schema: {},
       data: {},
       errors: {},
       warnings: {}
@@ -43,6 +47,10 @@ export default {
   methods: {
     updateSchema () {
       this.schema = JSON.parse(this.schema_string)
+    },
+    updateSchemaFromBuilder () {
+      this.schema = _.cloneDeep(this.builder_schema)
+      this.schema_string = JSON.stringify(this.builder_schema)
     }
   },
   components: {
