@@ -10,6 +10,7 @@
     <!-- <q-input v-model="data.foo"/> -->
       <!-- <q-editor ng-model="foo" v-if="false"/> -->
       <div v-for="v in fields" :key="v.variable" class="field q-mb-md q-pb-lg q-pl-sm q-pr-sm" v-bind:class="colWidth(v.variable)">
+        <slot :name="`field_${v.variable}`" v-bind="{v, data, form:this }">
         <div >
           variable:{{ v.variable }}
           {{ widgetClass(v).component }}
@@ -116,6 +117,7 @@
           </component>
           </span>
         </div>
+        </slot>
     </div>
   </span>
 

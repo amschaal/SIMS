@@ -19,7 +19,14 @@
                   :modify="true"
                   :warnings="warnings"
                   :errors="errors"
-                  />
+                  >
+            <template #field_test="{ v, data, form }">
+              <div>
+                <q-input type="textarea" v-model="data[v.variable]" label="OVERRIDDEN!!"/>
+                {{ form.colWidth(v) }} <!-- proof of concept that you can access form's functions, data, etc -->
+              </div>
+            </template>
+    </JSONSchemaForm>
     schema: {{ schema }}
   </q-page>
 </template>
