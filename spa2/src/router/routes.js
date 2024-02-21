@@ -77,7 +77,8 @@ const routes = [
         component: () => import('pages/ModelTypePage.vue'),
         name: 'model_type',
         props: true
-      }
+      },
+      { name: 'json_schema_test', path: 'json_schema_test', component: () => import('pages/JSONSchemaFormTest.vue') }
     ]
   },
   // Always leave this as last one,
