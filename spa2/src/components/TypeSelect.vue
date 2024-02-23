@@ -22,7 +22,7 @@ export default {
     selected (val) {
       this.model = val
       this.$emit('schema', val.schema)
-      this.$emit('update:modelValue', this.emit_object ? val : val.id)
+      this.$emit('update:modelValue', this.emit_object !== undefined ? val : val.id)
     }
   },
   mounted: function () {
