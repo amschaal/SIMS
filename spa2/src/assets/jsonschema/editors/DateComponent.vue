@@ -18,6 +18,7 @@
 
 export default {
   props: ['modelValue'],
+  emits: ['update:modelValue'],
   data () {
     return {
       date: this.modelValue
@@ -30,7 +31,7 @@ export default {
     onInput () {
       console.log('date', this.date)
       this.$refs.qDateProxy.hide()
-      this.$emit('update:model-value', this.date)
+      this.$emit('update:modelValue', this.date)
       // this.close()
     },
     close () {
