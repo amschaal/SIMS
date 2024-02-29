@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from djson.serializers import DjsonTypeModelSerializer, JSONSchemaField, JsonSchemaValidator
+from djson.serializers import DjsonTypeModelSerializer
+# from djson.fields import JSONSchemaField
+# from djson.validators import JsonSchemaValidator
 from djson.tests import TEST_SCHEMA
 from sims.models import Submission, Project, Machine, Run, Sample, Adapter, Pool, RunPool,\
     AdapterDB, SubmissionType
@@ -28,7 +30,8 @@ class ModelRelatedField(serializers.RelatedField):
             kwargs = {self.pk:data}
             return self.model.objects.get(**kwargs)
         if data.get(self.pk,None):
-            return self.model.objects.get(id=data['id'])
+            kwargs = {self.pk:data.get(self.pk)}
+            return self.model.objects.get(**kwargs)
         return None
     def to_representation(self, value):
         return self.serializer(value).data
@@ -52,7 +55,7 @@ class ProjectSerializer(DjsonTypeModelSerializer):
     class Meta:
         model = Project
         exclude = []
-#         read_only_fields = ('id',)
+        read_only_fields = ('schema', 'submission_data')
 
 def get_schema_func(validator):
     # raise Exception('get_schema_func', validator.serializer.initial_data)
@@ -66,6 +69,7 @@ class MachineSerializer(DjsonTypeModelSerializer):
     class Meta:
         model = Machine
         exclude = []
+        read_only_fields = ('schema',)
 
 class RunSerializer(DjsonTypeModelSerializer):
 # class RunSerializer(serializers.ModelSerializer):
@@ -75,12 +79,14 @@ class RunSerializer(DjsonTypeModelSerializer):
     class Meta:
         model = Run
         exclude = []
+        read_only_fields = ('schema',)
 
 class BasePoolSerializer(DjsonTypeModelSerializer):
 #     libraries = LibrarySerializer(many=True, read_only=True)
     class Meta:
         model = Pool
         exclude = []
+        read_only_fields = ('schema', 'submission_data')
 
 
 
@@ -94,6 +100,7 @@ class SampleSerializer(DjsonTypeModelSerializer):
     class Meta:
         model = Sample
         exclude = []
+        read_only_fields = ('schema', 'submission_data')
 
 class LibrarySerializer(SampleSerializer):
     class Meta:
@@ -138,6 +145,7 @@ class RunDetailSerializer(DjsonTypeModelSerializer):
     class Meta:
         model = Run
         exclude = []
+        read_only_fields = ('schema',)
 
 class AdapterDBSerializer(serializers.ModelSerializer):
     class Meta:

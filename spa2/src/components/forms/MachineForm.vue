@@ -14,6 +14,10 @@
         :error-message="errors.type"
         :error="has_error.type"
         /> -->
+      <q-input outlined v-model="model.id" label="ID"
+        :error-message="_errors.id"
+        :error="has_error.id"
+        />
       <q-input outlined v-model="model.name" label="Name"
         :error-message="_errors.name"
         :error="has_error.name"
