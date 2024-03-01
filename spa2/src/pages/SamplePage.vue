@@ -13,6 +13,14 @@
           <q-tab-panel name="details">
             <Sample :instance="sample" v-if="sample.id"/>
             <SubmissionData :data="sample.submission_data"/>
+            <JSONModelTypeForm v-model="sample" :schema="jsonschema" api-method="put" :api-url="`/api/samples/${this.id}/`" v-if="sample && jsonschema">
+              <!-- <template #field_id="{ v, data, form }">
+              <div>
+                <q-input type="textarea" v-model="data[v.variable]" label="OVERRIDDEN!!"/>
+              </div>
+            </template> -->
+            </JSONModelTypeForm>
+            jsonschema: {{ jsonschema }}
           </q-tab-panel>
           <q-tab-panel name="samples">
             <SamplesTable :filters="`samples__id=${id}`"/>
@@ -33,6 +41,7 @@ import SamplesTable from '../components/tables/SamplesTable.vue'
 import DeleteButton from '../components/DeleteButton.vue'
 import RunsTable from 'src/components/tables/RunsTable.vue'
 import SubmissionData from 'src/components/details/SubmissionData.vue'
+import JSONModelTypeForm from 'src/components/forms/JSONModelTypeForm.vue'
 
 export default {
   name: 'SamplePage',
@@ -40,16 +49,21 @@ export default {
   data () {
     return {
       sample: {},
+      jsonschema: null,
       tab: 'details'
     }
   },
   mounted: function () {
-    const self = this
     this.$api
-      .get(`/api/samples/${self.id}/`)
-      .then(function (response) {
+      .get(`/api/samples/${this.id}/`)
+      .then(response => {
         console.log('response', response)
-        self.sample = response.data
+        this.sample = response.data
+      })
+    this.$api
+      .get(`/api/samples/${this.id}/jsonschema`)
+      .then(response => {
+        this.jsonschema = response.data
       })
   },
   components: {
@@ -57,7 +71,8 @@ export default {
     DeleteButton,
     Sample,
     RunsTable,
-    SubmissionData
+    SubmissionData,
+    JSONModelTypeForm
   }
 }
 </script>
