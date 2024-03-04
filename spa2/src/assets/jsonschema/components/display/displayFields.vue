@@ -43,8 +43,8 @@
 </template>
 
 <script>
-import widgetFactory from './forms/widgets.js'
-import AgSchema from './agschema.vue'
+import widgetFactory from '../../widgets.js'
+import AgSchema from '../aggrid/agschema.vue'
 // import _ from 'lodash'
 
 export default {

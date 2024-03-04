@@ -279,7 +279,8 @@ export default {
     },
     fields_sorted_method () {
       console.log('field_sorted', this.schema)
-      return this.schema.order.map(function (variable) {
+      const order = this.schema.order || Object.getOwnPropertyNames(this.schema.properties)
+      return order.map(function (variable) {
         return { variable, schema: this.schema.properties[variable] }
       })
     }
@@ -315,11 +316,12 @@ export default {
       //   sorted.push({'variable': variable, 'schema': this.schema.properties[variable]})
       // }
       // return this.schema.order.length
-      if (!this.schema || !this.schema.order) {
+      if (!this.schema || (!this.schema.order && !this.schema.properties)) {
         return []
       }
+      const order = this.schema.order || Object.getOwnPropertyNames(this.schema.properties)
       const self = this
-      return this.schema.order.map(function (variable) {
+      return order.map(function (variable) {
         return { variable, schema: self.schema.properties[variable] }
       })
     },

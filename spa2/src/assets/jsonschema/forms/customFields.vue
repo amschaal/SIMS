@@ -2,9 +2,9 @@
 <template>
   <span>
     <!-- Fields: {{ fields }} -->
-    Data: {{ data }}
+    <!-- Data: {{ data }}
     Value: {{ value }}
-    Errors: {{ errors }}
+    Errors: {{ errors }} -->
     <!-- <q-input v-model="data.foo"/> -->
       <!-- <q-editor ng-model="foo" v-if="false"/> -->
       <div v-for="v in fields" :key="v.variable" class="field q-mb-md q-pb-lg q-pl-sm q-pr-sm" v-bind:class="colWidth(v.variable)">
@@ -109,9 +109,9 @@
 </template>
 
 <script>
-import widgetFactory from '../forms/widgets.js'
+import widgetFactory from '../widgets.js'
 import { QSelect, QOptionGroup, QCheckbox, QInput } from 'quasar'
-import AgSchema from '../agschema.vue'
+import AgSchema from '../components/aggrid/agschema.vue'
 // import _ from 'lodash'
 
 export default {

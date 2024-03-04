@@ -10,7 +10,7 @@ import GridComponent from './editors/GridComponent.vue'
 // import AdapterAutocompleteComponent from './editors/AdapterAutocompleteComponent.vue'
 // import AdapterSelectComponent from './editors/AdapterSelectComponent.vue'
 
-import { Widget, WidgetFactory } from '../forms/Widget.js'
+import { Widget, WidgetFactory } from '../../Widget.js'
 // import {MultiSelectWidget} from '../forms/widgets.js'
 
 // import {SIMS} from '../../settings.js'

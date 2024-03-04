@@ -11,7 +11,7 @@
     </div>
     <div class="row" v-if="run.data && run.schema">
       <fieldset class="row">
-        <legend>{{ run.type }} fields</legend>
+        <legend>{{ run.type.name }} fields</legend>
         <DisplayFields v-model="run.data" :schema="run.schema" v-if="run.schema && run.data"/>
       </fieldset>
     </div>
@@ -48,7 +48,7 @@
 </style>
 
 <script>
-import DisplayFields from 'src/assets/jsonschema/displayFields.vue'
+import DisplayFields from 'src/assets/jsonschema/components/display/displayFields.vue'
 import _ from 'lodash'
 export default {
   name: 'RunDetail',
