@@ -27,7 +27,8 @@
               </div>
             </template>
     </JSONSchemaForm>
-    schema: {{ schema }}
+    <div>schema: {{ schema }}</div>
+    <div>Data: {{ data }}</div>
   </q-page>
 </template>
 
@@ -35,7 +36,7 @@
 </style>
 
 <script>
-import JSONSchemaForm from 'src/assets/jsonschema/forms/JSONSchemaForm.vue'
+import JSONSchemaForm from 'src/assets/jsonschema/components/forms/JSONSchemaForm.vue'
 import _ from 'lodash'
 export default {
   props: [],

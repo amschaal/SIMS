@@ -1,5 +1,6 @@
 <template>
   <div class="q-pa-sm q-gutter-sm">
+    (JSONModelTypeForm)
     <!-- MODEL: {{ model }}
     DATA: {{ data }} -->
     <slot name="content" v-bind:errors="error_messages" v-bind:has_error="has_error" v-bind:_errors="errors" v-bind:model="data">
@@ -20,8 +21,8 @@
         <slot :name="name" v-bind="slotData || {}" />
       </template>
     </JSONSchemaForm>
-    jsonschema: {{ jsonschema }}
-    data: {{ data }}
+    <!-- jsonschema: {{ jsonschema }}
+    data: {{ data }} -->
     <slot name="buttons" v-bind:submit="submit">
       <q-btn label="Submit" color="primary" @click="submit" v-if="!hideButtons"/>
     </slot>
@@ -30,7 +31,7 @@
 <script>
 import _ from 'lodash'
 import TypeSelect from '../TypeSelect.vue'
-import JSONSchemaForm from 'src/assets/jsonschema/forms/JSONSchemaForm.vue'
+import JSONSchemaForm from 'src/assets/jsonschema/components/forms/JSONSchemaForm.vue'
 // import CustomFields from 'src/assets/jsonschema/forms/customFields.vue'
 
 export default {
@@ -40,7 +41,25 @@ export default {
     onSuccess: Function,
     onError: Function,
     hideButtons: Boolean,
-    schema: { type: Object, default () { return {} } },
+    // schema: { type: Object, default () { return {} } },
+    schema: {
+      type: Object,
+      default () {
+        return {
+          type: 'object',
+          properties: {
+            type: {
+              type: 'string',
+              title: 'Type'
+            },
+            data: {
+              type: 'object',
+              title: 'Data'
+            }
+          }
+        }
+      }
+    },
     modelValue: { type: Object, default () { return {} } },
     exclude: { type: Array, default () { return [] } }
   },

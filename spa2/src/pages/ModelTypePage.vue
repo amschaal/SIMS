@@ -7,7 +7,7 @@
         :error="has_error.name"
         />
     <q-input outlined v-model="type.description" label="Description" />
-    <SchemaForm v-model="type.schema" :root-schema="type.schema" :options="{variables: options, showWidth: true}" type="submission"/>
+    <JSONSchemaBuilder v-model="type.schema" :root-schema="type.schema" :options="{variables: options, showWidth: true}" type="submission"/>
     <q-btn label="Update" @click="submit" color="primary"/>
     schema: {{ type.schema }}
   </div>

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { Widget, WidgetFactory } from './Widget.js'
-import DateComponent from '../editors/DateComponent.vue'
-import TextAreaComponent from '../editors/TextAreaComponent.vue'
+import DateComponent from './editors/DateComponent.vue'
+import TextAreaComponent from './editors/TextAreaComponent.vue'
 
 class TextWidget extends Widget {
   static type = 'string'

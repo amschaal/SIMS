@@ -1,35 +1,46 @@
 <template>
   <div class="q-pa-sm q-gutter-sm">
+    (JSONForm)
     <!-- MODEL: {{ model }}
     DATA: {{ data }} -->
-    <TypeSelect v-model="data.type" @schema="schema => changeSchema(schema)" :error_messages="error_messages" :has_error="has_error" v-if="data"/>
+    <TypeSelect v-model="data.type" @schema="schema => changeSchema(schema)" :error_messages="error_messages" :has_error="has_error" v-if="data" :disable="existing_schema !== null" :read_only="existing_schema !== null"/>
     <slot name="content" v-bind:errors="error_messages" v-bind:has_error="has_error" v-bind:_errors="errors" v-bind:model="data">
       Override me
       Data: {{model}}
       Errors: {{errors}}
     </slot>
-    <fieldset>
+    <!-- <fieldset>
       <legend>Custom fields</legend>
       <CustomFields v-model="data.data" :schema="schema" ref="custom_fields" v-if="schema && data.data" :modify="true" :errors="errors.data" :warnings="{}"/>
-    </fieldset>
+    </fieldset> -->
+    <JSONSchemaForm v-model="data.data" :schema="schema" ref="custom_fields" v-if="schema && data.data" :modify="true" :errors="errors.data" :warnings="{}">
+      <template v-for="(_, name) in $slots" #[name]="slotData">
+        <slot :name="name" v-bind="slotData || {}" />
+      </template>
+    </JSONSchemaForm>
     <slot name="buttons" v-bind:submit="submit">
       <q-btn label="Submit" color="primary" @click="submit" v-if="!hideButtons"/>
     </slot>
+    {{ errors }}
   </div>
 </template>
 <script>
 import _ from 'lodash'
 import TypeSelect from '../TypeSelect.vue'
-import CustomFields from 'src/assets/jsonschema/forms/customFields.vue'
+import JSONSchemaForm from 'src/assets/jsonschema/components/forms/JSONSchemaForm.vue'
+// import CustomFields from 'src/assets/jsonschema/forms/customFields.vue'
 
 export default {
   props: {
     apiUrl: String, apiMethod: String, onSuccess: Function, onError: Function, hideButtons: Boolean, model: { type: Object, default () { return {} } }, modelValue: { type: Object, default () { return {} } }
   },
+  emits: ['update:modelValue'],
   data () {
     return {
       errors: {},
-      schema: {},
+      schema: null,
+      existing_schema: null,
+      lock_type: false,
       // model: { data: { foo: 'baz' }, type: 'machine_illumina_hiseq' }
       data: this.modelValue// _.cloneDeep(this.modelValue)
     }
@@ -77,11 +88,20 @@ export default {
     if (this.data && !this.data.data) {
       this.data.data = {}
     }
-    console.log('JSONForm', this)
+    if (this.data) {
+      if (this.data.schema) {
+        this.existing_schema = this.data.schema
+        this.changeSchema(this.data.schema)
+      } else if (this.data.type && this.data.type.schema) {
+        this.changeSchema(this.data.type.schema)
+      }
+    }
+    console.log('JSONForm', this.data, this)
   },
   components: {
     TypeSelect,
-    CustomFields
+    JSONSchemaForm
+    // CustomFields
     // BaseDialog
   }
 }

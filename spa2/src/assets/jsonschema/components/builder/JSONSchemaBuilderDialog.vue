@@ -74,7 +74,7 @@ import schemaForm from './schemaForm.vue'
 <script>
 import _ from 'lodash'
 // import schemaForm from './schemaForm.vue'
-import Agschema from '../agschema.vue'
+import Agschema from '../aggrid/agschema.vue'
 export default {
   props: ['modelValue', 'variable', 'rootSchema'],
   emits: ['update:modelValue'],

@@ -141,7 +141,7 @@
 
 <script>
 import _ from 'lodash'
-import submissionWidgetFactory from './widgets.js'
+import submissionWidgetFactory from '../../widgets.js'
 import tableWidgetFactory from '../aggrid/widgets.js'
 import OptionsModal from './OptionsModal.vue'
 import ForeignKey from './ForeignKey.vue'

@@ -70,7 +70,7 @@ export default {
     console.log('destroyed GridComponent')
   },
   components: {
-    Agschema: () => import('../../agschema.vue')
+    Agschema: () => import('../agschema.vue')
   }
 }
 

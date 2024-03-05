@@ -40,7 +40,7 @@
 </style>
 
 <script>
-import DisplayFields from 'src/assets/jsonschema/displayFields.vue'
+import DisplayFields from 'src/assets/jsonschema/components/display/displayFields.vue'
 export default {
   name: 'PoolDetail',
   props: ['id', 'instance'],

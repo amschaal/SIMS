@@ -4,16 +4,16 @@
     <!-- customFields: {{ fields }} -->
     <!-- schema: {{ schema }} -->
     <!-- Fields: {{ fields }} -->
-    <!-- Data: {{ data }}
+    Data: {{ data }}
     Value: {{ value }}
-    Errors: {{ errors }} -->
+    Errors: {{ errors }}
     <!-- <q-input v-model="data.foo"/> -->
       <!-- <q-editor ng-model="foo" v-if="false"/> -->
       <div v-for="v in fields" :key="v.variable" class="field q-mb-md q-pb-lg q-pl-sm q-pr-sm" v-bind:class="colWidth(v.variable)">
         <slot :name="`field_${v.variable}`" v-bind="{v, data, form:this }">
         <div >
-          variable:{{ v.variable }}
-          {{ widgetClass(v).component }}
+          <!-- variable:{{ v.variable }}
+          {{ widgetClass(v).component }} -->
           <!-- v-if="$store.getters.isStaff || !v.schema.internal" -->
           <fieldset v-if="v.schema.type=='object'">
             <legend>{{ v.schema.title ? v.schema.title : v.variable }}</legend>
@@ -124,9 +124,9 @@
 </template>
 
 <script>
-import widgetFactory from '../forms/widgets.js'
+import widgetFactory from '../../widgets.js'
 import { QSelect, QOptionGroup, QCheckbox, QInput } from 'quasar'
-import AgSchema from '../agschema.vue'
+import AgSchema from '../aggrid/agschema.vue'
 // import _ from 'lodash'
 
 export default {
@@ -145,7 +145,7 @@ export default {
   methods: {
     widgetClass (v) {
       const widget = v.schema.widget ? v.schema.widget : {}
-      console.log('widgetClass', v, widget)
+      // console.log('widgetClass', v, widget)
       return widgetFactory.getWidget(widget.type, v.schema.type, v.schema)
     },
     widget (v) {
@@ -212,7 +212,7 @@ export default {
   },
   computed: {
     fields () {
-      console.log('fields', this.schema)
+      console.log('json schema fields', this.schema)
       if (!this.schema) {
         return []
       }
