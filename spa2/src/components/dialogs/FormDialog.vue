@@ -1,56 +1,75 @@
 <template>
   <BaseDialog ref="dialog" :title="title">
+    <template v-slot:title>
+      {{ title }}
+    </template>
     <template v-slot:content>
-      <slot name="content" v-bind:errors="error_messages" v-bind:has_error="has_error" v-bind:data="data">
-        Override me
-        Data: {{data}}
-        Errors: {{errors}}
+      <!-- modelValue: {{ modelValue }} -->
+      <slot name="form" v-bind="{ data: data, dialog: this, errors }">
+        Form slot
+        data: {{ data }}
+        errors: {{ errors }}
       </slot>
     </template>
     <template v-slot:buttons>
-      <q-btn label="Submit" color="primary" @click="submit"/>
-      <q-btn label="Cancel" color="negative" v-close-popup />
+      <slot :name="buttons" v-bind="{ modal:this }">
+        <q-btn label="Submit" color="primary" @click="submit"/>
+        <q-btn label="Cancel" color="negative" @click="close" />
+      </slot>
     </template>
   </BaseDialog>
 </template>
 <script>
 import BaseDialog from './BaseDialog.vue'
+// import Vue from 'vue'
 import _ from 'lodash'
 export default {
-  props: ['model', 'apiUrl', 'title', 'apiMethod', 'onSuccess', 'onError'],
+  // props: ['title', 'onSuccess', 'onError', 'modelValue', 'apiUrl', 'apiMethod'],
+  props: {
+    title: String, apiUrl: String, apiMethod: String, onSuccess: Function, onError: Function, modelValue: { type: Object, default () { return {} } }
+  },
+  emits: ['update:modelValue'],
   data () {
     return {
       errors: {},
-      data: this.model
+      data: this.modelValue
     }
   },
   methods: {
-    open () {
+    open (data) {
+      this.data = _.cloneDeep(data)
       this.$refs.dialog.open()
     },
+    close () {
+      this.errors = {}
+      this.$refs.dialog.close()
+    },
+    success (data) {
+      if (this.onSuccess) {
+        this.onSuccess(data)
+      }
+      this.close()
+    },
     submit () {
-      const self = this
-      this.$api[this.apiMethod](this.apiUrl, this.data)
-        .then(function (response) {
-          console.log('success', response)
-          if (self.onSuccess) {
-            self.onSuccess(response)
+      this.$api[this.apiMethod.toLowerCase()](this.apiUrl, this.data)
+        .then(response => {
+          console.log('success', response.data)
+          this.$emit('update:modelValue', response.data)
+          this.errors = {}
+          if (this.onSuccess) {
+            this.onSuccess(response)
           }
           this.$refs.dialog.close()
         })
-        .catch(function (error) {
+        .catch(error => {
           if (error.response && error.response.data) {
-            self.errors = error.response.data
+            this.errors = error.response.data
+            console.log('errors', error.response.data, this.errors)
+            if (this.onError) {
+              this.onError(error)
+            }
           }
         })
-    }
-  },
-  computed: {
-    error_messages: function () {
-      return _.mapValues(this.errors, function (e) { return e ? e.join(',') : '' })
-    },
-    has_error: function () {
-      return _.mapValues(this.errors, function (e) { return e !== undefined })
     }
   },
   // mounted: function () {

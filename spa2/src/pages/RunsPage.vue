@@ -1,7 +1,12 @@
 <template>
   <q-page class="q-pa-sm q-gutter-sm">
     <h4 class="text-center">Runs</h4>
-    <BaseFormDialog ref="run_form" :form-component="RunForm" title="Create Run" :on-success="runCreated" :on-error="runError"/>
+    <!-- <BaseFormDialog ref="run_form" :form-component="RunForm" title="Create Run" :on-success="runCreated" :on-error="runError"/> -->
+    <FormDialog ref="form_dialog" title="Create Run" :on-success="runCreated" :on-error="runError" api-method="POST" api-url="/api/runs/">
+      <template #form="props">
+        <RunForm v-model="props.data" :errors="props.errors"/>
+      </template>
+    </FormDialog>
     <q-btn label="Create Run" color="primary" @click="createRun"/>
     <!-- <RunForm/> -->
     <RunsTable/>
@@ -14,7 +19,7 @@
 <script>
 import RunsTable from '../components/tables/RunsTable.vue'
 import RunForm from '../components/forms/RunForm.vue'
-import BaseFormDialog from '../components/dialogs/BaseFormDialog.vue'
+import FormDialog from '../components/dialogs/FormDialog.vue'
 export default {
   data () {
     return {
@@ -23,7 +28,7 @@ export default {
   },
   methods: {
     createRun () {
-      this.$refs.run_form.open()
+      this.$refs.form_dialog.open({})
     },
     runCreated (request) {
       console.log('run!', request.data)
@@ -40,8 +45,8 @@ export default {
   },
   components: {
     RunsTable,
-    // RunForm,
-    BaseFormDialog
+    RunForm,
+    FormDialog
   }
 }
 </script>
