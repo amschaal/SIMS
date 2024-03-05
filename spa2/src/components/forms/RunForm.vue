@@ -1,12 +1,7 @@
 <template>
-  <JSONForm
-    :model="model"
-    ref="form"
-    api-method="post"
-    api-url="/api/runs/"
-    :on-success="onSuccess"
-    :on-error="onError"
-    :hide-buttons="hideButtons"
+  <JSONTypeForm
+    v-model="model"
+    :errors="errors"
   >
     <template v-slot:content="{ model, errors, has_error }">
       <q-select outlined v-model="model.machine" :options="options" label="Machine"
@@ -23,30 +18,34 @@
         />
       <q-input outlined v-model="model.description" label="Description" />
     </template>
-  </JSONForm>
+    <!-- <template #field_organism="{ v, data }">
+      Just an example of how to override
+      <div>
+        <q-input type="textarea" v-model="data[v.variable]" label="OVERRIDDEN!!"/>
+      </div>
+    </template> -->
+  </JSONTypeForm>
 </template>
 <script>
-import JSONForm from './JSONForm.vue'
-import _ from 'lodash'
+import JSONTypeForm from './JSONTypeForm.vue'
+// import _ from 'lodash'
 export default {
-  props: ['onSuccess', 'onError', 'hideButtons', 'modelValue'],
+  props: ['modelValue', 'errors'],
   data () {
     return {
-      errors: {},
       options: [
       ],
-      model: _.cloneDeep(this.modelValue)
+      model: this.modelValue // _.cloneDeep(this.modelValue)
     }
   },
   mounted: function () {
-    var self = this
     this.$api.get('/api/machines/')
-      .then(function (response) {
-        self.options = response.data.results
+      .then(response => {
+        this.options = response.data.results
       })
   },
   components: {
-    JSONForm
+    JSONTypeForm
   }
 }
 </script>
