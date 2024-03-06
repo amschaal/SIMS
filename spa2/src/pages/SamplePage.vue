@@ -13,13 +13,18 @@
           <q-tab-panel name="details">
             <Sample :instance="sample" v-if="sample.id"/>
             <SubmissionData :data="sample.submission_data"/>
-            <JSONModelTypeForm v-model="sample" :schema="jsonschema" api-method="put" :api-url="`/api/samples/${this.id}/`" v-if="sample && jsonschema">
-              <!-- <template #field_id="{ v, data, form }">
-              <div>
-                <q-input type="textarea" v-model="data[v.variable]" label="OVERRIDDEN!!"/>
-              </div>
-            </template> -->
-            </JSONModelTypeForm>
+            <FormDialog ref="form_dialog" title="Modify Sample" :on-success="runCreated" :on-error="runError" api-method="put" :api-url="`/api/samples/${this.id}/`" v-model="sample">
+              <template #form="props">
+                <JSONModelTypeForm v-model="props.data" :schema="jsonschema" api-method="put" :api-url="`/api/samples/${this.id}/`" :errors="props.errors" v-if="sample && jsonschema">
+                  <!-- <template #field_id="{ v, data, form }">
+                  <div>
+                    <q-input type="textarea" v-model="data[v.variable]" label="OVERRIDDEN!!"/>
+                  </div>
+                </template> -->
+                </JSONModelTypeForm>
+              </template>
+            </FormDialog>
+            <q-btn label="Modify" color="primary" @click="modify"/>
             jsonschema: {{ jsonschema }}
           </q-tab-panel>
           <q-tab-panel name="samples">
@@ -42,6 +47,7 @@ import DeleteButton from '../components/DeleteButton.vue'
 import RunsTable from 'src/components/tables/RunsTable.vue'
 import SubmissionData from 'src/components/details/SubmissionData.vue'
 import JSONModelTypeForm from 'src/components/forms/JSONModelTypeForm.vue'
+import FormDialog from 'src/components/dialogs/FormDialog.vue'
 
 export default {
   name: 'SamplePage',
@@ -66,13 +72,19 @@ export default {
         this.jsonschema = response.data
       })
   },
+  methods: {
+    modify () {
+      this.$refs.form_dialog.open(this.sample)
+    }
+  },
   components: {
     SamplesTable,
     DeleteButton,
     Sample,
     RunsTable,
     SubmissionData,
-    JSONModelTypeForm
+    JSONModelTypeForm,
+    FormDialog
   }
 }
 </script>

@@ -4,9 +4,9 @@
     <!-- MODEL: {{ model }}
     DATA: {{ data }} -->
     <slot name="content" v-bind:errors="error_messages" v-bind:has_error="has_error" v-bind:_errors="errors" v-bind:model="data">
-      Override me
+      <!-- Override me
       Data: {{model}}
-      Errors: {{errors}}
+      Errors: {{errors}} -->
     </slot>
     <!-- <fieldset>
       <legend>Custom fields</legend>
@@ -23,9 +23,6 @@
     </JSONSchemaForm>
     <!-- jsonschema: {{ jsonschema }}
     data: {{ data }} -->
-    <slot name="buttons" v-bind:submit="submit">
-      <q-btn label="Submit" color="primary" @click="submit" v-if="!hideButtons"/>
-    </slot>
   </div>
 </template>
 <script>
@@ -36,11 +33,7 @@ import JSONSchemaForm from 'src/assets/jsonschema/components/forms/JSONSchemaFor
 
 export default {
   props: {
-    apiUrl: String,
-    apiMethod: String,
-    onSuccess: Function,
-    onError: Function,
-    hideButtons: Boolean,
+    errors: { type: Object, default () { return {} } },
     // schema: { type: Object, default () { return {} } },
     schema: {
       type: Object,
@@ -66,7 +59,6 @@ export default {
   emits: ['update:modelValue'],
   data () {
     return {
-      errors: {},
       // jsonschema: this.schema,
       // model: { data: { foo: 'baz' }, type: 'machine_illumina_hiseq' }
       data: this.modelValue, // _.cloneDeep(this.modelValue)
@@ -74,31 +66,6 @@ export default {
     }
   },
   methods: {
-    submit (onSuccess) {
-      const self = this
-      this.$api[this.apiMethod](this.apiUrl, this.data)
-        .then(function (response) {
-          console.log('success', response.data)
-          self.$emit('update:modelValue', response.data)
-          self.errors = {}
-          if (self.onSuccess) {
-            self.onSuccess(response)
-          }
-          if (onSuccess) {
-            onSuccess(response)
-          }
-          this.$parent.$parent.$refs.dialog.close()
-        })
-        .catch(function (error) {
-          if (error.response && error.response.data) {
-            self.errors = error.response.data
-            console.log('errors', error.response.data, self.errors)
-            if (self.onError) {
-              self.onError(error)
-            }
-          }
-        })
-    },
     changeSchema (schema) {
       console.log('changeSchema!', schema)
       this.type_schema = schema
