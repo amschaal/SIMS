@@ -13,6 +13,18 @@
           <q-tab-panel name="details">
             <div class="text-h6">Project</div>
             <Project :project="project" :id="id"/>
+            <FormDialog ref="form_dialog" title="Modify Project" api-method="put" :api-url="`/api/projects/${this.id}/`" v-model="project">
+              <template #form="props">
+                <JSONModelTypeForm v-model="props.data" :schema-url="`/api/projects/${this.id}/jsonschema/`" :errors="props.errors" v-if="project">
+                  <!-- <template #field_id="{ v, data, form }">
+                  <div>
+                    <q-input type="textarea" v-model="data[v.variable]" label="OVERRIDDEN!!"/>
+                  </div>
+                </template> -->
+                </JSONModelTypeForm>
+              </template>
+            </FormDialog>
+            <q-btn label="Modify" color="primary" @click="modify" v-if="project"/>
             <SubmissionData :data="project.submission.data" :schema="project.submission.schema" v-if="project && project.submission"/>
             <!-- <q-list bordered class="rounded-borders">
             <q-expansion-item
@@ -61,6 +73,8 @@ import RunsTable from '../components/tables/RunsTable.vue'
 import DeleteButton from '../components/DeleteButton.vue'
 // import CustomFields from 'assets/jsonschema/forms/customFields.vue'
 import SubmissionData from 'src/components/details/SubmissionData.vue'
+import JSONModelTypeForm from 'src/components/forms/JSONModelTypeForm.vue'
+import FormDialog from 'src/components/dialogs/FormDialog.vue'
 
 // import TableDialog from '../components/dialogs/TableDialog.vue'
 export default {
@@ -88,6 +102,9 @@ export default {
     openDialog () {
       console.log('dialog', this.$refs.dialog)
       this.$refs.dialog.open()
+    },
+    modify () {
+      this.$refs.form_dialog.open(this.project)
     }
     // updateSamples () {
     //   const self = this
@@ -115,7 +132,9 @@ export default {
     DeleteButton,
     Project,
     // CustomFields,
-    SubmissionData
+    SubmissionData,
+    JSONModelTypeForm,
+    FormDialog
     // TableDialog
   }
 }

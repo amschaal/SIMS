@@ -44,7 +44,7 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
 class ProjectSerializer(DjsonTypeModelSerializer):
     submission_url = serializers.SerializerMethodField()
-    submission = SubmissionSerializer() #  serializers.SerializerMethodField()
+    submission = SubmissionSerializer(read_only=True) #  serializers.SerializerMethodField()
     # num_samples = serializers.SerializerMethodField()
     def get_submission_url(self, obj):
         return settings.SUBMISSION_SYSTEM_URLS['submission'].format(id=obj.submission_id)
@@ -55,7 +55,7 @@ class ProjectSerializer(DjsonTypeModelSerializer):
     class Meta:
         model = Project
         exclude = []
-        read_only_fields = ('schema', 'submission_data')
+        read_only_fields = ('schema', 'submission_data', 'submission')
 
 def get_schema_func(validator):
     # raise Exception('get_schema_func', validator.serializer.initial_data)

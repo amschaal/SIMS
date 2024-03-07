@@ -1,8 +1,6 @@
 <template>
   <div class="q-pa-sm q-gutter-sm">
     (JSONModelTypeForm)
-    <!-- MODEL: {{ model }}
-    DATA: {{ data }} -->
     <slot name="content" v-bind:errors="error_messages" v-bind:has_error="has_error" v-bind:_errors="errors" v-bind:model="data">
       <!-- Override me
       Data: {{model}}
@@ -35,24 +33,26 @@ export default {
   props: {
     errors: { type: Object, default () { return {} } },
     // schema: { type: Object, default () { return {} } },
-    schema: {
-      type: Object,
-      default () {
-        return {
-          type: 'object',
-          properties: {
-            type: {
-              type: 'string',
-              title: 'Type'
-            },
-            data: {
-              type: 'object',
-              title: 'Data'
-            }
-          }
-        }
-      }
-    },
+    schemaUrl: String,
+    schema: Object,
+    // schema: {
+    //   type: Object,
+    //   default () {
+    //     return {
+    //       type: 'object',
+    //       properties: {
+    //         type: {
+    //           type: 'string',
+    //           title: 'Type'
+    //         },
+    //         data: {
+    //           type: 'object',
+    //           title: 'Data'
+    //         }
+    //       }
+    //     }
+    //   }
+    // },
     modelValue: { type: Object, default () { return {} } },
     exclude: { type: Array, default () { return [] } }
   },
@@ -62,7 +62,8 @@ export default {
       // jsonschema: this.schema,
       // model: { data: { foo: 'baz' }, type: 'machine_illumina_hiseq' }
       data: this.modelValue, // _.cloneDeep(this.modelValue)
-      type_schema: null
+      type_schema: null,
+      api_schema: null
     }
   },
   methods: {
@@ -82,14 +83,17 @@ export default {
     jsonschema: function () {
       console.log('jsonschema!!!!')
       if (!this.type_schema) {
-        return this.schema
+        return this._schema
       }
-      const schema = _.cloneDeep(this.schema)
+      const schema = _.cloneDeep(this._schema)
       schema.properties.data = this.type_schema
       schema.properties.data.type = 'object'
       schema.properties.data.title = this.data.type.name
       console.log('jsonschema', schema)
       return schema
+    },
+    _schema: function () {
+      return this.schema || this.api_schema
     }
   },
   mounted: function () {
@@ -97,6 +101,13 @@ export default {
       this.data.data = {}
     }
     console.log('JSONForm', this)
+    if (this.schemaUrl) {
+      this.$api
+        .get(this.schemaUrl)
+        .then(response => {
+          this.api_schema = response.data
+        })
+    }
   },
   components: {
     TypeSelect,
