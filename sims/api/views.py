@@ -47,7 +47,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         project, pools, samples = instance.process()
         return Response({'project': ProjectSerializer(project).data, 'new_pools': PoolSerializer(pools, many=True).data, 'new_samples': SampleSerializer(samples, many=True).data})
 
-class ProjectViewSet(viewsets.ModelViewSet):
+class ProjectViewSet(viewsets.ModelViewSet, mixins.JSONSchemaMixin):
     serializer_class = ProjectSerializer
     filterset_fields = {
         'id':['icontains','exact'],
@@ -162,6 +162,7 @@ class PoolViewSet(viewsets.ModelViewSet, mixins.JSONSchemaMixin):
         'project__id':['icontains','exact'],
         'submission__id': ['exact']
         }
+    search_fields = ('id', 'name', 'samples__id', 'samples__project__id')
     serializer_class = PoolSerializer
     queryset = Pool.objects.distinct()
     @action(detail=True, methods=['get','post'])

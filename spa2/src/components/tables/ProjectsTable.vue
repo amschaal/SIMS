@@ -17,7 +17,7 @@
           <q-td key="id" :props="props"><router-link :to="{ name: 'project', params: { id: props.row.id }}">{{ props.row.id }}</router-link></q-td>
           <q-td key="submission" :props="props"><router-link :to="{ name: 'submission', params: { id: props.row.submission.id }}" v-if="props.row.submission">{{ props.row.submission.id }}</router-link></q-td>
           <!-- <q-td key="submission" :props="props">foo</q-td> -->
-          <q-td key="type" :props="props">{{ props.row.type }}</q-td>
+          <q-td key="type" :props="props"><Property :value="props.row.type" label="name"/></q-td>
           <q-td key="submitted" :props="props">{{ $filters.formatDate(props.row.submitted) }}</q-td>
           <q-td key="name" :props="props">{{ props.row.first_name }} {{ props.row.last_name }}</q-td>
           <q-td key="email" :props="props">{{ props.row.email }}</q-td>
@@ -33,7 +33,9 @@
 </style>
 
 <script>
+import Property from '../details/Property.vue'
 import BaseTable from './BaseTable.vue'
+
 import _ from 'lodash'
 export default {
   name: 'ProjectsTable',
@@ -85,7 +87,8 @@ export default {
   // methods: {
   // },
   components: {
-    BaseTable
+    BaseTable,
+    Property
   }
 }
 </script>

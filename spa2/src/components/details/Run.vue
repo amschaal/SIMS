@@ -10,7 +10,7 @@
       <div class="col-12"><b>Description: </b>{{run.description}} {{ run.description }}</div>
     </div>
     <div class="row" v-if="run.data && run.schema">
-      <fieldset class="row">
+      <fieldset class="col-12">
         <legend>{{ run.type.name }} fields</legend>
         <DisplayFields v-model="run.data" :schema="run.schema" v-if="run.schema && run.data"/>
       </fieldset>

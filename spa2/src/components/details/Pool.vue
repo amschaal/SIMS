@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="row">
-      <div class="col-md-4 col-sm-12"><b>Type: </b>{{pool.type}}</div>
+      <div class="col-md-4 col-sm-12"><b>Type: </b><span v-if="pool.type && pool.type.name">{{pool.type.name}}</span><span v-else>{{pool.type}}</span></div>
       <div class="col-md-4 col-sm-12"><b>Name: </b>{{pool.name}}</div>
       <div class="col-md-4 col-sm-12"><b>Created: </b>{{pool.created}}</div>
       <div class="col-md-4 col-sm-12"><b>Project: </b><router-link :to="{ name: 'project', params: { id: pool.project }}">{{pool.project}}</router-link></div>
@@ -9,9 +9,9 @@
     <div class="row" v-if="pool.description">
       <div class="col-12"><b>Description: </b>{{pool.description}}</div>
     </div>
-    <div class="row" v-if="pool.data && pool.schema">
-      <fieldset class="row">
-        <legend>{{ pool.type }} fields</legend>
+    <div class="row" v-if="pool.data && pool.schema && pool.type">
+      <fieldset class="col-12">
+        <legend>{{ pool.type.name }} fields</legend>
         <DisplayFields v-model="pool.data" :schema="pool.schema" v-if="pool.schema && pool.data"/>
       </fieldset>
     </div>
