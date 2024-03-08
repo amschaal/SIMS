@@ -1,5 +1,5 @@
 <template>
-  <q-page class="q-pa-sm q-gutter-sm">
+  <q-page class="q-pa-sm q-gutter-sm" v-if="project">
     <h6 class="text-center"><router-link :to="{ name: 'projects'}">Projects</router-link> / {{project.id}}</h6>
     <DeleteButton :url="`/api/projects/${id}/`"/>
     <q-tabs
@@ -12,10 +12,10 @@
       <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="details">
             <div class="text-h6">Project</div>
-            <Project :project="project" :id="id"/>
+            <Project :instance="project" v-if="project"/>
             <FormDialog ref="form_dialog" title="Modify Project" api-method="put" :api-url="`/api/projects/${this.id}/`" v-model="project">
               <template #form="props">
-                <JSONModelTypeForm v-model="props.data" :schema-url="`/api/projects/${this.id}/jsonschema/`" :errors="props.errors" v-if="project">
+                <JSONModelTypeForm v-model="props.data" :schema-url="`/api/projects/${this.id}/jsonschema/`" :errors="props.errors" :ui="ui">
                   <!-- <template #field_id="{ v, data, form }">
                   <div>
                     <q-input type="textarea" v-model="data[v.variable]" label="OVERRIDDEN!!"/>
@@ -82,10 +82,13 @@ export default {
   props: ['id'],
   data () {
     return {
-      project: {},
+      project: null,
       tab: 'details',
       openSampleDialog: false,
-      SamplesTable
+      SamplesTable,
+      ui: {
+        first_name: { width: 'col-3' }, last_name: { width: 'col-3' }, phone: { width: 'col-3' }, email: { width: 'col-3' }, pi_first_name: { width: 'col-3' }, pi_last_name: { width: 'col-3' }, pi_phone: { width: 'col-3' }, pi_email: { width: 'col-3' }
+      }
     }
   },
   mounted: function () {

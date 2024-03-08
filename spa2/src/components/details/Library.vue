@@ -24,7 +24,7 @@ export default {
   props: ['id', 'instance'],
   data () {
     return {
-      library: this.instance
+      data: null
     }
   },
   mounted: function () {
@@ -34,9 +34,14 @@ export default {
         .get(`/api/libraries/${self.id}/`)
         .then(function (response) {
           console.log('response', response)
-          self.library = response.data
+          self.data = response.data
         })
     }
-  }
+  },
+  computed: {
+    library () {
+      return this.instance || this.data
+    }
+  },
 }
 </script>

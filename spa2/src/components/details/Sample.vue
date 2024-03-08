@@ -23,18 +23,23 @@ export default {
   props: ['id', 'instance'],
   data () {
     return {
-      sample: this.instance
+      data: this.instance
     }
   },
   mounted: function () {
-    if (!this.sample) {
+    if (!this.instance) {
       const self = this
       this.$api
         .get(`/api/sample/${self.id}/`)
         .then(function (response) {
           console.log('response', response)
-          self.sample = response.data
+          self.data = response.data
         })
+    }
+  },
+  computed: {
+    sample () {
+      return this.instance || this.data
     }
   }
 }

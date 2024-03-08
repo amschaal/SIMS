@@ -6,19 +6,20 @@
     <template v-slot:content>
       <!-- modelValue: {{ modelValue }} -->
       <slot name="form" v-bind="{ data: data, dialog: this, errors }">
-        Form slot
-        data: {{ data }}
-        errors: {{ errors }}
+        *** OVERRIDE: 'Form' slot ***
+        <!--data: {{ data }}
+        errors: {{ errors }} -->
       </slot>
     </template>
     <template v-slot:buttons>
-      <slot :name="buttons" v-bind="{ modal:this }">
+      <slot :name="buttons" v-bind="{ modal: this }">
         <q-btn label="Submit" color="primary" @click="submit"/>
         <q-btn label="Cancel" color="negative" @click="close" />
       </slot>
     </template>
   </BaseDialog>
 </template>
+
 <script>
 import BaseDialog from './BaseDialog.vue'
 // import Vue from 'vue'
@@ -53,7 +54,7 @@ export default {
     submit () {
       this.$api[this.apiMethod.toLowerCase()](this.apiUrl, this.data)
         .then(response => {
-          console.log('success', response.data)
+          console.log('form dialog success', response.data)
           this.$emit('update:modelValue', response.data)
           this.errors = {}
           if (this.onSuccess) {

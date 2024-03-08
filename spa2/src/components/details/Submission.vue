@@ -32,10 +32,10 @@
 import CustomFields from 'src/assets/jsonschema/forms/customFields.vue'
 export default {
   name: 'ProjectDetails',
-  props: ['id', 'submission_data'],
+  props: ['id', 'instance'],
   data () {
     return {
-      submission: null
+      data: null
     }
   },
   mounted: function () {
@@ -44,8 +44,13 @@ export default {
       this.$api
         .get(`/api/submissions/${self.id}/`)
         .then(function (response) {
-          self.submission = response.data
+          self.data = response.data
         })
+    }
+  },
+  computed: {
+    submission () {
+      return this.instance || this.data
     }
   },
   components: {

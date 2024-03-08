@@ -32,23 +32,28 @@ import DisplayFields from 'src/assets/jsonschema/components/display/displayField
 
 export default {
   name: 'ProjectDetails',
-  props: ['id', 'project_data'],
+  props: ['id', 'instance'],
   data () {
     return {
-      project: null
+      data: null
     }
   },
   mounted: function () {
     console.log('project mounting', this.id)
-    if (!this.project) {
+    if (!this.instance && this.id) {
       const self = this
       this.$api
         .get(`/api/projects/${self.id}/`)
         .then(function (response) {
           console.log('project response', response)
           // Vue.set(self, 'project', response.data)
-          self.project = response.data
+          self.data = response.data
         })
+    }
+  },
+  computed: {
+    project () {
+      return this.instance || this.data
     }
   },
   components: {
