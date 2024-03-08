@@ -2,15 +2,19 @@
   <q-page class="q-pa-sm q-gutter-sm">
     Model Type Page
     <div v-if="type">
-    <q-input outlined v-model="type.name" label="Name"
-        :error-message="error_messages.name"
-        :error="has_error.name"
-        />
-    <q-input outlined v-model="type.description" label="Description" />
-    <JSONSchemaBuilder v-model="type.schema" :root-schema="type.schema" :options="{variables: options, showWidth: true}" type="submission"/>
-    <q-btn label="Update" @click="submit" color="primary"/>
-    schema: {{ type.schema }}
-  </div>
+    <BaseForm :api-url="`/api/model_types/${this.id}/`" api-method="put" v-model="type" :on-success="onSuccess" :on-error="onError">
+      <template v-slot:content="{ model, errors, has_error }">
+        <q-input outlined v-model="model.name" label="Name"
+          :error-message="errors.name"
+          :error="has_error.name"
+          />
+        <q-input outlined v-model="type.description" label="Description" />
+        <JSONSchemaBuilder v-model="type.schema" :root-schema="type.schema" :options="{variables: options, showWidth: true}" type="submission"/>
+        <!-- <q-btn label="Update" @click="submit" color="primary"/> -->
+        schema: {{ type.schema }}
+      </template>
+    </BaseForm>
+    </div>
   </q-page>
 </template>
 
@@ -20,14 +24,14 @@
 <script>
 // import schemaForm from 'src/assets/jsonschema/forms/schemaForm.vue'
 // import PoolFormDialog from '../components/forms/PoolFormDialog.vue'
-import _ from 'lodash'
+
+import BaseForm from 'src/components/forms/BaseForm.vue'
 export default {
   props: ['id'],
   data () {
     return {
       type: null,
-      options: {},
-      errors: {}
+      options: {}
     }
   },
   mounted: function () {
@@ -38,30 +42,15 @@ export default {
       })
   },
   methods: {
-    submit () {
-      this.$api.put(`/api/model_types/${this.id}/`, this.type)
-        .then(response => {
-          this.$q.notify('Model type updated')
-          this.errors = {}
-        })
-        .catch(error => {
-          if (error.response && error.response.data) {
-            this.errors = error.response.data
-            this.$q.notify('There was an error updating the model type')
-          }
-        })
-    }
-  },
-  computed: {
-    error_messages: function () {
-      return _.mapValues(this.errors, function (e) { return Array.isArray(e) ? e.join(',') : '' })
+    onSuccess () {
+      this.$q.notify('The model was successfully updated')
     },
-    has_error: function () {
-      return _.mapValues(this.errors, function (e) { return e !== undefined })
+    onError () {
+      this.$q.notify('There was an error updating the model')
     }
   },
   components: {
-    // schemaForm
+    BaseForm
   }
 }
 </script>

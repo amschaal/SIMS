@@ -6,18 +6,19 @@
       Errors: {{errors}}
     </slot>
     <slot name="buttons" v-bind:submit="submit">
-      <q-btn label="Submit" color="primary" @click="submit" v-if="!hideButtons"/>
+      <q-btn label="Submit" color="primary" @click="submit"/>
     </slot>
   </div>
 </template>
 <script>
 import _ from 'lodash'
 export default {
-  props: ['model', 'apiUrl', 'apiMethod', 'onSuccess', 'onError', 'hideButtons'],
+  props: ['modelValue', 'apiUrl', 'apiMethod', 'onSuccess', 'onError'],
+  emits: ['update:modelValue'],
   data () {
     return {
-      errors: {}
-      // data: this.model
+      errors: {},
+      model: this.modelValue
     }
   },
   methods: {
@@ -30,7 +31,6 @@ export default {
           if (self.onSuccess) {
             self.onSuccess(response)
           }
-          this.$refs.dialog.close()
         })
         .catch(function (error) {
           if (error.response && error.response.data) {
