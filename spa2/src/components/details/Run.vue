@@ -1,13 +1,13 @@
 <template>
   <div>
     <div class="row">
-      <div class="col-md-4 col-sm-12"><b>Type: </b>{{run.type}}</div>
+      <div class="col-md-4 col-sm-12"><b>Type: </b><span v-if="run.type && run.type.name">{{run.type.name}}</span><span v-else>None</span></div>
       <div class="col-md-4 col-sm-12"><b>Machine: </b>{{run.machine}}</div>
       <div class="col-md-4 col-sm-12"><b>Name: </b>{{run.name}}</div>
       <div class="col-md-4 col-sm-12"><b>Created: </b>{{run.created}}</div>
     </div>
     <div class="row" v-if="run.description">
-      <div class="col-12"><b>Description: </b>{{run.description}} {{ run.description }}</div>
+      <div class="col-12"><b>Description: </b>{{run.description}}</div>
     </div>
     <div class="row" v-if="run.data && run.schema">
       <fieldset class="col-12">
@@ -36,7 +36,6 @@
             </span>
           </td>
           <td>
-            {{p.description}}
           </td>
         </tr>
       </tbody>

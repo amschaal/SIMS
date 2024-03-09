@@ -3,21 +3,21 @@
     (JSONTypeForm)
     <!-- MODEL: {{ model }}
     DATA: {{ data }} -->
-    <TypeSelect v-model="data.type" @schema="schema => changeSchema(schema)" :error_messages="error_messages" :has_error="has_error" v-if="data" :disable="existing_schema !== null" :read_only="existing_schema !== null"/>
+    <TypeSelect v-model="data.type" @schema="schema => changeSchema(schema)" :error_messages="error_messages" :has_error="has_error" v-if="data" :disable="existing_schema !== null" :read_only="existing_schema !== null" :emit_object="true"/>
     <slot name="content" v-bind= "{ errors, has_error, model:data }">
       Override me
       Data: {{model}}
       Errors: {{errors}}
     </slot>
     <!-- JSONSchemaForm data: {{ data.data }} errors: {{ errors }} -->
-    <JSONSchemaForm v-model="data.data" :schema="schema" ref="custom_fields" v-if="schema && data.data" :modify="true" :errors="errors.data" :warnings="{}">
-      <template v-for="(_, name) in $slots" #[name]="slotData">
-        <slot :name="name" v-bind="slotData || {}" />
-      </template>
-    </JSONSchemaForm>
-    <slot name="buttons" v-bind:submit="submit">
-      <q-btn label="Submit" color="primary" @click="submit" v-if="!hideButtons"/>
-    </slot>
+    <fieldset v-if="schema && data.data">
+      <legend v-if="data.type && data.type.name">{{ data.type.name }} fields</legend>
+      <JSONSchemaForm v-model="data.data" :schema="schema" ref="custom_fields" :modify="true" :errors="errors.data" :warnings="{}">
+        <template v-for="(_, name) in $slots" #[name]="slotData">
+          <slot :name="name" v-bind="slotData || {}" />
+        </template>
+      </JSONSchemaForm>
+    </fieldset>
   </div>
 </template>
 <script>

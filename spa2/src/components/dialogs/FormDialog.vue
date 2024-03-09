@@ -4,7 +4,6 @@
       {{ title }}
     </template>
     <template v-slot:content>
-      <!-- modelValue: {{ modelValue }} -->
       <slot name="form" v-bind="{ data: data, dialog: this, errors }">
         *** OVERRIDE: 'Form' slot ***
         <!--data: {{ data }}
@@ -38,7 +37,7 @@ export default {
   },
   methods: {
     open (data) {
-      this.data = _.cloneDeep(data)
+      this.data = _.cloneDeep(data || this.modelValue)
       this.$refs.dialog.open()
     },
     close () {
@@ -52,6 +51,7 @@ export default {
       this.close()
     },
     submit () {
+      console.log('FormDialog submit', this.data, this.modelValue)
       this.$api[this.apiMethod.toLowerCase()](this.apiUrl, this.data)
         .then(response => {
           console.log('form dialog success', response.data)

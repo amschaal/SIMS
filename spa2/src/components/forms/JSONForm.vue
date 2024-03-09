@@ -13,15 +13,18 @@
       <legend>Custom fields</legend>
       <CustomFields v-model="data.data" :schema="schema" ref="custom_fields" v-if="schema && data.data" :modify="true" :errors="errors.data" :warnings="{}"/>
     </fieldset> -->
-    <JSONSchemaForm v-model="data.data" :schema="schema" ref="custom_fields" v-if="schema && data.data" :modify="true" :errors="errors.data" :warnings="{}">
+    <fieldset v-if="schema && data.data">
+      <legend v-if="data.type && data.type.name">{{ data.type.name }} fields</legend>
+      <JSONSchemaForm v-model="data.data" :schema="schema" ref="custom_fields" :modify="true" :errors="errors.data" :warnings="{}">
       <template v-for="(_, name) in $slots" #[name]="slotData">
         <slot :name="name" v-bind="slotData || {}" />
       </template>
     </JSONSchemaForm>
+    </fieldset>
     <slot name="buttons" v-bind:submit="submit">
       <q-btn label="Submit" color="primary" @click="submit" v-if="!hideButtons"/>
     </slot>
-    {{ errors }}
+    <!-- {{ errors }} -->
   </div>
 </template>
 <script>
@@ -32,7 +35,13 @@ import JSONSchemaForm from 'src/assets/jsonschema/components/forms/JSONSchemaFor
 
 export default {
   props: {
-    apiUrl: String, apiMethod: String, onSuccess: Function, onError: Function, hideButtons: Boolean, model: { type: Object, default () { return {} } }, modelValue: { type: Object, default () { return {} } }
+    apiUrl: String,
+    apiMethod: String,
+    onSuccess: Function,
+    onError: Function,
+    hideButtons: Boolean,
+    model: { type: Object, default () { return {} } },
+    modelValue: { type: Object, default () { return {} } }
   },
   emits: ['update:modelValue'],
   data () {

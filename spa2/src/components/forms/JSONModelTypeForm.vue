@@ -10,9 +10,9 @@
       <legend>Custom fields</legend>
       <CustomFields v-model="data.data" :schema="schema" ref="custom_fields" v-if="schema && data.data" :modify="true" :errors="errors.data" :warnings="{}"/>
     </fieldset> -->
-    <JSONSchemaForm v-model="data" :schema="jsonschema" ref="custom_fields" v-if="jsonschema && data" :modify="true" :errors="errors" :warnings="{}">
+    <JSONSchemaForm v-model="data" :schema="jsonschema" ref="custom_fields" v-if="jsonschema && data" :modify="true" :errors="errors" :warnings="{}" :ui="ui">
       <template #field_type="{ data }">
-          <TypeSelect v-model="data.type" emit_object @schema="schema => changeSchema(schema)" :error_messages="error_messages" :has_error="has_error" v-if="data"/>
+          <TypeSelect v-model="data.type" :emit_object="true" @schema="schema => changeSchema(schema)" :error_messages="error_messages" :has_error="has_error" v-if="data"/>
       </template>
       <!-- Pass along slots from calling template -->
       <template v-for="(_, name) in $slots" #[name]="slotData">
@@ -54,7 +54,8 @@ export default {
     //   }
     // },
     modelValue: { type: Object, default () { return {} } },
-    exclude: { type: Array, default () { return [] } }
+    exclude: { type: Array, default () { return [] } },
+    ui: { type: Object, default () { return {} } }
   },
   emits: ['update:modelValue'],
   data () {

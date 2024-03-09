@@ -15,7 +15,7 @@
             <SubmissionData :data="sample.submission_data"/>
             <FormDialog ref="form_dialog" title="Modify Sample" :on-success="runCreated" :on-error="runError" api-method="put" :api-url="`/api/samples/${this.id}/`" v-model="sample">
               <template #form="props">
-                <JSONModelTypeForm v-model="props.data" :schema="jsonschema" api-method="put" :api-url="`/api/samples/${this.id}/`" :errors="props.errors" v-if="sample && jsonschema">
+                <JSONModelTypeForm v-model="props.data" :schema-url="`/api/samples/${this.id}/jsonschema/`" :errors="props.errors" v-if="sample">
                   <!-- <template #field_id="{ v, data, form }">
                   <div>
                     <q-input type="textarea" v-model="data[v.variable]" label="OVERRIDDEN!!"/>
@@ -66,11 +66,11 @@ export default {
         console.log('response', response)
         this.sample = response.data
       })
-    this.$api
-      .get(`/api/samples/${this.id}/jsonschema`)
-      .then(response => {
-        this.jsonschema = response.data
-      })
+    // this.$api
+    //   .get(`/api/samples/${this.id}/jsonschema`)
+    //   .then(response => {
+    //     this.jsonschema = response.data
+    //   })
   },
   methods: {
     modify () {
