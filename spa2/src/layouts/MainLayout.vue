@@ -13,15 +13,25 @@
         </q-btn>
 
         <q-toolbar-title>
-          D^3
+          SIMS
         </q-toolbar-title>
 
         <div>
           <q-btn-dropdown color="white" flat label="Admin">
             <q-list>
+              <q-item clickable v-close-popup :to="{ name: 'model_types'}">
+                <q-item-section>
+                  <q-item-label>Model Types</q-item-label>
+                </q-item-section>
+              </q-item>
               <q-item clickable v-close-popup :to="{ name: 'machines'}">
                 <q-item-section>
                   <q-item-label>Machines</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup :to="{ name: 'map_types'}">
+                <q-item-section>
+                  <q-item-label>Map Types</q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
@@ -46,6 +56,11 @@
             <q-item-label caption>quasar.dev</q-item-label>
           </q-item-section>
         </q-item> -->
+        <q-item clickable :to="{ name: 'submissions'}">
+          <q-item-section>
+            <q-item-label>Submissions</q-item-label>
+          </q-item-section>
+        </q-item>
         <q-item clickable :to="{ name: 'projects'}">
           <q-item-section>
             <q-item-label>Projects</q-item-label>
@@ -57,11 +72,11 @@
             <q-item-label>Samples</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item clickable :to="{ name: 'libraries'}">
+        <!-- <q-item clickable :to="{ name: 'libraries'}">
           <q-item-section>
             <q-item-label>Libraries</q-item-label>
           </q-item-section>
-        </q-item>
+        </q-item> -->
         <q-item clickable :to="{ name: 'pools'}">
           <q-item-section>
             <q-item-label>Pools</q-item-label>
