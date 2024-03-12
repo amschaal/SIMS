@@ -1,5 +1,5 @@
 <template>
-    <q-select outlined v-model="model" :options="options" label="Type" ref="select"
+    <q-select outlined v-model="model" :options="filtered_options" label="Type" ref="select"
         option-value="id"
         option-label="name"
         @update:modelValue="val => selected(val)"
@@ -10,7 +10,7 @@
 
 <script>
 export default {
-  props: ['modelValue', 'error_messages', 'has_error', 'emit_object'],
+  props: ['modelValue', 'error_messages', 'has_error', 'emit_object', 'modelFilter'],
   emits: ['update:modelValue', 'schema'],
   data () {
     return {
@@ -38,6 +38,11 @@ export default {
           this.selected(opt)
         }
       })
+  },
+  computed: {
+    filtered_options () {
+      return this.modelFilter ? this.options.filter(o => o.model === this.modelFilter) : this.options
+    }
   }
 }
 </script>
