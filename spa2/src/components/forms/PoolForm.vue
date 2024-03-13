@@ -7,6 +7,7 @@
     :on-success="onSuccessMethod"
     :on-error="onErrorMethod"
     :hide-buttons="hideButtons"
+    model-filter="pool"
   >
     <template v-slot:content="{ model, errors, has_error }">
       <q-input outlined v-model="model.name" label="Name"

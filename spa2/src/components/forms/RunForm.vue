@@ -2,6 +2,7 @@
   <JSONTypeForm
     v-model="model"
     :errors="errors"
+    model-filter="run"
   >
     <template v-slot:content="{ model, errors, has_error }">
       <q-select outlined v-model="model.machine" :options="options" label="Machine"

@@ -3,7 +3,7 @@
     (JSONTypeForm)
     <!-- MODEL: {{ model }}
     DATA: {{ data }} -->
-    <TypeSelect v-model="data.type" @schema="schema => changeSchema(schema)" :error_messages="error_messages" :has_error="has_error" v-if="data" :disable="existing_schema !== null" :read_only="existing_schema !== null" :emit_object="true"/>
+    <TypeSelect v-model="data.type" @schema="schema => changeSchema(schema)" :error_messages="error_messages" :has_error="has_error" v-if="data" :disable="existing_schema !== null" :read_only="existing_schema !== null" :emit_object="true" :model-filter="modelFilter"/>
     <slot name="content" v-bind= "{ errors, has_error, model:data }">
       Override me
       Data: {{model}}
@@ -27,7 +27,9 @@ import JSONSchemaForm from 'src/assets/jsonschema/components/forms/JSONSchemaFor
 
 export default {
   props: {
-    errors: { type: Object, default () { return {} } }, modelValue: { type: Object, default () { return { data: {} } } }
+    errors: { type: Object, default () { return {} } },
+    modelValue: { type: Object, default () { return { data: {} } } },
+    modelFilter: String
   },
   // emits: ['update:modelValue'],
   data () {

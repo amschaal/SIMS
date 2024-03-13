@@ -9,9 +9,9 @@
     <div class="row" v-if="run.description">
       <div class="col-12"><b>Description: </b>{{run.description}}</div>
     </div>
-    <div class="row" v-if="run.data && run.schema">
+    <div class="row" v-if="run.data && run.schema && run.schema.properties">
       <fieldset class="col-12">
-        <legend>{{ run.type.name }} fields</legend>
+        <legend v-if="run.type">{{ run.type.name }} fields</legend>
         <DisplayFields v-model="run.data" :schema="run.schema" v-if="run.schema && run.data"/>
       </fieldset>
     </div>

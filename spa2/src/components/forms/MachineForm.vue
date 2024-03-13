@@ -2,6 +2,7 @@
   <JSONTypeForm
     v-model="model"
     :errors="errors"
+    model-filter="machine"
   >
     <template v-slot:content="{ model, errors, has_error }">
       Model: {{ model }}

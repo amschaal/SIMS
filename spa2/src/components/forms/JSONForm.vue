@@ -3,7 +3,7 @@
     (JSONForm)
     <!-- MODEL: {{ model }}
     DATA: {{ data }} -->
-    <TypeSelect v-model="data.type" @schema="schema => changeSchema(schema)" :error_messages="error_messages" :has_error="has_error" v-if="data" :disable="existing_schema !== null" :read_only="existing_schema !== null"/>
+    <TypeSelect v-model="data.type" @schema="schema => changeSchema(schema)" :error_messages="error_messages" :has_error="has_error" v-if="data" :disable="existing_schema !== null" :read_only="existing_schema !== null" :model-filter="modelFilter"/>
     <slot name="content" v-bind:errors="error_messages" v-bind:has_error="has_error" v-bind:_errors="errors" v-bind:model="data">
       Override me
       Data: {{model}}
@@ -41,7 +41,8 @@ export default {
     onError: Function,
     hideButtons: Boolean,
     model: { type: Object, default () { return {} } },
-    modelValue: { type: Object, default () { return {} } }
+    modelValue: { type: Object, default () { return {} } },
+    modelFilter: String
   },
   emits: ['update:modelValue'],
   data () {
