@@ -15,7 +15,7 @@
             <Project :instance="project" v-if="project"/>
             <FormDialog ref="form_dialog" title="Modify Project" api-method="put" :api-url="`/api/projects/${this.id}/`" v-model="project">
               <template #form="props">
-                <JSONModelTypeForm v-model="props.data" :schema-url="`/api/projects/${this.id}/jsonschema/`" :errors="props.errors" :ui="ui">
+                <JSONModelTypeForm v-model="props.data" :schema-url="`/api/projects/${this.id}/jsonschema/`" :errors="props.errors" :ui="ui" model-filter="project">
                   <!-- <template #field_id="{ v, data, form }">
                   <div>
                     <q-input type="textarea" v-model="data[v.variable]" label="OVERRIDDEN!!"/>

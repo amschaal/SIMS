@@ -16,7 +16,10 @@
         :error-message="error_messages.name"
         :error="has_error.name"
         />
-      <q-input outlined v-model="model.description" label="Description" />
+      <q-input outlined v-model="model.description" label="Description"
+        :error-message="error_messages.name"
+        :error="has_error.name"
+      />
       {{ model }}
     </div>
 </template>

@@ -10,6 +10,7 @@
     <template v-slot:body="{ props }">
       <q-tr :props="props">
         <q-td key="id" :props="props"><router-link :to="{ name: 'model_type', params: { id: props.row.id }}">{{ props.row.id }}</router-link></q-td>
+        <q-td key="model" :props="props">{{ props.row.model }}</q-td>
         <q-td key="name" :props="props">{{ props.row.name }}</q-td>
         <q-td key="description" :props="props">{{ props.row.description }}</q-td>
       </q-tr>
@@ -25,6 +26,7 @@ export default {
     return {
       columns: [
         { name: 'id', label: 'ID', field: 'id', sortable: true },
+        { name: 'model', label: 'Model', field: 'model', sortable: false },
         { name: 'name', label: 'Name', field: 'name', sortable: true },
         { name: 'description', label: 'Description', field: 'description', sortable: false }
       ],
