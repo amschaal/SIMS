@@ -2,7 +2,7 @@
   <!-- <q-page class="flex flex-center"> -->
   <q-page>
     From: <SubmissionTypeSelect v-model="submission_type" @update:model-value="setMapping(type)"/>
-    To: <TypeSelect v-model="type" :emit_object="true" :error_messages="{}" :has_error="false"/><br>
+    To: <TypeSelect v-model="type" :emit_object="true" :error_messages="{}" :has_error="false" model-filter="project"/><br>
     <!-- Submission Type: {{ submission_type }} -->
     <div v-if="submission_type">
     Variables: {{  schema_to_variables(submission_type.submission_schema) }}

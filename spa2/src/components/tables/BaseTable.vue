@@ -38,7 +38,7 @@
      </template>
      <template v-slot:header="props">
       <q-tr :props="props">
-        <q-th auto-width v-if="options.controlColumn"/>
+        <q-th auto-width v-if="options.controlColumn || selection"/>
         <q-th
           v-for="col in props.cols"
           :key="col.name"
@@ -87,7 +87,7 @@ export default {
     }
     return {
       selected: [],
-      selection: this.options && this.options.selection ? this.options.selection : 'none',
+      selection: this.options && this.options.selection ? this.options.selection : '',
       filter: '',
       loading: false,
       tableColumns: this.visibleColumns,
