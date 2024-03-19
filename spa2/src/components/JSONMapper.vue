@@ -3,7 +3,7 @@
       <thead>
         <tr><th colspan="3">Source</th><th colspan="3">Destination <q-btn label="I'm feeling lucky!" v-on:click="autoAssign()"></q-btn></th></tr>
         <tr>
-          <th class="text-left">Source Variable</th>
+          <th class="text-left" style="width: 10%;">Source Variable</th>
           <th class="text-left">Type</th>
           <th class="text-left">Name</th>
           <th class="text-left">Destination Variable</th>
@@ -14,27 +14,26 @@
       <tbody>
         <template v-for="variable in schema_to_variables(submission_type.submission_schema)" :key="variable">
         <tr v-if="submission_type.submission_schema.properties[variable].type === 'table'">
-          <td class="text-left">{{variable}}</td>
+          <td class="text-left" style="width: 10%;">{{variable}}</td>
           <td class="text-left">{{submission_type.submission_schema.properties[variable].type}}</td>
           <td class="text-left">{{submission_type.submission_schema.properties[variable].title}}</td>
           <td colspan="3">
-            <q-select outlined v-model="mapping[variable]" :options="mapping_types" label="Select Mapping Type"
+            <q-select :dense="true" outlined v-model="mapping[variable]" :options="mapping_types" label="Select Mapping Type"
                 option-value="id"
                 option-label="label"
-                emit-value
                 @update:modelValue="val => selectMappingType(val, variable)"
                 />
                 <!-- :modelValue="pageTitle"
   @update:modelValue="pageTitle = $event" -->
             <!-- <TypeSelect :error_messages="{}" :has_error="{}" v-model="mapping[variable].model_type" @update:model-value="val => selectedModelType(val, variable)" :emit_object="true" v-if="mapping[variable] && mapping[variable].mapping_type === 'model'"/> -->
-              <TypeSelect :error_messages="{}" :has_error="{}" :modelValue="mapping[variable].model_type" @update:model-value="val => selectedModelType(val, variable)" :emit_object="true" v-if="mapping[variable] && mapping[variable].mapping_type === 'model'"/>
+              <TypeSelect :dense="true" :error_messages="{}" :has_error="{}" :modelValue="mapping[variable].model_type" @update:model-value="val => selectedModelType(val, variable)" :emit_object="true" v-if="mapping[variable] && mapping[variable].mapping_type === 'model'" :model-filter="mapping[variable].model"/>
           </td>
         </tr>
         <tr v-else>
-          <td class="text-left">{{variable}}</td>
+          <td class="text-left" style="width: 10%;">{{variable}}</td>
           <td class="text-left">{{submission_type.submission_schema.properties[variable].type}}</td>
           <td class="text-left">{{submission_type.submission_schema.properties[variable].title}}</td>
-          <td> <q-select outlined v-model="mapping[variable]" :options="getOptions(type, mapping, submission_type.submission_schema.properties[variable].type)" label="Select Variable"
+          <td> <q-select :dense="true" outlined v-model="mapping[variable]" :options="getOptions(type, mapping, submission_type.submission_schema.properties[variable].type)" label="Select Variable"
                 option-value="id"
                 option-label="label"
                 emit-value
@@ -46,7 +45,10 @@
           <td><span v-if="mapping[variable]  && mapping[variable].variable">{{type.schema.properties[mapping[variable].variable].title}}</span></td>
         </tr>
         <tr v-if="mapping[variable] && mapping[variable].mapping && variable_schemas[variable]">
-          <td>Fix: This should actually be mapping to another schema which must be selected.  For example, a schema for "RNA libraries", etc.</td>
+          <td>
+            Fix: This should actually be mapping to another schema which must be selected.<br>
+            For example, a schema for "RNA libraries", etc.
+          </td>
           <td colspan="5" >
             <!-- <JSONTableMapper :source-schema="submission_type.submission_schema.properties[variable].schema" :dest-schema="type.schema.properties[mapping[variable].variable].schema" v-model="mapping[variable].mapping"/> -->
             <JSONTableMapper :source-schema="submission_type.submission_schema.properties[variable].schema" :dest-schema="variable_schemas[variable]" v-model="mapping[variable].mapping" />
@@ -74,7 +76,7 @@ export default {
     return {
       mapping: this.modelValue,
       variable_schemas: {},
-      mapping_types: [{ id: 'JSON', label: 'JSON' }, { id: 'samples', label: 'Samples' }, { id: 'pools', label: 'Pools' }]
+      mapping_types: [{ id: 'JSON', label: 'JSON' }, { id: 'samples', model: 'sample', label: 'Samples', schema_url: '/api/samples/jsonschema/' }, { id: 'pools', model: 'pool', label: 'Pools', schema_url: '/api/pools/jsonschema/' }]
     }
   },
   methods: {
@@ -102,12 +104,12 @@ export default {
     },
     selectMappingType (val, variable) {
       console.log('selectMappingType', val, variable)
-      if (val === 'JSON') {
+      if (val.id === 'JSON') {
         console.log('selectMappingType: overwriting mapping')
-        this.mapping[variable] = { variable: val, mapping_type: 'JSON', mapping: {} }
+        this.mapping[variable] = { variable: val.id, mapping_type: 'JSON', mapping: {} }
       } else {
         console.log('selectMappingType: overwriting mapping')
-        this.mapping[variable] = { variable: val, mapping_type: 'model', model: val, model_type: null, mapping: {} }
+        this.mapping[variable] = { variable: val.id, mapping_type: 'model', model: val.model, model_type: null, mapping: {} }
       }
       // if (this.submission_type.submission_schema.properties[variable].type === 'table') {
       //   this.mapping[variable] = { variable: val, mapping: {} }
@@ -123,7 +125,9 @@ export default {
       // this.$emit('update:modelValue', this.mapping)
     },
     selectedModelType (type, variable) {
-      console.log('selectedModelType', type, variable)
+      console.log('selectedModelType', type, variable, this.mapping[variable])
+      console.log(`/api/${this.mapping[variable].model}/jsonschema/`)
+      this.$api.post(`/api/${this.mapping[variable].model}/jsonschema/`, { type: type.id })
       // Object.getOwnPropertyNames(this.mapping[variable].mapping).forEach(prop => delete this.mapping[variable].mapping[prop])
       // this.mapping[variable].mapping = {}
       if (this.mapping[variable] && this.mapping[variable].model_type !== type.id) {
