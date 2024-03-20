@@ -1,5 +1,5 @@
 <template>
-    <q-markup-table flat bordered>
+    <q-markup-table flat bordered dense>
       <thead>
         <tr><th colspan="3">Source</th><th colspan="3">Destination <q-btn label="I'm feeling lucky!" v-on:click="autoAssign()"></q-btn></th><th></th><th></th></tr>
         <tr>
@@ -16,16 +16,22 @@
           <td class="text-left">{{variable}}</td>
           <td class="text-left">{{sourceSchema.properties[variable].type}}</td>
           <td class="text-left">{{sourceSchema.properties[variable].title}}</td>
-          <td> <q-select outlined v-model="mapping[variable]" :options="getOptions(destSchema, mapping, sourceSchema.properties[variable].type)" label="Select Variable"
+          <td>
+              <q-select dense outlined v-model="mapping.data[variable]" :options="getOptions(destSchema, mapping, sourceSchema.properties[variable].type)" label="Select Variable"
                 option-value="id"
                 option-label="label"
                 emit-value
                 @update:modelValue="val => selected(val)"
-                />
+                v-if="mapping.data"
+                >
+                <template v-slot:after>
+                  <q-btn @click="clearVariable(variable)" round icon="delete" v-if="mapping.data[variable]"/>
+                </template>
+              </q-select>
                 <!-- <MappingTable :submission_type="submission_type" :type="type" v-model="mapping[variable]" v-if="submission_type.submission_schema.properties[variable].type === 'table'"/> -->
           </td>
-          <td><span v-if="mapping[variable] && destSchema.properties[mapping[variable]]">{{destSchema.properties[mapping[variable]].type}}</span></td>
-          <td><span v-if="mapping[variable] && destSchema.properties[mapping[variable]]">{{destSchema.properties[mapping[variable]].title}}</span></td>
+          <td><span v-if="mapping.data && mapping.data[variable] && destSchema.properties[mapping.data[variable]]">{{destSchema.properties[mapping.data[variable]].type}}</span></td>
+          <td><span v-if="mapping.data && mapping.data[variable] && destSchema.properties[mapping.data[variable]]">{{destSchema.properties[mapping.data[variable]].title}}</span></td>
         </tr>
       </tbody>
     </q-markup-table>
@@ -46,15 +52,17 @@ export default {
       mapping: this.modelValue
     }
   },
-  // mounted () {
-
-  // },
+  mounted () {
+    if (!this.mapping.data) {
+      this.mapping.data = {}
+    }
+  },
   methods: {
     schema_to_variables (schema, path) {
       return schema.order
     },
     getAvailableFields (schema, mapping, variableType) {
-      const usedVariables = Object.values(mapping)
+      const usedVariables = Object.values(mapping).concat(Object.values(mapping.data))
       const fieldTypes = variableType === 'table' ? ['table'] : ['number', 'string']
       return schema.order.filter(v => usedVariables.indexOf(v) < 0 && (!fieldTypes || fieldTypes.indexOf(schema.properties[v].type) !== -1))
     },
@@ -78,6 +86,9 @@ export default {
           this.selected(variable, variable)
         }
       })
+    },
+    clearVariable (variable) {
+      delete this.mapping.data[variable]
     }
   },
   watch: {
