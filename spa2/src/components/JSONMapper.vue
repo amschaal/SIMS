@@ -1,5 +1,5 @@
 <template>
-    <q-markup-table flat bordered>
+    <q-markup-table flat bordered dense>
       <thead>
         <tr><th colspan="3">Source</th><th colspan="3">Destination <q-btn label="I'm feeling lucky!" v-on:click="autoAssign()"></q-btn></th></tr>
         <tr>
@@ -18,11 +18,15 @@
           <td class="text-left">{{submission_type.submission_schema.properties[variable].type}}</td>
           <td class="text-left">{{submission_type.submission_schema.properties[variable].title}}</td>
           <td colspan="3">
-            <q-select :dense="true" outlined v-model="mapping[variable]" :options="mapping_types" label="Select Mapping Type"
+            <q-select dense outlined v-model="mapping[variable]" :options="mapping_types" label="Select Mapping Type"
                 option-value="id"
                 option-label="label"
                 @update:modelValue="val => selectMappingType(val, variable)"
-                />
+                >
+                <template v-slot:after v-if="mapping[variable]">
+                  <q-btn @click="clearTableVariable(variable)" round icon="delete"></q-btn>
+                </template>
+            </q-select>
                 <!-- :modelValue="pageTitle"
   @update:modelValue="pageTitle = $event" -->
             <!-- <TypeSelect :error_messages="{}" :has_error="{}" v-model="mapping[variable].model_type" @update:model-value="val => selectedModelType(val, variable)" :emit_object="true" v-if="mapping[variable] && mapping[variable].mapping_type === 'model'"/> -->
@@ -33,12 +37,16 @@
           <td class="text-left" style="width: 10%;">{{variable}}</td>
           <td class="text-left">{{submission_type.submission_schema.properties[variable].type}}</td>
           <td class="text-left">{{submission_type.submission_schema.properties[variable].title}}</td>
-          <td> <q-select :dense="true" outlined v-model="mapping[variable]" :options="getOptions(type, mapping, submission_type.submission_schema.properties[variable].type)" label="Select Variable"
+          <td> <q-select dense outlined v-model="mapping[variable]" :options="getOptions(type, mapping, submission_type.submission_schema.properties[variable].type)" label="Select Variable"
                 option-value="id"
                 option-label="label"
                 emit-value
                 @update:modelValue="val => selected(val, variable)"
-                />
+                >
+                <template v-slot:after v-if="mapping[variable]">
+                  <q-btn @click="clearVariable(variable)" round icon="delete"></q-btn>
+                </template>
+                </q-select>
                 <!-- <MappingTable :submission_type="submission_type" :type="type" v-model="mapping[variable]" v-if="submission_type.submission_schema.properties[variable].type === 'table'"/> -->
           </td>
           <td><span v-if="mapping[variable] && mapping[variable].variable">{{type.schema.properties[mapping[variable].variable].type}}</span></td>
@@ -149,6 +157,12 @@ export default {
           this.selected(variable, variable)
         }
       })
+    },
+    clearVariable (variable) {
+      delete this.mapping[variable]
+    },
+    clearTableVariable (variable) {
+      delete this.mapping[variable]
     }
   },
   watch: {
