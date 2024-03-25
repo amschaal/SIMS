@@ -1,17 +1,17 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <template>
-  <span>
+  <div class="row">
     <!-- customFields: {{ fields }} -->
     <!-- schema: {{ schema }} -->
     <!-- Fields: {{ fields }} -->
-    Data: {{ data }}
+    <!-- Data: {{ data }}
     Value: {{ value }}
-    Errors: {{ errors }}
+    Errors: {{ errors }} -->
     <!-- <q-input v-model="data.foo"/> -->
       <!-- <q-editor ng-model="foo" v-if="false"/> -->
       <div v-for="v in fields" :key="v.variable" class="field q-mb-md q-pb-lg q-pl-sm q-pr-sm" v-bind:class="colWidth(v.variable)">
         <slot :name="`field_${v.variable}`" v-bind="{v, data, form:this }">
-        <div >
+        <div>
           <!-- variable:{{ v.variable }}
           {{ widgetClass(v).component }} -->
           <!-- v-if="$store.getters.isStaff || !v.schema.internal" -->
@@ -119,7 +119,7 @@
         </div>
         </slot>
     </div>
-  </span>
+  </div>
 
 </template>
 
@@ -130,7 +130,7 @@ import AgSchema from '../aggrid/agschema.vue'
 // import _ from 'lodash'
 
 export default {
-  props: ['modelValue', 'schema', 'editable', 'errors', 'warnings', 'modify'],
+  props: ['modelValue', 'schema', 'editable', 'errors', 'warnings', 'modify', 'ui'],
   data () {
     return {
       data: this.modelValue ? this.modelValue : {}
@@ -154,10 +154,13 @@ export default {
       return new WidgetClass(v, options)
     },
     colWidth (variable) {
-      // if (!this.modify) {
-      //   return 'col-4'
-      // }
-      return this.schema.layout && this.schema.layout[variable] && this.schema.layout[variable].width ? [this.schema.layout[variable].width] : ['col-12']
+      if (this.schema.layout && this.schema.layout[variable] && this.schema.layout[variable].width) {
+        return [this.schema.layout[variable].width]
+      } else if (this.ui && this.ui[variable] && ['col-12', 'col-6', 'col-4', 'col-3'].indexOf(this.ui[variable].width) !== -1) {
+        return [this.ui[variable].width]
+      } else {
+        return [this.default_width]
+      }
     },
     getError (v) {
       // console.log('getError1', v.schema, v.schema.error_message, this.errors, v.variable)
@@ -226,6 +229,13 @@ export default {
     },
     value () {
       return this.modelValue
+    },
+    default_width () {
+      if (this.ui && this.ui.defaults && ['col-12', 'col-6', 'col-4', 'col-3'].indexOf(this.ui.defaults.width) !== -1) {
+        return this.ui.defaults.width
+      } else {
+        return 'col-12'
+      }
     }
   },
   components: {
