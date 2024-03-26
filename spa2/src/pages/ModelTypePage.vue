@@ -13,6 +13,9 @@
         <JSONSchemaBuilder v-model="type.schema" :root-schema="type.schema" :options="{variables: options, showWidth: true}" type="submission"/>
         <!-- <q-btn label="Update" @click="submit" color="primary"/> -->
         schema: {{ type.schema }}
+        <div v-for="(type_id, modelname) in related_models[type.model]" :key="modelname">
+          {{ modelname }}: <TypeSelect v-model="model.metadata[modelname]" :model-filter="modelname" :error_messages="errors" :has_error="has_error"/>
+        </div>
       </template>
     </BaseForm>
     </div>
@@ -25,14 +28,15 @@
 <script>
 // import schemaForm from 'src/assets/jsonschema/forms/schemaForm.vue'
 // import PoolFormDialog from '../components/forms/PoolFormDialog.vue'
-
+import TypeSelect from 'src/components/TypeSelect.vue'
 import BaseForm from 'src/components/forms/BaseForm.vue'
 export default {
   props: ['id'],
   data () {
     return {
       type: null,
-      options: {}
+      options: {},
+      related_models: { project: { sample: null, pool: null, run: null } }
     }
   },
   mounted: function () {
@@ -51,7 +55,8 @@ export default {
     }
   },
   components: {
-    BaseForm
+    BaseForm,
+    TypeSelect
   }
 }
 </script>
