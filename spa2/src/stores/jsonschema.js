@@ -3,7 +3,7 @@ import { api } from 'src/boot/axios'
 
 export const useJsonSchemaStore = defineStore('jsonschema', {
   state: () => ({
-    typeSchemas: null,
+    schemas: [],
     loadingSchemas: false,
     modelSchemas: {
       project: {},
@@ -12,14 +12,26 @@ export const useJsonSchemaStore = defineStore('jsonschema', {
     }
   }),
   getters: {
+    typeSchemas: (state) => {
+      const typeSchemas = {}
+      state.schemas.forEach(t => {
+        typeSchemas[t.id] = t
+      })
+      return typeSchemas
+    },
+    getSchemas: (state) => {
+      return state.schemas
+    }
   },
   actions: {
     async refreshTypeSchemas () {
+      // try {
+      console.log('refresh schemas')
       const data = await api.get('/api/model_types/')
-      this.typeSchemas = {}
-      data.data.results.forEach(t => {
-        this.typeSchemas[t.id] = t
-      })
+      this.schemas = data.data.results
+      // } catch {
+      //   throw Error('Unable to fetch model type schemas')
+      // }
     },
     async getTypeSchema (typeId) {
       if (!this.typeSchemas) {
