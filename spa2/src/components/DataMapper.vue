@@ -1,4 +1,5 @@
 <template>
+  <div>
     <q-markup-table flat bordered dense>
       <thead>
         <tr><th colspan="3">Destination</th><th colspan="3">Source <q-btn label="I'm feeling lucky!" v-on:click="autoAssign()"></q-btn></th></tr>
@@ -61,23 +62,34 @@
           </td>
         </tr>
       </template>
-      <template v-for="related in related_types" :key="related.model">
-        <tr>
-          <td>
-            {{ related.title }}
-          </td>
-          <td colspan="5">
-            <TypeSelect :dense="true" :error_messages="{}" :has_error="{}" :modelValue="type.metadata[related.model]" @update:model-value="val => selectedModelType(val, related)" :emit_object="true" :model-filter="related.model"/>
-            {{ type.metadata[related.model] }}
-            Type: {{ related.type }}
-            <!-- <JSONTableMapper :source-schema="submission_type.submission_schema.properties[variable].schema" :dest-schema="type.schema.properties[mapping[variable].variable].schema" v-model="mapping[variable].mapping"/> -->
-            <!-- <TableMapper :source-schema="submission_type.submission_schema.properties[variable].schema" :dest-schema="variable_schemas[variable]" v-model="mapping[variable].mapping" /> -->
-          </td>
-        </tr>
-      </template>
       </tbody>
       <!-- {{ type }} -->
     </q-markup-table>
+    <h4>Mapping Pools and Samples</h4>
+    <template v-for="related in related_types" :key="related.model">
+      <q-markup-table flat bordered dense>
+        <thead>
+          <tr><th colspan="4">Samples</th></tr>
+          <tr><th colspan="2">Destination</th><th colspan="2">Source</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="2" style="width: 50%;">
+                <!-- {{ related.title }} -->
+                <!-- {{ $store.jsonschema.typeSchemas[type.metadata[related.model]] }} -->
+                <TypeSelect dense outlined :error_messages="{}" :has_error="{}" :modelValue="type.metadata[related.model]" @update:model-value="val => selectedModelType(val, related)" :emit_object="true" :model-filter="related.model"/>
+            </td>
+            <td colspan="2" style="width: 50%;">
+              <!-- {{ type.metadata[related.model] }} -->
+                <q-select label="Submission Table" :options="tables" v-model="related.source" dense outlined/>
+            </td>
+                <!-- <JSONTableMapper :source-schema="submission_type.submission_schema.properties[variable].schema" :dest-schema="type.schema.properties[mapping[variable].variable].schema" v-model="mapping[variable].mapping"/> -->
+              <!-- <TableMapper :source-schema="submission_type.submission_schema.properties[variable].schema" :dest-schema="variable_schemas[variable]" v-model="mapping[variable].mapping" /> -->
+          </tr>
+        </tbody>
+      </q-markup-table>
+    </template>
+  </div>
 </template>
 
 <style>
@@ -177,6 +189,13 @@ export default {
     },
     clearTableVariable (variable) {
       delete this.mapping[variable]
+    }
+  },
+  computed: {
+    tables () {
+      const schema = this.submission_type.submission_schema
+      const order = schema.order.filter(f => (schema.properties[f].type) === 'table')
+      return order.map(f => ({ id: f, label: schema.properties[f].title ? `${schema.properties[f].title} (${f})` : f }))
     }
   },
   watch: {
