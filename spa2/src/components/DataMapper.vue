@@ -77,7 +77,7 @@
             <td colspan="2" style="width: 50%;">
                 <!-- {{ related.title }} -->
                 <!-- {{ $store.jsonschema.typeSchemas[type.metadata[related.model]] }} -->
-                <TypeSelect dense outlined :error_messages="{}" :has_error="{}" :modelValue="type.metadata[related.model]" @update:model-value="val => selectedModelType(val, related)" :emit_object="true" :model-filter="related.model"/>
+                <!-- <TypeSelect dense outlined :error_messages="{}" :has_error="{}" :modelValue="type.metadata[related.model]" @update:model-value="val => selectedModelType(val, related)" :emit_object="true" :model-filter="related.model"/> -->
             </td>
             <td colspan="2" style="width: 50%;">
               <!-- {{ type.metadata[related.model] }} -->
@@ -85,6 +85,14 @@
             </td>
                 <!-- <JSONTableMapper :source-schema="submission_type.submission_schema.properties[variable].schema" :dest-schema="type.schema.properties[mapping[variable].variable].schema" v-model="mapping[variable].mapping"/> -->
               <!-- <TableMapper :source-schema="submission_type.submission_schema.properties[variable].schema" :dest-schema="variable_schemas[variable]" v-model="mapping[variable].mapping" /> -->
+          </tr>
+          <tr>
+            <td colspan="4" v-if="type.metadata[related.model] && related.source">
+              <!-- {{ $store.jsonschema.typeSchemas[type.metadata[related.model]] }} -->
+              {{ getModelSchema('sample', type.metadata[related.model] ) }}
+              Test: <TableMapper :source-schema="submission_type.submission_schema" :dest-schema="getModelSchema('sample', type.metadata[related.model] )" v-model="mapping[related.model]" :table="related.source" :model="related.model"/>
+              <p>variable_schemas: {{ variable_schemas }}</p>
+            </td>
           </tr>
         </tbody>
       </q-markup-table>
@@ -96,8 +104,9 @@
 </style>
 
 <script>
-// import JSONTableMapper from './JSONTableMapper.vue'
-import TypeSelect from 'src/components/TypeSelect.vue'
+import TableMapper from './TableMapper.vue'
+// import TypeSelect from 'src/components/TypeSelect.vue'
+import ModelSchemas from 'src/model_schemas/schemas'
 // import SubmissionTypeSelect from 'src/components/SubmissionTypeSelect.vue'
 // import TypeSelect from 'src/components/TypeSelect.vue'
 
@@ -112,6 +121,13 @@ export default {
       mapping_types: [{ id: 'JSON', label: 'JSON' }, { id: 'samples', model: 'sample', label: 'Samples', schema_url: '/api/samples/jsonschema/' }, { id: 'pools', model: 'pool', label: 'Pools', schema_url: '/api/pools/jsonschema/' }],
       related_types: [{ model: 'sample', accessor: 'samples', title: 'Samples' }]
     }
+  },
+  mounted () {
+    this.related_types.forEach(r => {
+      if (!this.mapping[r.model]) {
+        this.mapping[r.model] = {}
+      }
+    })
   },
   methods: {
     schema_to_variables (schema, path) {
@@ -189,6 +205,9 @@ export default {
     },
     clearTableVariable (variable) {
       delete this.mapping[variable]
+    },
+    getModelSchema (model, type) {
+      return ModelSchemas.getSchema(model, type)
     }
   },
   computed: {
@@ -205,6 +224,6 @@ export default {
       this.mapping = val
     }
   },
-  components: { TypeSelect }
+  components: { TableMapper }
 }
 </script>
