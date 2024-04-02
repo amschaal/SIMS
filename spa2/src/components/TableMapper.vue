@@ -29,6 +29,7 @@
                 option-label="label"
                 emit-value
                 @update:modelValue="val => selected(val)"
+                :display-value="mapping[variable] ? `${variableObject[mapping[variable]].label}` : ''"
                 >
                 <template v-slot:after>
                   <q-btn @click="clearVariable(variable)" round icon="delete" v-if="mapping[variable]"/>
@@ -97,15 +98,15 @@ export default {
       this.$emit('update:modelValue', this.mapping)
     },
     autoAssign () {
-      const destVariables = this.schema_to_variables(this.destSchema)
-      this.schema_to_variables(this.sourceSchema).forEach(variable => {
-        console.log(variable)
-        if (!this.mapping[variable] && destVariables.indexOf(variable) !== -1) {
-          console.log('assign', variable)
-          this.mapping[variable] = variable
-          this.selected(variable, variable)
-        }
-      })
+      // const destVariables = this.schema_to_variables(this.destSchema)
+      // this.schema_to_variables(this.sourceSchema).forEach(variable => {
+      //   console.log(variable)
+      //   if (!this.mapping[variable] && destVariables.indexOf(variable) !== -1) {
+      //     console.log('assign', variable)
+      //     this.mapping[variable] = variable
+      //     this.selected(variable, variable)
+      //   }
+      // })
     },
     clearVariable (variable, path) {
       if (path) {
@@ -120,15 +121,22 @@ export default {
       const options = []
       this.sourceSchema.order.forEach(v => {
         if (['array', 'table'].indexOf(this.sourceSchema.properties[v].type) === -1) {
-          options.push({ id: v, label: this.sourceSchema.properties[v].title || v, type: this.sourceSchema.properties[v].type })
+          options.push({ id: v, variable: v, label: this.sourceSchema.properties[v].title || v, type: this.sourceSchema.properties[v].type })
         }
       })
-      const tableSchema = this.sourceSchema.properties[this.table.id].schema
+      const tableSchema = this.sourceSchema.properties[this.table].schema
       tableSchema.order.forEach(v => {
         const label = tableSchema.properties[v].title || v
-        options.push({ id: `${this.table.id}[].${v}`, label: `${this.table.id} -> ${label}`, type: tableSchema.properties[v].type })
+        options.push({ id: `${this.table}[].${v}`, variable: v, label: `${this.table} -> ${label}`, type: tableSchema.properties[v].type })
       })
       return options
+    },
+    variableObject () {
+      const obj = {}
+      this.variableOptions.forEach(o => {
+        obj[o.id] = o
+      })
+      return obj
     }
   },
   watch: {

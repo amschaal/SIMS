@@ -65,15 +65,17 @@
       </tbody>
       <!-- {{ type }} -->
     </q-markup-table>
-    <h4>Mapping Pools and Samples</h4>
     <template v-for="related in related_types" :key="related.model">
-      <q-markup-table flat bordered dense>
+      <div v-if="type.metadata[related.model]">
+        <h5>Map {{related.title}}</h5>
+        {{ type.metadata[related.model] }}
+        <q-markup-table flat bordered dense>
         <thead>
-          <tr><th colspan="4">Samples</th></tr>
+          <tr><th colspan="4">{{related.title}}</th></tr>
           <tr><th colspan="2">Destination</th><th colspan="2">Source</th></tr>
         </thead>
         <tbody>
-          <tr>
+          <tr v-if="mapping[related.model]">
             <td colspan="2" style="width: 50%;">
                 <!-- {{ related.title }} -->
                 <!-- {{ $store.jsonschema.typeSchemas[type.metadata[related.model]] }} -->
@@ -81,21 +83,31 @@
             </td>
             <td colspan="2" style="width: 50%;">
               <!-- {{ type.metadata[related.model] }} -->
-                <q-select label="Submission Table" :options="tables" v-model="related.source" dense outlined/>
+                <q-select
+                  label="Submission Table"
+                  :options="tables"
+                  v-model="mapping[related.model].source"
+                  dense
+                  outlined
+                  option-value="id"
+                  option-label="label"
+                  emit-value
+                  />
             </td>
                 <!-- <JSONTableMapper :source-schema="submission_type.submission_schema.properties[variable].schema" :dest-schema="type.schema.properties[mapping[variable].variable].schema" v-model="mapping[variable].mapping"/> -->
               <!-- <TableMapper :source-schema="submission_type.submission_schema.properties[variable].schema" :dest-schema="variable_schemas[variable]" v-model="mapping[variable].mapping" /> -->
           </tr>
-          <tr>
-            <td colspan="4" v-if="type.metadata[related.model] && related.source">
+          <tr v-if="type.metadata[related.model] && mapping[related.model] && mapping[related.model].source">
+            <td colspan="4" >
               <!-- {{ $store.jsonschema.typeSchemas[type.metadata[related.model]] }} -->
-              {{ getModelSchema('sample', type.metadata[related.model] ) }}
-              Test: <TableMapper :source-schema="submission_type.submission_schema" :dest-schema="getModelSchema('sample', type.metadata[related.model] )" v-model="mapping[related.model]" :table="related.source" :model="related.model"/>
+              <!-- {{ getModelSchema('sample', type.metadata[related.model] ) }} -->
+              Test: <TableMapper :source-schema="submission_type.submission_schema" :dest-schema="getModelSchema(related.model, type.metadata[related.model] )" v-model="mapping[related.model].mapping" :table="mapping[related.model].source" :model="related.model"/>
               <p>variable_schemas: {{ variable_schemas }}</p>
             </td>
           </tr>
         </tbody>
       </q-markup-table>
+      </div>
     </template>
   </div>
 </template>
@@ -119,13 +131,13 @@ export default {
       mapping_type: {},
       variable_schemas: {},
       mapping_types: [{ id: 'JSON', label: 'JSON' }, { id: 'samples', model: 'sample', label: 'Samples', schema_url: '/api/samples/jsonschema/' }, { id: 'pools', model: 'pool', label: 'Pools', schema_url: '/api/pools/jsonschema/' }],
-      related_types: [{ model: 'sample', accessor: 'samples', title: 'Samples' }]
+      related_types: [{ model: 'sample', accessor: 'samples', title: 'Samples' }, { model: 'pool', accessor: 'pools', title: 'Pools' }]
     }
   },
   mounted () {
     this.related_types.forEach(r => {
       if (!this.mapping[r.model]) {
-        this.mapping[r.model] = {}
+        this.mapping[r.model] = { type: 'array', source: null, mapping: {} }
       }
     })
   },

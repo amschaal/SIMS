@@ -15,7 +15,15 @@ const sampleSchema = {
     // adapter: { type: 'integer', title: 'Adapter' }
   },
   required: ['name'],
-  order: ['name']
+  order: ['name', 'data']
+}
+const poolSchema = {
+  type: 'object',
+  properties: {
+    name: { type: 'string', maxLength: 50, minLength: 1, title: 'Name' }
+  },
+  required: ['name'],
+  order: ['name', 'data']
 }
 const projectSchema = {
   type: 'object',
@@ -24,7 +32,7 @@ const projectSchema = {
     // type: { type: 'string', title: 'Type' },
     // data: { type: 'object', title: 'Data' },
     // physical_type: { type: ['string', 'null'], maxLength: 25, minLength: 1, title: 'Physical type' },
-    comment: { type: 'string', title: 'Comment' }
+    // comment: { type: 'string', title: 'Comment' }
     // barcodes: { type: 'object', title: 'Barcodes' },
     // sample: { type: 'integer', title: 'Sample' },
     // project: { type: 'integer', title: 'Project' },
@@ -32,7 +40,7 @@ const projectSchema = {
     // adapter: { type: 'integer', title: 'Adapter' }
   },
   required: [],
-  order: ['comment']
+  order: ['data']
 }
 
 // const schema = {
@@ -47,7 +55,8 @@ const projectSchema = {
 class ModelSchemas {
   static schemas = {
     project: projectSchema,
-    sample: sampleSchema
+    sample: sampleSchema,
+    pool: poolSchema
   }
 
   static schemaStore = useJsonSchemaStore()
@@ -57,7 +66,9 @@ class ModelSchemas {
     const schema = ModelSchemas.schemas[model]
     const type = ModelSchemas.schemaStore.typeSchemas[typeId]
     schema.properties[dataField] = type.schema
-    schema.order.push(dataField)
+    if (schema.order.indexOf(dataField) === -1) {
+      schema.order.push(dataField)
+    }
     return schema
   }
 }
