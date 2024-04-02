@@ -18,8 +18,13 @@
           <td class="text-left">{{destSchema.properties[variable].type}}</td>
           <td class="text-left">{{destSchema.properties[variable].title}}</td>
           <td>
-              {{sourceSchema.properties.samples.order}}
-              <q-select dense outlined v-model="mapping[variable]" :options="getOptions(sourceSchema.properties.samples.schema, mapping, destSchema.properties[variable].type)" label="Select Variable"
+              <!-- getOptions(sourceSchema.properties.libraries.schema, mapping, destSchema.properties[variable].type) -->
+              <q-select
+                dense
+                outlined
+                v-model="mapping[variable]"
+                :options="getFilteredOptions(destSchema.properties[variable].type)"
+                label="Select Variable"
                 option-value="id"
                 option-label="label"
                 emit-value
@@ -73,15 +78,19 @@ export default {
     schema_to_variables (schema, path) {
       return path ? schema[path].order : schema.order
     },
-    getAvailableFields (schema, mapping, variableType) {
+    // getAvailableFields (schema, mapping, variableType) {
+    //   const fieldTypes = variableType === 'table' ? ['table'] : ['number', 'string']
+    //   return schema.order.filter(v => (!fieldTypes || fieldTypes.indexOf(schema.properties[v].type) !== -1))
+    // },
+    // getOptions (schema, mapping, variableType) {
+    //   if (!schema) {
+    //     return []
+    //   }
+    //   return this.getAvailableFields(schema, mapping, variableType).map(v => ({ id: `${this.table.id}[].${v}`, label: schema.properties[v].title || v }))
+    // },
+    getFilteredOptions (variableType) {
       const fieldTypes = variableType === 'table' ? ['table'] : ['number', 'string']
-      return schema.order.filter(v => (!fieldTypes || fieldTypes.indexOf(schema.properties[v].type) !== -1))
-    },
-    getOptions (schema, mapping, variableType) {
-      if (!schema) {
-        return []
-      }
-      return this.getAvailableFields(schema, mapping, variableType).map(v => ({ id: v, label: schema.properties[v].title || v }))
+      return this.variableOptions.filter(o => (!fieldTypes || fieldTypes.indexOf(o.type) !== -1))
     },
     selected () {
       console.log('JSONTableMapper.selected', JSON.stringify(this.mapping))
@@ -104,6 +113,22 @@ export default {
       } else {
         delete this.mapping[variable]
       }
+    }
+  },
+  computed: {
+    variableOptions () {
+      const options = []
+      this.sourceSchema.order.forEach(v => {
+        if (['array', 'table'].indexOf(this.sourceSchema.properties[v].type) === -1) {
+          options.push({ id: v, label: this.sourceSchema.properties[v].title || v, type: this.sourceSchema.properties[v].type })
+        }
+      })
+      const tableSchema = this.sourceSchema.properties[this.table.id].schema
+      tableSchema.order.forEach(v => {
+        const label = tableSchema.properties[v].title || v
+        options.push({ id: `${this.table.id}[].${v}`, label: `${this.table.id} -> ${label}`, type: tableSchema.properties[v].type })
+      })
+      return options
     }
   },
   watch: {
