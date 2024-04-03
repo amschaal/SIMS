@@ -63,6 +63,13 @@ const routes = [
         name: 'run',
         props: true
       },
+      { name: 'submission_types', path: 'submission_types', component: () => import('pages/SubmissionTypesPage.vue') },
+      {
+        path: '/submission_types/:id/',
+        component: () => import('pages/SubmissionTypePage.vue'),
+        name: 'submission_type',
+        props: true
+      },
       { name: 'machines', path: 'machines', component: () => import('pages/MachinesPage.vue') },
       {
         path: '/machines/:id/',
