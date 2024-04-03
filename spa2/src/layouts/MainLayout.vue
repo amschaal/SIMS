@@ -29,6 +29,11 @@
                   <q-item-label>Machines</q-item-label>
                 </q-item-section>
               </q-item>
+              <q-item clickable v-close-popup :to="{ name: 'submission_types'}">
+                <q-item-section>
+                  <q-item-label>Submission Types</q-item-label>
+                </q-item-section>
+              </q-item>
               <q-item clickable v-close-popup :to="{ name: 'map_types'}">
                 <q-item-section>
                   <q-item-label>Map Types</q-item-label>

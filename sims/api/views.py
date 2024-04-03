@@ -300,7 +300,8 @@ class SubmissionTypeViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = SubmissionTypeSerializer
     model = SubmissionType
     queryset = SubmissionType.objects.all()
-    ordering_fields = ['name', 'lab_id', 'sort_order']
+    ordering_fields = ['name', 'lab_id', 'sort_order'],
+    search_fields = ('name', 'description', 'prefix')
     @action(detail=True, methods=['post'])
     def update_mapping(self, request, pk=None):
         st = self.get_object()
@@ -308,4 +309,3 @@ class SubmissionTypeViewSet(viewsets.ReadOnlyModelViewSet):
         st.mapping = mapping
         st.save()
         return Response(mapping)
-
