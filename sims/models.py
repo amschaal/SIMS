@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator
 from django.utils import timezone
 
-from djson.models import DjsonModel, DjsonTypeModel
+from djson.models import DjsonModel, DjsonTypeModel, ModelType
 
 class Machine(DjsonTypeModel):
     id = models.SlugField(max_length=20, blank=False, primary_key=True)
@@ -180,6 +180,17 @@ class SubmissionType(models.Model):
     prefix = models.CharField(max_length=15, null=True, blank=True)
     statuses = JSONField(default=list)
     submission_schema = JSONField(null=True)
+    mapping = JSONField(default=dict)
+    def __str__(self):
+        return self.name
+
+class SubmissionTypeMapper(models.Model):
+    updated = models.DateTimeField(auto_now=True)
+    active = models.BooleanField(default=True)
+    name = models.CharField(max_length=100)
+    description = models.TextField(null=True,blank=True)
+    submission_type = models.ForeignKey(SubmissionType, related_name='mappers', on_delete=models.CASCADE)
+    model_type = models.ForeignKey(ModelType, on_delete=models.CASCADE)
     mapping = JSONField(default=dict)
 
 class Submission(models.Model):

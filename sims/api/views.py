@@ -2,10 +2,10 @@ from rest_framework import viewsets, status
 from sims.api.serializers import SubmissionSerializer, LibrarySerializer, RunSerializer,RunDetailSerializer, MachineSerializer,\
     ProjectSerializer, SampleSerializer, PoolSerializer, \
     AdapterSerializer, RunPoolSerializer, RunPoolDetailSerializer,\
-    AdapterDBSerializer, SubmissionTypeSerializer
+    AdapterDBSerializer, SubmissionTypeMapperSerializer, SubmissionTypeSerializer
 from sims.coreomics.api import get_submission_types
 from sims.models import Submission, Run, Machine, Project, Sample, Pool, Adapter,\
-    RunPool, AdapterDB, SubmissionType
+    RunPool, AdapterDB, SubmissionType, SubmissionTypeMapper
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.exceptions import APIException
@@ -309,3 +309,17 @@ class SubmissionTypeViewSet(viewsets.ReadOnlyModelViewSet):
         st.mapping = mapping
         st.save()
         return Response(mapping)
+
+class SubmissionTypeMapperViewSet(viewsets.ModelViewSet):
+    serializer_class = SubmissionTypeMapperSerializer
+    model = SubmissionTypeMapper
+    queryset = SubmissionTypeMapper.objects.all()
+    # ordering_fields = ['name', 'submission_type', 'model_type'],
+    # search_fields = ('name', 'description')
+    # @action(detail=True, methods=['post'])
+    # def update_mapping(self, request, pk=None):
+    #     st = self.get_object()
+    #     mapping = request.data.get('mapping')
+    #     st.mapping = mapping
+    #     st.save()
+    #     return Response(mapping)

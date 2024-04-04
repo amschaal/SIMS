@@ -4,7 +4,7 @@ from djson.serializers import DjsonTypeModelSerializer
 # from djson.validators import JsonSchemaValidator
 from djson.tests import TEST_SCHEMA
 from sims.models import Submission, Project, Machine, Run, Sample, Adapter, Pool, RunPool,\
-    AdapterDB, SubmissionType
+    AdapterDB, SubmissionType, SubmissionTypeMapper
 from django.conf import settings
 
 #Allows Creation/Updating of related model fields with OBJECT instead of just id
@@ -29,13 +29,13 @@ class ModelRelatedField(serializers.RelatedField):
         if isinstance(data, int) or isinstance(data, str):
             kwargs = {self.pk:data}
             return self.model.objects.get(**kwargs)
-        if data.get(self.pk,None):
+        if data.get(self.pk, None):
             kwargs = {self.pk:data.get(self.pk)}
             return self.model.objects.get(**kwargs)
         return None
     def to_representation(self, value):
         return self.serializer(value).data
-    
+
 class SubmissionSerializer(serializers.ModelSerializer):
     project = serializers.PrimaryKeyRelatedField(read_only=True)
     class Meta:
@@ -157,3 +157,9 @@ class SubmissionTypeSerializer(serializers.ModelSerializer):
         model = SubmissionType
         exclude = []
 
+class SubmissionTypeMapperSerializer(serializers.ModelSerializer):
+    # submission_type = SubmissionTypeSerializer()
+    class Meta:
+        model = SubmissionTypeMapper
+        exclude = []
+    
