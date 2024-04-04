@@ -23,7 +23,7 @@
             </q-markup-table>
           </q-tab-panel>
           <q-tab-panel name="mappings">
-            Mappings
+            <SubmissionTypeMapperTable :filters="`submission_type=${id}`"/>
           </q-tab-panel>
         </q-tab-panels>
   </q-page>
@@ -33,6 +33,8 @@
 </style>
 
 <script>
+import SubmissionTypeMapperTable from 'src/components/tables/SubmissionTypeMapperTable.vue'
+
 export default {
   name: 'SubmissionTypePage',
   props: ['id'],
@@ -51,6 +53,7 @@ export default {
       })
   },
   components: {
+    SubmissionTypeMapperTable
   }
 }
 </script>
