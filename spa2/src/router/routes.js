@@ -70,6 +70,12 @@ const routes = [
         name: 'submission_type',
         props: true
       },
+      {
+        path: '/submission_type_mappers/:id/',
+        component: () => import('pages/SubmissionTypeMapperPage.vue'),
+        name: 'submission_type_mapper',
+        props: true
+      },
       { name: 'machines', path: 'machines', component: () => import('pages/MachinesPage.vue') },
       {
         path: '/machines/:id/',
