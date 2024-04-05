@@ -24,6 +24,10 @@
           </q-tab-panel>
           <q-tab-panel name="mappings">
             <SubmissionTypeMapperTable :filters="`submission_type=${id}`"/>
+            <fieldset>
+              <legend>Create a new mapper</legend>
+              <SubmissionTypeMapperForm v-model="foo" :on-success="mapperCreated"/>
+            </fieldset>
           </q-tab-panel>
         </q-tab-panels>
   </q-page>
@@ -34,14 +38,16 @@
 
 <script>
 import SubmissionTypeMapperTable from 'src/components/tables/SubmissionTypeMapperTable.vue'
-
+import SubmissionTypeMapperForm from 'src/components/forms/SubmissionTypeMapperForm.vue'
 export default {
   name: 'SubmissionTypePage',
   props: ['id'],
   data () {
     return {
       type: {},
-      tab: 'details'
+      tab: 'details',
+      SubmissionTypeMapperForm,
+      foo: { submission_type: this.id }
     }
   },
   mounted: function () {
@@ -52,8 +58,19 @@ export default {
         self.type = response.data
       })
   },
+  methods: {
+    openDialog () {
+      this.$refs.mapper_form.open()
+    },
+    mapperCreated (request) {
+      this.$q.notify('Mapper created.')
+      this.$router.push({ name: 'submission_type_mapper', params: { id: request.data.id } })
+      this.$refs.mapper_form.$refs.dialog.close()
+    }
+  },
   components: {
-    SubmissionTypeMapperTable
+    SubmissionTypeMapperTable,
+    SubmissionTypeMapperForm
   }
 }
 </script>
