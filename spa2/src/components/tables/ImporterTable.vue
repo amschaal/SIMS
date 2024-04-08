@@ -2,14 +2,14 @@
   <BaseTable
     :columns="columns"
     :visible-columns="visibleColumns"
-    api-url="/api/submission_type_mappers/"
+    api-url="/api/importers/"
     :options="combined_options"
     :filters="filters"
     ref="table"
   >
     <template v-slot:body="{ props }">
       <q-tr :props="props">
-        <q-td key="name" :props="props"><router-link :to="{ name: 'submission_type_mapper', params: { id: props.row.id }}">{{ props.row.name }}</router-link></q-td>
+        <q-td key="name" :props="props"><router-link :to="{ name: 'importer', params: { id: props.row.id }}">{{ props.row.name }}</router-link></q-td>
         <!-- <q-td key="name" :props="props">{{ props.row.name }}</q-td> -->
         <q-td key="description" :props="props">{{ props.row.description }}</q-td>
       </q-tr>

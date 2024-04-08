@@ -1,10 +1,11 @@
 from rest_framework import serializers
-from djson.serializers import DjsonTypeModelSerializer
+from djson.models import ModelType
+from djson.serializers import DjsonTypeModelSerializer, ModelTypeSerializer
 # from djson.fields import JSONSchemaField
 # from djson.validators import JsonSchemaValidator
 from djson.tests import TEST_SCHEMA
 from sims.models import Submission, Project, Machine, Run, Sample, Adapter, Pool, RunPool,\
-    AdapterDB, SubmissionType, SubmissionTypeMapper
+    AdapterDB, SubmissionType, Importer
 from django.conf import settings
 
 #Allows Creation/Updating of related model fields with OBJECT instead of just id
@@ -157,9 +158,12 @@ class SubmissionTypeSerializer(serializers.ModelSerializer):
         model = SubmissionType
         exclude = []
 
-class SubmissionTypeMapperSerializer(serializers.ModelSerializer):
-    # submission_type = SubmissionTypeSerializer()
+class ImporterSerializer(serializers.ModelSerializer):
     class Meta:
-        model = SubmissionTypeMapper
+        model = Importer
         exclude = []
+
+class ImporterDetailSerializer(ImporterSerializer):
+    submission_type = ModelRelatedField(model=SubmissionType, serializer=SubmissionTypeSerializer)
+    model_type = ModelRelatedField(model=ModelType, serializer=ModelTypeSerializer)
     

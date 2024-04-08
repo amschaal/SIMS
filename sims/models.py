@@ -184,14 +184,14 @@ class SubmissionType(models.Model):
     def __str__(self):
         return self.name
 
-class SubmissionTypeMapper(models.Model):
+class Importer(models.Model):
     updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
     name = models.CharField(max_length=100)
     description = models.TextField(null=True,blank=True)
-    submission_type = models.ForeignKey(SubmissionType, related_name='mappers', on_delete=models.CASCADE)
+    submission_type = models.ForeignKey(SubmissionType, related_name='importers', on_delete=models.CASCADE)
     model_type = models.ForeignKey(ModelType, on_delete=models.CASCADE)
-    mapping = JSONField(default=dict)
+    config = JSONField(default=dict)
 
 class Submission(models.Model):
     id = models.CharField(max_length=50, primary_key=True, editable=False)

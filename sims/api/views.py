@@ -2,10 +2,10 @@ from rest_framework import viewsets, status
 from sims.api.serializers import SubmissionSerializer, LibrarySerializer, RunSerializer,RunDetailSerializer, MachineSerializer,\
     ProjectSerializer, SampleSerializer, PoolSerializer, \
     AdapterSerializer, RunPoolSerializer, RunPoolDetailSerializer,\
-    AdapterDBSerializer, SubmissionTypeMapperSerializer, SubmissionTypeSerializer
+    AdapterDBSerializer, ImporterDetailSerializer, ImporterSerializer, SubmissionTypeSerializer
 from sims.coreomics.api import get_submission_types
 from sims.models import Submission, Run, Machine, Project, Sample, Pool, Adapter,\
-    RunPool, AdapterDB, SubmissionType, SubmissionTypeMapper
+    RunPool, AdapterDB, SubmissionType, Importer
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.exceptions import APIException
@@ -310,10 +310,17 @@ class SubmissionTypeViewSet(viewsets.ReadOnlyModelViewSet):
         st.save()
         return Response(mapping)
 
-class SubmissionTypeMapperViewSet(viewsets.ModelViewSet):
-    serializer_class = SubmissionTypeMapperSerializer
-    model = SubmissionTypeMapper
-    queryset = SubmissionTypeMapper.objects.all()
+class ImporterViewSet(mixins.ActionSerializerMixin, viewsets.ModelViewSet):
+    serializer_class = ImporterSerializer
+    action_serializers = {
+        'retrieve': ImporterDetailSerializer,
+        'list': ImporterSerializer,
+        'create': ImporterDetailSerializer,
+        'update': ImporterDetailSerializer
+    }
+    model = Importer
+    queryset = Importer.objects.all()
+    filterset_fields = {'submission_type':['exact']}
     # ordering_fields = ['name', 'submission_type', 'model_type'],
     # search_fields = ('name', 'description')
     # @action(detail=True, methods=['post'])

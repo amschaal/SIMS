@@ -44,6 +44,9 @@ export default {
       .get(`/api/model_types/${this.id}/`)
       .then(response => {
         this.type = response.data
+        if (!this.type.schema.type) {
+          this.type.schema.type = 'object'
+        }
       })
   },
   methods: {

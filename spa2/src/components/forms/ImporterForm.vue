@@ -1,5 +1,5 @@
 <template>
-  <BaseForm :api-url="`/api/submission_type_mappers/`" api-method="post" v-model="model" :on-success="onSuccess" :on-error="onError">
+  <BaseForm :api-url="`/api/importers/`" api-method="post" v-model="model" :on-success="onSuccess" :on-error="onError">
       <template v-slot:content="{ model, errors, has_error }">
         <TypeSelect v-model="model.model_type" model-filter="project" :error_messages="errors" :has_error="has_error" field="model_type"/>
         <q-input outlined v-model="model.name" label="Name"
@@ -30,7 +30,7 @@ export default {
     onError () {
       this.$q.notify({
         type: 'negative',
-        message: 'Error creating submission type mapper.'
+        message: 'Error creating submission type importer.'
       })
     }
   },

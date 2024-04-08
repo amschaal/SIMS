@@ -5,7 +5,7 @@
         v-model="tab"
       >
         <q-tab name="details" label="Details"/>
-        <q-tab name="mappings" label="Mappings"/>
+        <q-tab name="importers" label="Importers"/>
       </q-tabs>
       <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="details">
@@ -22,11 +22,11 @@
               </tbody>
             </q-markup-table>
           </q-tab-panel>
-          <q-tab-panel name="mappings">
-            <SubmissionTypeMapperTable :filters="`submission_type=${id}`"/>
+          <q-tab-panel name="importers">
+            <ImporterTable :filters="`submission_type=${id}`"/>
             <fieldset>
-              <legend>Create a new mapper</legend>
-              <SubmissionTypeMapperForm v-model="foo" :on-success="mapperCreated"/>
+              <legend>Create a new importer</legend>
+              <ImporterForm v-model="foo" :on-success="importerCreated"/>
             </fieldset>
           </q-tab-panel>
         </q-tab-panels>
@@ -37,8 +37,8 @@
 </style>
 
 <script>
-import SubmissionTypeMapperTable from 'src/components/tables/SubmissionTypeMapperTable.vue'
-import SubmissionTypeMapperForm from 'src/components/forms/SubmissionTypeMapperForm.vue'
+import ImporterTable from 'src/components/tables/ImporterTable.vue'
+import ImporterForm from 'src/components/forms/ImporterForm.vue'
 export default {
   name: 'SubmissionTypePage',
   props: ['id'],
@@ -46,7 +46,7 @@ export default {
     return {
       type: {},
       tab: 'details',
-      SubmissionTypeMapperForm,
+      ImporterForm,
       foo: { submission_type: this.id }
     }
   },
@@ -60,17 +60,17 @@ export default {
   },
   methods: {
     openDialog () {
-      this.$refs.mapper_form.open()
+      this.$refs.importer_form.open()
     },
-    mapperCreated (request) {
-      this.$q.notify('Mapper created.')
-      this.$router.push({ name: 'submission_type_mapper', params: { id: request.data.id } })
-      this.$refs.mapper_form.$refs.dialog.close()
+    importerCreated (request) {
+      this.$q.notify('Importer created.')
+      this.$router.push({ name: 'importer', params: { id: request.data.id } })
+      this.$refs.importer_form.$refs.dialog.close()
     }
   },
   components: {
-    SubmissionTypeMapperTable,
-    SubmissionTypeMapperForm
+    ImporterTable,
+    ImporterForm
   }
 }
 </script>

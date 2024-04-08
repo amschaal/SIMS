@@ -1,7 +1,7 @@
 <template>
-  <q-page class="q-pa-sm q-gutter-sm" v-if="mapper">
-    <h6 class="text-center"><router-link :to="{ name: 'submission_type',  params: { id: mapper.submission_type.id } }">{{ mapper.submission_type.name }}</router-link> / Mappers / {{mapper.name}}</h6>
-    <DeleteButton :url="`/api/submission_type_mappers/${id}/`"/>
+  <q-page class="q-pa-sm q-gutter-sm" v-if="importer">
+    <h6 class="text-center"><router-link :to="{ name: 'submission_type',  params: { id: importer.submission_type.id } }">{{ importer.submission_type.name }}</router-link> / Importers / {{importer.name}}</h6>
+    <DeleteButton :url="`/api/importers/${id}/`"/>
     <q-tabs
         v-model="tab"
       >
@@ -10,13 +10,13 @@
       </q-tabs>
       <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="details">
-            From: {{ mapper.submission_type.name }}
-            To: {{mapper.model_type.name}}
+            From: {{ importer.submission_type.name }}
+            To: {{importer.model_type.name}}
     <!-- Variables: {{  schema_to_variables(submission_type.submission_schema) }} -->
-            <DataMapper v-model="mapper.mapping" :submission_type="mapper.submission_type" :type="mapper.model_type"/>
+            <DataMapper v-model="importer.config" :submission_type="importer.submission_type" :type="importer.model_type"/>
             <q-btn label="Update Mapping" @click="updateMapping"/>
-            <!-- {{mapper}} -->
-            {{ mapper.mapping }}
+            <!-- {{importer}} -->
+            {{ importer.mapping }}
           </q-tab-panel>
           <q-tab-panel name="imports">
           </q-tab-panel>
@@ -31,26 +31,26 @@
 import DataMapper from 'src/components/DataMapper.vue'
 import DeleteButton from 'src/components/DeleteButton.vue'
 export default {
-  name: 'SubmissionTypeMapperPage',
+  name: 'ImporterPage',
   props: ['id'],
   data () {
     return {
-      mapper: null,
+      importer: null,
       tab: 'details'
     }
   },
   mounted: function () {
     const self = this
     this.$api
-      .get(`/api/submission_type_mappers/${self.id}/`)
+      .get(`/api/importers/${self.id}/`)
       .then(function (response) {
-        self.mapper = response.data
+        self.importer = response.data
       })
   },
   methods: {
     updateMapping () {
       this.$api
-        .put(`/api/submission_type_mappers/${this.id}/`, this.mapper)
+        .put(`/api/importers/${this.id}/`, this.importer)
         .then(response => {
           this.$q.notify({ message: 'Mapper updated.', type: 'positive' })
           // this.options = response.data.results
