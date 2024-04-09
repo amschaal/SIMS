@@ -195,9 +195,9 @@ class Importer(models.Model):
 
 class Submission(models.Model):
     id = models.CharField(max_length=50, primary_key=True, editable=False)
+    # submission_type = models.ForeignKey(SubmissionType)
     # project = models.OneToOneField(Project, on_delete=models.SET_NULL, null=True)
     imported = models.DateTimeField(null=True)
-    processed = models.DateTimeField(null=True)
     submitted = models.DateTimeField(null=True)
     submission_id = models.CharField(max_length=50, unique=True, editable=False, null=True)
     first_name = models.CharField(max_length=50)
@@ -213,6 +213,10 @@ class Submission(models.Model):
     type = models.JSONField(default=dict)
     schema = models.JSONField(default=dict)
     data = models.JSONField(default=dict)
+    # import fields below
+    importer = models.ForeignKey(Importer, null=True, on_delete=models.RESTRICT)
+    processed = models.DateTimeField(null=True)
+    config = models.JSONField(default=dict)
     def process(self):
         if not getattr(self.processed, 'project', None):
             from sims.transform import import_submission, pool_samples
@@ -226,6 +230,12 @@ class Submission(models.Model):
             self.save()
             # libraries = Library.objects.bulk_create(libraries)
             return (project, pools, samples)
+
+# class SubmissionImport(models.Model):
+#     submission = models.OneToOneField(Submission, on_delete=models.RESTRICT, related_name='import')
+#     imported = models.DateTimeField(auto_now_add=True)
+#     importer = models.ForeignKey(Importer, on_delete=models.RESTRICT)
+#     config = models.JSONField(default=dict)
 
 class Sample(DjsonTypeModel):
     TYPE_LIBRARY = 'LIBRARY'
