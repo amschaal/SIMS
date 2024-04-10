@@ -11,7 +11,8 @@
       </q-tabs>
       <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="details">
-            <q-btn v-if="!submission.project" label="Import project/samples/pools" @click="process" color="primary"/>
+            <SubmissionImportDialog ref="import_dialog" :submission-type="submission.type.id" v-if="submission.type" :import="process"/>
+            <q-btn v-if="!submission.project && submission.type" label="Import project/samples/pools" @click="openDialog" color="primary"/>
             <div class="text-h6">Submission</div>
             <Submission :submission="submission" :id="id"/>
           </q-tab-panel>
@@ -33,6 +34,7 @@ import Submission from '../components/details/Submission.vue'
 import SamplesTable from '../components/tables/SamplesTable.vue'
 import PoolsTable from 'src/components/tables/PoolsTable.vue'
 import DeleteButton from '../components/DeleteButton.vue'
+import SubmissionImportDialog from '../components/dialogs/SubmissionImportDialog.vue'
 // import TableDialog from '../components/dialogs/TableDialog.vue'
 export default {
   name: 'SubmissionPage',
@@ -58,13 +60,13 @@ export default {
   methods: {
     openDialog () {
       console.log('dialog', this.$refs.dialog)
-      this.$refs.dialog.open()
+      this.$refs.import_dialog.open()
     },
-    process () {
+    process (importer) {
       const self = this
       this.$api
         // .post(`/api/submissions/${this.id}/update_samples/`)
-        .post(`/api/submissions/${this.id}/process/`)
+        .post(`/api/submissions/${this.id}/process/`, { importer })
         .then(function (response) {
           console.log('response', response, self.$refs.samples)
           self.$q.notify(`Successfully imported submission id "${self.id}"`)
@@ -86,7 +88,8 @@ export default {
     SamplesTable,
     PoolsTable,
     DeleteButton,
-    Submission
+    Submission,
+    SubmissionImportDialog
     // TableDialog
   }
 }
