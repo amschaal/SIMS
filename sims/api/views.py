@@ -49,7 +49,11 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         # instance.process(importer)
         project, pools, samples = instance.process(importer)
         return Response({'project': ProjectSerializer(project).data, 'new_pools': PoolSerializer(pools, many=True).data, 'new_samples': SampleSerializer(samples, many=True).data})
-
+    @action(detail=True, methods=['post'])
+    def unimport(self, request, pk=None):
+        instance = self.get_object()
+        instance.unimport()
+        return Response({'message': 'Submission has been unimported', 'submission': SubmissionSerializer(instance).data})
 class ProjectViewSet(viewsets.ModelViewSet, mixins.JSONSchemaMixin):
     serializer_class = ProjectSerializer
     filterset_fields = {

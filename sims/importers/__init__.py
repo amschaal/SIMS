@@ -1,10 +1,17 @@
-
-
+from django.utils import timezone
 
 class Importer(object):
-    def __init__(self, submission, importer):
+    def __init__(self, submission, importer, config=None):
         self.submission = submission
         self.importer = importer
+    def delete_imported(self):
+        """
+        Cleanup any resources created before deleting import
+        """
+        from sims.models import Pool, Sample, Project
+        Sample.objects.filter(submission=self.submission).delete()
+        Pool.objects.filter(submission=self.submission).delete()
+        Project.objects.filter(submission=self.submission).delete()
     def get_project(self):
         from sims.models import Project
         submission = self.submission
@@ -22,7 +29,9 @@ class Importer(object):
             institute=submission.institute,
             comments=submission.comments,
             submission_data=submission.data,
-            submission=submission
+            submission=submission,
+            submitted = submission.submitted,
+            created = timezone.now()
             )
         return project
     def process(self):

@@ -9,7 +9,6 @@ from django.core.validators import MaxValueValidator
 from django.utils import timezone
 
 from djson.models import DjsonModel, DjsonTypeModel, ModelType
-from sims.importers.mapped import MappedImporter
 
 class Machine(DjsonTypeModel):
     id = models.SlugField(max_length=20, blank=False, primary_key=True)
@@ -58,6 +57,7 @@ class RunPool(models.Model):
 #         return Library.objects
 
 class Pool(DjsonTypeModel):
+    unique_id = models.CharField(max_length=100,unique=True,db_index=True, null=True)
     name = models.CharField(max_length=100,unique=True,db_index=True)
     description = models.TextField(null=True,blank=True,db_index=True)
     submission = models.ForeignKey('Submission', null=True, on_delete=models.CASCADE, related_name='pools')
@@ -218,10 +218,17 @@ class Submission(models.Model):
     # import fields below
     importer = models.ForeignKey(Importer, null=True, on_delete=models.RESTRICT)
     processed = models.DateTimeField(null=True)
-    config = models.JSONField(default=dict)
+    config = models.JSONField(null=True, default=dict)
+    @property
+    def ImporterClass(self):
+        """
+        This may eventually be dynamic
+        """
+        from sims.importers.mapped import MappedImporter
+        return MappedImporter
     def process(self, importer):
         if not getattr(self.processed, 'project', None):
-            mapper_importer = MappedImporter(self, importer)
+            mapper_importer = self.ImporterClass(self, importer)
             return mapper_importer.process()
             # from sims.transform import import_submission, pool_samples
             # project, pools, samples = import_submission(self)
@@ -235,7 +242,14 @@ class Submission(models.Model):
             # self.save()
             # # libraries = Library.objects.bulk_create(libraries)
             # return (project, pools, samples)
-
+    def unimport(self):
+        # if self.importer and self.processed:
+        mapper_importer = self.ImporterClass(self, self.importer, config=self.config)
+        mapper_importer.delete_imported()
+        self.importer = None
+        self.config = None
+        self.processed = None
+        self.save()
 # class SubmissionImport(models.Model):
 #     submission = models.OneToOneField(Submission, on_delete=models.RESTRICT, related_name='import')
 #     imported = models.DateTimeField(auto_now_add=True)
