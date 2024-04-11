@@ -9,6 +9,7 @@ from django.core.validators import MaxValueValidator
 from django.utils import timezone
 
 from djson.models import DjsonModel, DjsonTypeModel, ModelType
+from sims.importers.mapped import MappedImporter
 
 class Machine(DjsonTypeModel):
     id = models.SlugField(max_length=20, blank=False, primary_key=True)
@@ -171,6 +172,7 @@ class Project(DjsonTypeModel):
     # plugin_data = JSONField(default=dict)s = models.TextField(null=True,blank=True)
 
 class SubmissionType(models.Model):
+
     lab_id = models.SlugField()
     updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
@@ -217,19 +219,22 @@ class Submission(models.Model):
     importer = models.ForeignKey(Importer, null=True, on_delete=models.RESTRICT)
     processed = models.DateTimeField(null=True)
     config = models.JSONField(default=dict)
-    def process(self):
+    def process(self, importer):
         if not getattr(self.processed, 'project', None):
-            from sims.transform import import_submission, pool_samples
-            project, pools, samples = import_submission(self)
-            project.save()
-            pools = Pool.objects.bulk_create(pools)
-            samples = Sample.objects.bulk_create(samples)
-            pool_samples(project, pools, samples)
-            self.processed = timezone.now()
-            # self.data = self.project.submission_data
-            self.save()
-            # libraries = Library.objects.bulk_create(libraries)
-            return (project, pools, samples)
+            mapper_importer = MappedImporter(self, importer)
+            return mapper_importer.process()
+            # from sims.transform import import_submission, pool_samples
+            # project, pools, samples = import_submission(self)
+            # project.save()
+            # pools = Pool.objects.bulk_create(pools)
+            # samples = Sample.objects.bulk_create(samples)
+            # pool_samples(project, pools, samples)
+            # self.importer = importer
+            # self.processed = timezone.now()
+            # # self.data = self.project.submission_data
+            # self.save()
+            # # libraries = Library.objects.bulk_create(libraries)
+            # return (project, pools, samples)
 
 # class SubmissionImport(models.Model):
 #     submission = models.OneToOneField(Submission, on_delete=models.RESTRICT, related_name='import')

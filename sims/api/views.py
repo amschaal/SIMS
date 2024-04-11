@@ -42,9 +42,12 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'])
     def process(self, request, pk=None):
         instance = self.get_object()
+        importer_id = request.data.get('importer')
+        importer = Importer.objects.get(id=importer_id)
         if getattr(instance,'project',None):
             raise APIException('Submission has already been processed')
-        project, pools, samples = instance.process()
+        # instance.process(importer)
+        project, pools, samples = instance.process(importer)
         return Response({'project': ProjectSerializer(project).data, 'new_pools': PoolSerializer(pools, many=True).data, 'new_samples': SampleSerializer(samples, many=True).data})
 
 class ProjectViewSet(viewsets.ModelViewSet, mixins.JSONSchemaMixin):
