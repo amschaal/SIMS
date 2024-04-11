@@ -1,4 +1,6 @@
 from sims.importers import Importer
+from sims.models import Project, Sample, Pool
+from django.utils import timezone
 
 class MappedImporter(Importer):
     # def __init__(self, submission, importer):
@@ -29,15 +31,55 @@ class MappedImporter(Importer):
             source = mapping['source']
             array = self.submission.data.get(source)
             for row in array:
-                data.append(MappedImporter.map_data(mapping.get('mapping', {}), self.submission.data, row, array_prefix=source))
+                mapped = MappedImporter.map_data(mapping.get('mapping', {}), self.submission.data, row, array_prefix=source)
+                mapped['submission_data'] = row
+                data.append(mapped)
         return data
+    def pool_samples(self):
+        pass
+        # for pool in pools:
+        #     pool_samples = []
+        #     for sample in samples:
+        #         if pool.data.get(pool_id_column) and sample.data.get(pool_id_column) == pool.data.get(pool_id_column):
+        #             pool_samples.append(sample)
+        #     pool.samples.add(*pool_samples)
+    def get_pools(self):
+        from sims.models import Pool
+        pool_data = self.get_array_data('pool')
+        pools = []
+        for fields in pool_data:
+            fields['project'] = self.project
+            fields['submission'] = self.submission
+            pool = Pool(**fields)
+            pool.unique_id = '{}_{}'.format(self.project.id, pool.name)
+            pools.append(pool)
+        return pools
+    def get_samples(self):
+        from sims.models import Sample
+        sample_data = self.get_array_data('sample')
+        samples = []
+        for fields in sample_data:
+            fields['project'] = self.project
+            fields['submission'] = self.submission
+            sample = Sample(**fields)
+            sample.id = '{}_{}'.format(self.project.id, sample.name)
+            samples.append(sample)
+        return samples
     def process(self):
         self.project = self.get_project()
-        samples = self.get_array_data('sample')
-        pools = self.get_array_data('pool')
-        raise Exception(self.project, pools, samples)
-        self.pools = self.get_pools(self.project, self.submission)
-        raise NotImplementedError
+        samples = self.get_samples()
+        pools = self.get_pools()
+        # raise Exception(self.project, pools, samples)
+        self.project.save()
+        pools = Pool.objects.bulk_create(pools)
+        samples = Sample.objects.bulk_create(samples)
+        # pool_samples(project, pools, samples)
+        self.submission.importer = self.importer
+        self.submission.processed = timezone.now()
+        # self.data = self.project.submission_data
+        self.submission.save()
+        # libraries = Library.objects.bulk_create(libraries)
+        return (self.project, pools, samples)
 """
 def import_submission(submission):
     
