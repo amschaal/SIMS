@@ -100,7 +100,7 @@
           <tr v-if="type.metadata[related.model] && mapping[related.model] && mapping[related.model].source">
             <td colspan="4" >
               <!-- {{ $store.jsonschema.typeSchemas[type.metadata[related.model]] }} -->
-              <!-- {{ getModelSchema('sample', type.metadata[related.model] ) }} -->
+              modelSchema ( {{ related.model }} -> {{ type.metadata[related.model] }} ): {{ getModelSchema(related.model, type.metadata[related.model] ) }}
               Test: <TableMapper :source-schema="submission_type.submission_schema" :dest-schema="getModelSchema(related.model, type.metadata[related.model] )" v-model="mapping[related.model].mapping" :table="mapping[related.model].source" :model="related.model"/>
               <p>variable_schemas: {{ variable_schemas }}</p>
             </td>
@@ -146,7 +146,7 @@ export default {
       return schema.order
     },
     getAvailableFields (schema, variableType) {
-      const fieldTypes = variableType === 'table' ? ['table'] : ['number', 'string']
+      const fieldTypes = variableType === 'array' ? ['array'] : ['number', 'string']
       return schema.order.filter(v => (!fieldTypes || fieldTypes.indexOf(schema.properties[v].type) !== -1))
     },
     getOptions (schema, mapping, variableType) {
@@ -225,7 +225,7 @@ export default {
   computed: {
     tables () {
       const schema = this.submission_type.submission_schema
-      const order = schema.order.filter(f => (schema.properties[f].type) === 'table')
+      const order = schema.order.filter(f => (schema.properties[f].type) === 'array')
       return order.map(f => ({ id: f, label: schema.properties[f].title ? `${schema.properties[f].title} (${f})` : f }))
     }
   },

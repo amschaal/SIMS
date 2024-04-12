@@ -35,7 +35,6 @@
                   <q-btn @click="clearVariable(variable)" round icon="delete" v-if="mapping[variable]"/>
                 </template>
               </q-select>
-                <!-- <MappingTable :submission_type="submission_type" :type="type" v-model="mapping[variable]" v-if="submission_type.submission_schema.properties[variable].type === 'table'"/> -->
           </td>
           <!-- <td><span v-if="mapping.data && mapping.data[variable] && destSchema.properties[mapping.data[variable]]">{{destSchema.properties[mapping.data[variable]].type}}</span></td>
           <td><span v-if="mapping.data && mapping.data[variable] && destSchema.properties[mapping.data[variable]]">{{destSchema.properties[mapping.data[variable]].title}}</span></td> -->
@@ -90,7 +89,7 @@ export default {
     //   return this.getAvailableFields(schema, mapping, variableType).map(v => ({ id: `${this.table.id}[].${v}`, label: schema.properties[v].title || v }))
     // },
     getFilteredOptions (variableType) {
-      const fieldTypes = variableType === 'table' ? ['table'] : ['number', 'string']
+      const fieldTypes = variableType === 'array' ? ['array'] : ['number', 'string']
       return this.variableOptions.filter(o => (!fieldTypes || fieldTypes.indexOf(o.type) !== -1))
     },
     selected () {
@@ -124,7 +123,7 @@ export default {
           options.push({ id: v, variable: v, label: this.sourceSchema.properties[v].title || v, type: this.sourceSchema.properties[v].type })
         }
       })
-      const tableSchema = this.sourceSchema.properties[this.table].schema
+      const tableSchema = this.sourceSchema.properties[this.table].items
       tableSchema.order.forEach(v => {
         const label = tableSchema.properties[v].title || v
         options.push({ id: `${this.table}.${v}`, variable: v, label: `${this.table} -> ${label}`, type: tableSchema.properties[v].type })

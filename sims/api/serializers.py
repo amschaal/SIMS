@@ -4,6 +4,7 @@ from djson.serializers import DjsonTypeModelSerializer, ModelTypeSerializer
 # from djson.fields import JSONSchemaField
 # from djson.validators import JsonSchemaValidator
 from djson.tests import TEST_SCHEMA
+from sims.api.fields import JSONSchemaConverterField
 from sims.models import Submission, Project, Machine, Run, Sample, Adapter, Pool, RunPool,\
     AdapterDB, SubmissionType, Importer
 from django.conf import settings
@@ -39,6 +40,7 @@ class ModelRelatedField(serializers.RelatedField):
 
 class SubmissionSerializer(serializers.ModelSerializer):
     project = serializers.PrimaryKeyRelatedField(read_only=True)
+    schema = JSONSchemaConverterField()
     class Meta:
         model = Submission
         exclude = []
@@ -154,6 +156,7 @@ class AdapterDBSerializer(serializers.ModelSerializer):
         exclude = []
 
 class SubmissionTypeSerializer(serializers.ModelSerializer):
+    submission_schema = JSONSchemaConverterField()
     class Meta:
         model = SubmissionType
         exclude = []

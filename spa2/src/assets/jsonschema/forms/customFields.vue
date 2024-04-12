@@ -18,7 +18,7 @@
             :warning="sample_data_warning"
             warning-label="Samples contain warnings" -->
             <q-field
-              v-if="v.schema.schema && v.schema.schema.order && v.schema.schema.order.length"
+              v-if="v.schema.items && v.schema.items.order && v.schema.items.order.length"
               :hint="tableHint(v)"
               class="q-pb-xl q-mb-xl"
               borderless
@@ -33,7 +33,7 @@
                 <!-- :editable="modify && ($store.getters.isStaff || !v.schema.internal)" -->
                 <AgSchema
                   v-model="data[v.variable]"
-                  :schema="v.schema.schema"
+                  :schema="v.schema.items"
                   :editable="modify"
                   :allow-examples="true"
                   :allow-force-save="true"
@@ -188,8 +188,8 @@ export default {
       return (v.schema.title ? v.schema.title : v.variable) + ' (' + (this.value[v.variable] && this.value[v.variable].length ? this.value[v.variable].length : 0) + ')'
     },
     tableHint (v) {
-      if (v.schema.schema.description) {
-        return v.schema.schema.description
+      if (v.schema.items.description) {
+        return v.schema.items.description
       } else {
         return (v.schema.title ? v.schema.title : v.variable) + ': Click on the button above to open the table'
       }
