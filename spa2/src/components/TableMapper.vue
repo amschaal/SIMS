@@ -127,7 +127,7 @@ export default {
       const tableSchema = this.sourceSchema.properties[this.table].schema
       tableSchema.order.forEach(v => {
         const label = tableSchema.properties[v].title || v
-        options.push({ id: `${this.table}[].${v}`, variable: v, label: `${this.table} -> ${label}`, type: tableSchema.properties[v].type })
+        options.push({ id: `${this.table}.${v}`, variable: v, label: `${this.table} -> ${label}`, type: tableSchema.properties[v].type })
       })
       return options
     },

@@ -13,7 +13,7 @@
             <tr v-for="i in importers" :key="i.id">
               <td class="text-left field">{{i.name}}</td>
               <td class="text-left">{{ i.description }}</td>
-              <td><q-btn label="Import" @click="chooseImporter"/></td>
+              <td><q-btn label="Import" @click="chooseImporter(i.id)"/></td>
             </tr>
           </tbody>
         </q-markup-table>
