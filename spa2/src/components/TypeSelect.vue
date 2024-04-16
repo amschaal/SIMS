@@ -3,19 +3,20 @@
         option-value="id"
         option-label="name"
         @update:modelValue="val => selected(val)"
-        :error-message="error_messages.type"
-        :error="has_error.type"
+        :error-message="error_messages[field_name]"
+        :error="has_error[field_name]"
     />
 </template>
 
 <script>
 export default {
-  props: ['modelValue', 'error_messages', 'has_error', 'emit_object', 'modelFilter'],
+  props: ['modelValue', 'error_messages', 'has_error', 'emit_object', 'modelFilter', 'field'],
   emits: ['update:modelValue', 'schema'],
   data () {
     return {
       model: this.modelValue,
-      options: this.$store.jsonschema.getSchemas
+      options: this.$store.jsonschema.getSchemas,
+      field_name: this.field || 'type'
     }
   },
   methods: {

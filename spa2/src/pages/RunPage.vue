@@ -12,7 +12,15 @@
       <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="details">
             <div class="text-h6">Run</div>
-            <RunDetailForm :model="run" v-if="run.id"/>
+            <Run :instance="run" v-if="run.id"/>
+            <!-- <RunDetailForm v-model="run" v-if="run.id"/> -->
+            <!-- <FormDialog ref="run_form" :form-component="RunDetailForm" title="Create Run" v-model="run"/> -->
+            <FormDialog ref="form_dialog" title="Modify Run" api-method="PUT" :api-url="`/api/runs/${id}/`" v-model="run">
+              <template #form="props">
+                <RunDetailForm v-model="props.data" :errors="props.errors"/>
+              </template>
+            </FormDialog>
+            <q-btn label="Modify" color="primary" @click="$refs.form_dialog.open(run)"/>
           </q-tab-panel>
           <q-tab-panel name="samples">
             <div class="text-h6">Samples</div>
@@ -30,10 +38,12 @@
 </style>
 
 <script>
+import FormDialog from '../components/dialogs/FormDialog.vue'
 import RunDetailForm from '../components/forms/RunDetailForm.vue'
 import SamplesTable from '../components/tables/SamplesTable.vue'
 import PoolsTable from '../components/tables/PoolsTable.vue'
 import DeleteButton from '../components/DeleteButton.vue'
+import Run from 'src/components/details/Run.vue'
 export default {
   name: 'RunPage',
   props: ['id'],
@@ -55,7 +65,9 @@ export default {
     SamplesTable,
     PoolsTable,
     RunDetailForm,
-    DeleteButton
+    FormDialog,
+    DeleteButton,
+    Run
   }
 }
 </script>
