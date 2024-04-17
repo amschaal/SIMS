@@ -405,27 +405,23 @@ export default {
       const columnDefs = []
       let col = null
       // var columnDefs = [{ headerName: '', lockPosition: true, valueGetter: this.rowIndex, cellClass: 'locked-col', width: 60, suppressNavigable: true, pinned: 'left' }]
-      if (schema.order) {
-        for (const i in schema.order) {
-          if (!this.editable || this.admin || !schema.properties[schema.order[i]].internal) { // (!this.editable || this.$store.getters.isStaff || !schema.properties[schema.order[i]].internal)
-            col = this.getColDef(schema.order[i], schema.properties[schema.order[i]], schema)
-            columnDefs.push(col)
-          }
+      const order = schema.order || Object.keys(schema.properties).array
+      order.forEach(prop => {
+        if (schema.properties[prop].type === 'object') {
+          // Supported nested properties
+          const objschema = schema.properties[prop]
+          const order = objschema.order || Object.keys(objschema.properties).array
+          order.forEach(nestedProp => {
+            if (this.editable || this.admin || !objschema.properties[nestedProp].internal) { // (!this.editable || this.$store.getters.isStaff || !schema.properties[prop].internal)
+              col = this.getColDef(`${prop}.${nestedProp}`, objschema.properties[nestedProp], objschema)
+              columnDefs.push(col)
+            }
+          })
+        } else if (this.editable || this.admin || !schema.properties[prop].internal) { // (!this.editable || this.$store.getters.isStaff || !schema.properties[prop].internal)
+          col = this.getColDef(prop, schema.properties[prop], schema)
+          columnDefs.push(col)
         }
-      } else {
-        Object.keys(schema.properties).array.forEach(prop => {
-          if (this.editable || this.admin || !schema.properties[prop].internal) { // (!this.editable || this.$store.getters.isStaff || !schema.properties[prop].internal)
-            col = this.getColDef(prop, schema.properties[prop], schema)
-            columnDefs.push(col)
-          }
-        })
-        // for (const prop in schema.properties) {
-        //   if (schema.properties.hasOwn(prop) && (!this.editable || this.$store.getters.isStaff || !schema.properties[prop].internal)) {
-        //     col = this.getColDef(prop, schema.properties[prop], schema)
-        //     columnDefs.push(col)
-        //   }
-        // }
-      }
+      })
 
       if (this.editable) {
         columnDefs[0].headerCheckboxSelection = true
