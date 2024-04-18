@@ -1,5 +1,5 @@
 from rest_framework import viewsets, status
-from sims.api.serializers import SubmissionSerializer, LibrarySerializer, RunSerializer,RunDetailSerializer, MachineSerializer,\
+from sims.api.serializers import ProjectDetailSerializer, SubmissionSerializer, LibrarySerializer, RunSerializer,RunDetailSerializer, MachineSerializer,\
     ProjectSerializer, SampleSerializer, PoolSerializer, \
     AdapterSerializer, RunPoolSerializer, RunPoolDetailSerializer,\
     AdapterDBSerializer, ImporterDetailSerializer, ImporterSerializer, SubmissionTypeSerializer
@@ -54,7 +54,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         instance.unimport()
         return Response({'message': 'Submission has been unimported', 'submission': SubmissionSerializer(instance).data})
-class ProjectViewSet(viewsets.ModelViewSet, mixins.JSONSchemaMixin):
+class ProjectViewSet(mixins.ActionSerializerMixin, viewsets.ModelViewSet, mixins.JSONSchemaMixin):
     serializer_class = ProjectSerializer
     filterset_fields = {
         'id':['icontains','exact'],
@@ -66,6 +66,12 @@ class ProjectViewSet(viewsets.ModelViewSet, mixins.JSONSchemaMixin):
     search_fields = ('id', 'submission__id', 'pi_first_name', 'pi_last_name', 'pi_email', 'first_name', 'last_name', 'email')
     ordering_fields = ['id', 'submitted', 'submission_id', 'created']
     queryset = Project.objects.distinct()
+    action_serializers = {
+        'retrieve': ProjectDetailSerializer,
+        'list': ProjectSerializer,
+        'create': ProjectSerializer,
+        'update': ProjectSerializer
+    }
     @action(detail=True, methods=['post'])
     def update_samples(self, request, pk=None):
         project = self.get_object()

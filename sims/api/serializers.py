@@ -150,6 +150,13 @@ class RunDetailSerializer(DjsonTypeModelSerializer):
         exclude = []
         read_only_fields = ('schema',)
 
+class ProjectDetailSerializer(ProjectSerializer):
+    type = ModelRelatedField(model=ModelType, serializer=ModelTypeSerializer, required=False, allow_null=True)
+    sample_type = serializers.SerializerMethodField()
+    samples = SampleSerializer(many=True)
+    def get_sample_type(self, obj):
+        return obj.type.metadata.get('sample') if obj.type else None
+
 class AdapterDBSerializer(serializers.ModelSerializer):
     class Meta:
         model = AdapterDB
