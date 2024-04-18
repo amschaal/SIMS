@@ -54,6 +54,8 @@
             <!-- <TableDialog :table-component="SamplesTable" :options="{'selection': 'multiple'}" ref="dialog"/>
             <q-btn label="Samples" color="primary" @click="openDialog" /> -->
             <SamplesTable :filters="`project__id=${id}`" ref="samples"/>
+            <JSONSchemaTable v-model="project.samples" :schema="sample_schema" v-if="project && project.samples && sample_schema"/>
+            {{ sample_schema }}
           </q-tab-panel>
           <q-tab-panel name="runs">
             <RunsTable :filters="`run_pools__pool__samples__sample__project__id=${id}`"/>
@@ -75,7 +77,8 @@ import DeleteButton from '../components/DeleteButton.vue'
 import SubmissionData from 'src/components/details/SubmissionData.vue'
 import JSONModelTypeForm from 'src/components/forms/JSONModelTypeForm.vue'
 import FormDialog from 'src/components/dialogs/FormDialog.vue'
-
+import JSONSchemaTable from 'src/components/tables/jsonschema/JSONSchemaTable.vue'
+import ModelSchemas from 'src/model_schemas/schemas'
 // import TableDialog from '../components/dialogs/TableDialog.vue'
 export default {
   name: 'ProjectPage',
@@ -137,8 +140,14 @@ export default {
     // CustomFields,
     SubmissionData,
     JSONModelTypeForm,
-    FormDialog
+    FormDialog,
+    JSONSchemaTable
     // TableDialog
+  },
+  computed: {
+    sample_schema () {
+      return ModelSchemas.getSchema('sample', this.project.sample_type)
+    }
   }
 }
 </script>
