@@ -12,13 +12,13 @@
               :rowData='rowData'
               :columnDefs='columnDefs'
               ref="grid"
-              :pinnedTopRowData="getExampleRows"
+              :pinnedTopRowData="exampleRows"
               v-if="columnDefs.length > 0"
               @grid-ready="onGridReady"
               >
             </ag-grid-vue>
   columnDefs: {{ columnDefs }}
-
+  <q-btn label="add row" @click="agutil.addRow(5)"/>
   </div>
 </template>
 
@@ -50,54 +50,53 @@ export default {
     return {
       opened: false,
       show_help: false,
-      showExamples: this.allowExamples,
-      showDescriptions: true,
       // schema: Object.freeze({}),
       rowData: [], // this.value,
       rootNode: {},
       columnDefs: [],
-      gridOptions: {
-        enableRangeSelection: true,
-        defaultColDef: {
-          editable: this.cellEditable,
-          // suppressSorting: true, // deprecated
-          sortable: false, // newer version
-          suppressMenu: true // let's keep it simple
-        },
-        getRowStyle: function (params) {
-          if (params.node.rowPinned) {
-            return { 'font-weight': 'bold' }
-          }
-        },
-        getRowHeight: function (params) {
-          // console.log('getRowHeight', params, params.node.rowPinned, params.data)
-          if (params.node.rowPinned === 'top' && params.data && params.data._row_type === 'description') {
-            return 75
-          } else {
-            return 25
-          }
-        },
-        onPinnedRowDataChanged: this.expandDescriptionRow,
-        onCellFocused: this.onCellFocused,
-        // suppressMultiRangeSelection: true,
-        // suppressRowClickSelection: true,
-        // checkboxSelection: function () { return true },
-        processCellFromClipboard (params) {
-          switch (params.column.colDef.cellDataType) {
-            case 'boolean':
-              if (params.value === 'true' || params.value === 'True' || params.value === true) {
-                return true
-              }
-              return false
-            case 'numeric':
-              return parseFloat(params.value)
-            default:
-              return params.value
-          }
-        },
-        rowGroupPanelSuppressSort: true,
-        rowSelection: 'multiple'
-      },
+      exampleRows: [],
+      gridOptions: {},
+      //   enableRangeSelection: true,
+      //   defaultColDef: {
+      //     editable: this.cellEditable,
+      //     // suppressSorting: true, // deprecated
+      //     sortable: false, // newer version
+      //     suppressMenu: true // let's keep it simple
+      //   },
+      //   getRowStyle: function (params) {
+      //     if (params.node.rowPinned) {
+      //       return { 'font-weight': 'bold' }
+      //     }
+      //   },
+      //   getRowHeight: function (params) {
+      //     // console.log('getRowHeight', params, params.node.rowPinned, params.data)
+      //     if (params.node.rowPinned === 'top' && params.data && params.data._row_type === 'description') {
+      //       return 75
+      //     } else {
+      //       return 25
+      //     }
+      //   },
+      //   onPinnedRowDataChanged: this.expandDescriptionRow,
+      //   onCellFocused: this.onCellFocused,
+      //   // suppressMultiRangeSelection: true,
+      //   // suppressRowClickSelection: true,
+      //   // checkboxSelection: function () { return true },
+      //   processCellFromClipboard (params) {
+      //     switch (params.column.colDef.cellDataType) {
+      //       case 'boolean':
+      //         if (params.value === 'true' || params.value === 'True' || params.value === true) {
+      //           return true
+      //         }
+      //         return false
+      //       case 'numeric':
+      //         return parseFloat(params.value)
+      //       default:
+      //         return params.value
+      //     }
+      //   },
+      //   rowGroupPanelSuppressSort: true,
+      //   rowSelection: 'multiple'
+      // },
       errors: {},
       warnings: {},
       maximized: true
@@ -105,7 +104,14 @@ export default {
   },
   mounted () {
     console.log('mounted agschema')
-    this.agutil = new AgUtil(this.schema, { admin: this.admin, editable: this.editable }, this)
+    this.agutil = new AgUtil(this.schema,
+      {
+        admin: this.admin,
+        editable: this.editable,
+        showExamples: this.allowExamples,
+        showDescriptions: true
+      },
+      this)
     this.setupGrid()
   },
   created () {
@@ -116,109 +122,24 @@ export default {
   },
   methods: {
     setupGrid () {
-      this.warnings = this.tableWarnings ? _.cloneDeep(this.getValidationObject(this.tableWarnings)) : {}
-      this.errors = this.tableErrors ? _.cloneDeep(this.getValidationObject(this.tableErrors)) : {}
+      this.warnings = this.tableWarnings ? _.cloneDeep(this.agutil.getValidationObject(this.tableWarnings)) : {}
+      this.errors = this.tableErrors ? _.cloneDeep(this.agutil.getValidationObject(this.tableErrors)) : {}
       if (this.value && this.value.length > 0) {
         this.rowData = _.cloneDeep(this.value)
       } else {
         this.rowData = _.times(10, _.stubObject)
       }
+      this.gridOptions = this.agutil.getGridOptions()
       this.columnDefs = this.agutil.schema2Columns(this.schema)
     },
     onGridReady (params) {
       alert('grid ready!')
+      this.agutil.onGridReady(params)
       this.gridApi = params.api
       this.columnApi = params.columnApi
       this.rootNode = this.gridApi.getModel().rootNode
-      this.agutil.onGridReady(params)
+      this.exampleRows = this.agutil.getExampleRows()
       console.log('gridApi', this.gridApi)
-    },
-    getValidationObject (validation) {
-      // validation errors or warnings could be a list mixed strings and objects, we only want the object
-      if (typeof validation === 'object' && !Array.isArray(validation)) {
-        return validation
-      } else if (Array.isArray(validation)) {
-        for (const i in validation) {
-          if (typeof validation[i] === 'object' && !Array.isArray(validation[i])) {
-            return validation[i]
-          }
-        }
-      }
-      return {}
-    },
-    openSamplesheet () {
-      console.log('openSamplesheet!!!', this.type, this.value)
-      // var self = this
-      // if (this.submission && this.submission.data) {
-      //   this.errors = this.submission.data.errors && this.submission.data.errors.sample_data ? this.submission.data.errors.sample_data : {}
-      //   this.warnings = this.submission.data.warnings && this.submission.data.warnings.sample_data ? this.submission.data.warnings.sample_data : {}
-      // }
-      // console.log('warnings', this.warnings)
-      this.warnings = this.tableWarnings ? _.cloneDeep(this.getValidationObject(this.tableWarnings)) : {}
-      this.errors = this.tableErrors ? _.cloneDeep(this.getValidationObject(this.tableErrors)) : {}
-      console.log('Samplesheet errors, warnings', this.warnings, this.errors)
-      if (this.value && this.value.length > 0) {
-        this.rowData = _.cloneDeep(this.value)
-      } else {
-        this.rowData = _.times(10, _.stubObject)
-      }
-
-      // if (!this.type || !this.type.schema) {
-      //   this.$q.dialog({
-      //     title: 'Alert',
-      //     message: 'Please select a submission type first.'
-      //   })
-      //   return
-      // }
-      // this.schema = this.schema || this.type.schema
-      this._columnDefs = this.schema2Columns(this.schema)
-      // console.log('openSamplesheet', this.rowData, this.value, this.columnDefs)
-      // console.log('agschema refs', this.$refs)
-      this.$refs.modal.show()
-      // .then(() => {
-      //   if (self.rowData.length === 0) {
-      //     self.addRow()
-      //   }
-      //   this.rootNode = this.gridOptions.api.getModel().rootNode
-      //   setTimeout(function () {
-      //     self.$refs.tooltip.show()
-      //   }, 1000)
-      //   setTimeout(function () {
-      //     self.$refs.tooltip.hide()
-      //   }, 6000)
-      // })
-    },
-    onShow () {
-      // var self = this
-      if (this.rowData.length === 0) {
-        this.addRow()
-      }
-      console.log('gridOptions', this.gridOptions.api)
-      // this.rootNode = this.gridOptions.api.getModel().rootNode
-    },
-    cellEditable (params) {
-      // console.log('cellEditable', this.editable, params)
-      if (params.node.rowPinned === 'top') {
-        this.$q.notify({ position: 'top', message: 'Description and example rows are not editable.  Please use the "Add row" button for editable rows.' })
-        return false
-      }
-      return this.editable
-    },
-    onCellFocused (params) {
-      if (this.dismiss) {
-        this.dismiss()
-      }
-      if (params.column) {
-        const errors = this.getCellErrors(params.rowIndex, params.column.colDef.field)
-        if (errors) {
-          this.dismiss = this.$q.notify({ position: 'top', message: `Error at Row ${params.rowIndex + 1}, Column "${params.column.colDef.headerName}": ` + errors.join(', ') })
-        } else {
-          const warnings = this.getCellWarnings(params.rowIndex, params.column.colDef.field)
-          if (warnings) {
-            this.dismiss = this.$q.notify({ position: 'top', color: 'warning', message: `Warning at Row ${params.rowIndex + 1}, Column "${params.column.colDef.headerName}": ` + warnings.join(', ') })
-          }
-        }
-      }
     },
     sizeToFit () {
       this.gridOptions.api.sizeColumnsToFit()
@@ -486,14 +407,14 @@ export default {
     rowIsEmpty (row) {
       return !_.values(row).some(x => x !== undefined && x !== '')
     },
-    addRow (number) {
-      const rows = []
-      for (let i = 0; i < number; i++) {
-        rows.push({})
-      }
-      this.gridOptions.api.applyTransaction({ add: rows })
-      // console.log('addRow', this.getRowData())
-    },
+    // addRow (number) {
+    //   const rows = []
+    //   for (let i = 0; i < number; i++) {
+    //     rows.push({})
+    //   }
+    //   this.gridOptions.api.applyTransaction({ add: rows })
+    //   // console.log('addRow', this.getRowData())
+    // },
     removeRows () {
       const selectedData = this.gridOptions.api.getSelectedRows()
       this.gridOptions.api.applyTransaction({ remove: selectedData })
@@ -542,34 +463,6 @@ export default {
       }
       return 0
       // return this.getRowData().length
-    },
-    hasDescriptions () {
-      for (const prop in this.schema.properties) {
-        // if (this.schema.properties.hasOwn(prop)) {
-        if (this.schema.properties[prop].description) {
-          return true
-        }
-        // }
-      }
-      return false
-    },
-    getExampleRows () {
-      const examples = []
-      if (this.showDescriptions && this.hasDescriptions) {
-        const descriptions = this.getColDescriptions(this.schema)
-        descriptions._row_type = 'description'
-        examples.push(descriptions)
-      }
-      if (this.showExamples) {
-        for (const i in this.schema.examples) {
-          const example = this.schema.examples[i]
-          example._row_type = 'example'
-          examples.push(example)
-        }
-        // examples = examples.concat(this.schema.examples)
-      }
-      // console.log('examples', examples)
-      return examples
     }
   },
   components: {

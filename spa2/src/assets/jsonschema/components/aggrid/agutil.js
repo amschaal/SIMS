@@ -67,10 +67,10 @@ class AgUtil {
   getRowData (filterAndSort) {
     const data = []
     const method = filterAndSort ? 'forEachNodeAfterFilterAndSort' : 'forEachNode'
-    if (!this.gridOptions.api) {
+    if (!this.gridApi) {
       return []
     }
-    this.gridOptions.api[method](function (node) {
+    this.gridApi[method](function (node) {
       data.push(node.data)
     })
     const self = this, cleaned = []
@@ -96,15 +96,15 @@ class AgUtil {
     for (let i = 0; i < number; i++) {
       rows.push({})
     }
-    this.gridOptions.api.applyTransaction({ add: rows })
+    this.gridApi.applyTransaction({ add: rows })
     // console.log('addRow', this.getRowData())
   }
 
   removeRows () {
-    const selectedData = this.gridOptions.api.getSelectedRows()
-    this.gridOptions.api.applyTransaction({ remove: selectedData })
+    const selectedData = this.gridApi.getSelectedRows()
+    this.gridApi.applyTransaction({ remove: selectedData })
     // this.errors = {}
-    this.gridOptions.api.redrawRows()
+    this.gridApi.redrawRows()
     // this.validate(false)
   }
 
@@ -230,6 +230,128 @@ class AgUtil {
       default:
         // console.log(id,definition);
         throw new Error('Unsupported type ' + definition.type)
+    }
+  }
+
+  hasDescriptions () {
+    for (const prop in this.schema.properties) {
+      if (this.schema.properties[prop].description) {
+        return true
+      }
+    }
+    return false
+  }
+
+  getExampleRows () {
+    const examples = []
+    if (this.props.showDescriptions && this.hasDescriptions()) {
+      const descriptions = this.getColDescriptions(this.schema)
+      descriptions._row_type = 'description'
+      examples.push(descriptions)
+    }
+    if (this.props.showExamples) {
+      for (const i in this.schema.examples) {
+        const example = this.schema.examples[i]
+        example._row_type = 'example'
+        examples.push(example)
+      }
+      // examples = examples.concat(this.schema.examples)
+    }
+    // console.log('examples', examples)
+    return examples
+  }
+
+  cellEditable (params) {
+    // console.log('cellEditable', this.editable, params)
+    if (params.node.rowPinned === 'top') {
+      this.component.$q.notify({ position: 'top', message: 'Description and example rows are not editable.  Please use the "Add row" button for editable rows.' })
+      return false
+    }
+    return this.props.editable
+  }
+
+  expandDescriptionRow (params) {
+    console.log('expandDescriptionRow', params, params.api, params.api.getPinnedTopRow(0)) //
+    if (params.api.getPinnedTopRow(0)) {
+      params.api.getPinnedTopRow(0).isDescription = true
+    }
+    params.api.onRowHeightChanged()
+  }
+
+  onCellFocused (params) {
+    console.log('onCellFocused', this, this.getCellErrors)
+    if (this.dismiss) {
+      this.dismiss()
+    }
+    if (params.column) {
+      const errors = this.getCellErrors(params.rowIndex, params.column.colDef.field)
+      if (errors) {
+        this.dismiss = this.component.$q.notify({ position: 'top', message: `Error at Row ${params.rowIndex + 1}, Column "${params.column.colDef.headerName}": ` + errors.join(', ') })
+      } else {
+        const warnings = this.getCellWarnings(params.rowIndex, params.column.colDef.field)
+        if (warnings) {
+          this.dismiss = this.component.$q.notify({ position: 'top', color: 'warning', message: `Warning at Row ${params.rowIndex + 1}, Column "${params.column.colDef.headerName}": ` + warnings.join(', ') })
+        }
+      }
+    }
+  }
+
+  getValidationObject (validation) {
+    // validation errors or warnings could be a list mixed strings and objects, we only want the object
+    if (typeof validation === 'object' && !Array.isArray(validation)) {
+      return validation
+    } else if (Array.isArray(validation)) {
+      for (const i in validation) {
+        if (typeof validation[i] === 'object' && !Array.isArray(validation[i])) {
+          return validation[i]
+        }
+      }
+    }
+    return {}
+  }
+
+  getGridOptions () {
+    return {
+      enableRangeSelection: true,
+      defaultColDef: {
+        editable: this.cellEditable.bind(this),
+        // suppressSorting: true, // deprecated
+        sortable: false, // newer version
+        suppressMenu: true // let's keep it simple
+      },
+      getRowStyle: function (params) {
+        if (params.node.rowPinned) {
+          return { 'font-weight': 'bold' }
+        }
+      },
+      getRowHeight: function (params) {
+        // console.log('getRowHeight', params, params.node.rowPinned, params.data)
+        if (params.node.rowPinned === 'top' && params.data && params.data._row_type === 'description') {
+          return 75
+        } else {
+          return 25
+        }
+      },
+      onPinnedRowDataChanged: this.expandDescriptionRow.bind(this),
+      onCellFocused: this.onCellFocused.bind(this),
+      // suppressMultiRangeSelection: true,
+      // suppressRowClickSelection: true,
+      // checkboxSelection: function () { return true },
+      processCellFromClipboard (params) {
+        switch (params.column.colDef.cellDataType) {
+          case 'boolean':
+            if (params.value === 'true' || params.value === 'True' || params.value === true) {
+              return true
+            }
+            return false
+          case 'numeric':
+            return parseFloat(params.value)
+          default:
+            return params.value
+        }
+      },
+      rowGroupPanelSuppressSort: true,
+      rowSelection: 'multiple'
     }
   }
 }
