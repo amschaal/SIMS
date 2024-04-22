@@ -64,6 +64,10 @@ class AgUtil {
     return descriptions
   }
 
+  rowIsEmpty (row) {
+    return !_.values(row).some(x => x !== undefined && x !== '')
+  }
+
   getRowData (filterAndSort) {
     const data = []
     const method = filterAndSort ? 'forEachNodeAfterFilterAndSort' : 'forEachNode'
@@ -87,10 +91,6 @@ class AgUtil {
     return cleaned
   }
 
-  rowIsEmpty (row) {
-    return !_.values(row).some(x => x !== undefined && x !== '')
-  }
-
   addRow (number) {
     const rows = []
     for (let i = 0; i < number; i++) {
@@ -106,6 +106,15 @@ class AgUtil {
     // this.errors = {}
     this.gridApi.redrawRows()
     // this.validate(false)
+  }
+
+  sizeToFit () {
+    this.gridApi.sizeColumnsToFit()
+  }
+
+  autoSizeAll () {
+    const allColIds = this.columnApi.getAllColumns().map(column => column.colId)
+    this.columnApi.autoSizeColumns(allColIds)
   }
 
   getCellErrors (row, field) {
