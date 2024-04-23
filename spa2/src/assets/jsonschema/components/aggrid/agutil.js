@@ -14,6 +14,7 @@ class AgUtil {
     this.component = component
     this.errors = component.errors
     this.warnings = component.warnings
+    this.descriptions = null
   }
 
   onGridReady (params) {
@@ -52,16 +53,27 @@ class AgUtil {
     }
     columnDefs.push({ field: '_row_type', hide: true })
     console.log('columnDefs', columnDefs)
+
+    // this.parseDescriptions()
+
     return columnDefs
   }
 
-  getColDescriptions (schema) {
-    // console.log('getColDescriptions', schema)
+  parseDescriptions (schema) {
+    const properties = schema ? schema.properties : this.schema.properties
     const descriptions = {}
-    Object.keys(schema.properties).forEach(prop => {
-      descriptions[prop] = schema.properties[prop].description
-    })
+    for (const prop in properties) {
+      if (properties[prop].type === 'object') {
+        descriptions[prop] = this.parseDescriptions(properties[prop])
+      } else {
+        descriptions[prop] = properties[prop].description
+      }
+    }
     return descriptions
+  }
+
+  getColDescriptions (schema) {
+    return this.parseDescriptions(schema)
   }
 
   rowIsEmpty (row) {
@@ -142,6 +154,7 @@ class AgUtil {
   }
 
   getColDef (id, definition, schema) {
+    // alert('getColDef ' + id)
     console.log('getColDef', definition, schema)
     const self = this
     function cellClass (params) {
@@ -230,6 +243,7 @@ class AgUtil {
         return { headerName: header, headerTooltip: tooltip, field: id, cellEditor: NumericComponent, cellClass, tooltipValueGetter: cellTooltip, cellDataType: 'number', pinned: definition.pinned }
       case 'boolean':
         return { headerName: header, headerTooltip: tooltip, field: id, cellEditor: BooleanComponent, cellClass, tooltipValueGetter: cellTooltip, cellDataType: 'boolean', pinned: definition.pinned }
+        // return { test: 'foo', headerName: header, headerTooltip: tooltip, field: id, cellEditor: 'agCheckboxCellEditor', cellRenderer: 'agCheckboxCellRenderer', cellClass, tooltipValueGetter: cellTooltip, cellDataType: 'boolean', pinned: definition.pinned }
       case 'array':
         def = { headerName: header, field: id, cellClass, tooltipValueGetter: cellTooltip, pinned: definition.pinned }
         if (definition.items && definition.items.enum) {
@@ -242,13 +256,23 @@ class AgUtil {
     }
   }
 
-  hasDescriptions () {
+  getFlattenedProperties () {
+    const properties = {}
     for (const prop in this.schema.properties) {
-      if (this.schema.properties[prop].description) {
-        return true
+      if (this.schema.properties[prop].type === 'object') {
+        for (const prop2 in this.schema.properties[prop].properties) {
+          properties[`${prop}.${prop2}`] = this.schema.properties[prop].properties[prop2]
+        }
+      } else {
+        properties[prop] = this.schema.properties[prop]
       }
     }
-    return false
+    return properties
+  }
+
+  hasDescriptions () {
+    const descriptions = this.getColDescriptions()
+    return descriptions !== null
   }
 
   getExampleRows () {
@@ -266,7 +290,7 @@ class AgUtil {
       }
       // examples = examples.concat(this.schema.examples)
     }
-    // console.log('examples', examples)
+    console.log('examples', examples)
     return examples
   }
 
