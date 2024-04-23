@@ -1,3 +1,4 @@
+from djson.models import ModelType
 from sims.importers import Importer
 from sims.models import Project, Sample, Pool
 from django.utils import timezone
@@ -21,6 +22,10 @@ class MappedImporter(Importer):
                 else:
                     result[k] = data.get(v)
         return result
+    def get_type(self, model):
+        if self.importer.model_type:
+            type_id = self.importer.model_type.metadata.get(model, None)
+            return ModelType.objects.filter(id=type_id).first()
     def get_array_data(self, model): # takes 'pool', 'sample', or 'project'
         # { "pool": { "type": "array", "source": null, "mapping": {} }, "sample": { "type": "array", "source": "samples", "mapping": { "data": { "i5": "samples[].fragment_size", "i7": "samples[].special_instructions" }, "name": "samples[].sample_name" } }, "run_type": "runtype" }
         mapping = self.importer.config.get(model)
@@ -47,9 +52,11 @@ class MappedImporter(Importer):
         from sims.models import Pool
         pool_data = self.get_array_data('pool')
         pools = []
+        model_type = self.get_type('pool')
         for fields in pool_data:
             fields['project'] = self.project
             fields['submission'] = self.submission
+            fields['type'] = model_type
             pool = Pool(**fields)
             pool.unique_id = '{}_{}'.format(self.project.id, pool.name)
             pools.append(pool)
@@ -58,9 +65,11 @@ class MappedImporter(Importer):
         from sims.models import Sample
         sample_data = self.get_array_data('sample')
         samples = []
+        model_type = self.get_type('sample')
         for fields in sample_data:
             fields['project'] = self.project
             fields['submission'] = self.submission
+            fields['type'] = model_type
             sample = Sample(**fields)
             sample.id = '{}_{}'.format(self.project.id, sample.name)
             samples.append(sample)

@@ -1,6 +1,7 @@
 <!-- eslint-disable no-case-declarations -->
 <template>
-  <div style="width: 100%; height: 500px;">
+  <div style="width: 100%; height: 500px;" class="ag-theme-balham">
+    <p>exampleRows: {{ example }}</p>
   <p>editable: {{ editable }}</p>
   <p>modelValue: {{ modelValue }}</p>
             <ag-grid-vue style="width: 100%; height: 90%;" class="ag-theme-balham"
@@ -23,14 +24,15 @@
   <q-btn label="sizeToFit" @click="agutil.sizeToFit()"/>
   <q-btn label="autoSizeAll" @click="agutil.autoSizeAll()"/>
   <q-btn label="logData" @click="console.log(agutil.getRowData())"/>
-
+  <q-btn label="getFlattenedProperties" @click="console.log(agutil.getFlattenedProperties())"/>
   </div>
 </template>
 
 <script>
 import { AgGridVue } from 'ag-grid-vue3'
 import 'ag-grid-community/styles/ag-grid.css' // Core grid CSS, always needed
-import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
+import 'ag-grid-community/styles/ag-theme-balham.css' // Optional theme CSS
+// import 'ag-grid-community/styles/ag-theme-material.css'
 import 'ag-grid-enterprise'
 import _ from 'lodash'
 import AgUtil from './agutil'
@@ -87,7 +89,7 @@ export default {
       this.columnDefs = this.agutil.schema2Columns(this.schema)
     },
     onGridReady (params) {
-      alert('grid ready!')
+      // alert('grid ready!')
       this.agutil.onGridReady(params)
       this.gridApi = params.api
       this.columnApi = params.columnApi
