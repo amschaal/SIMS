@@ -1,9 +1,10 @@
 <!-- eslint-disable no-case-declarations -->
 <template>
   <div style="width: 100%; height: 500px;" class="ag-theme-balham">
-    <p>exampleRows: {{ example }}</p>
-  <p>editable: {{ editable }}</p>
-  <p>modelValue: {{ modelValue }}</p>
+    <!-- <p>exampleRows: {{ example }}</p> -->
+  <!-- <p>editable: {{ editable }}</p> -->
+  <!-- <p>modelValue: {{ modelValue }}</p> -->
+  <slot name="grid">
             <ag-grid-vue style="width: 100%; height: 90%;" class="ag-theme-balham"
 
               rowSelection='multiple'
@@ -18,13 +19,16 @@
               @grid-ready="onGridReady"
               >
             </ag-grid-vue>
+  </slot>
   columnDefs: {{ columnDefs }}
-  <q-btn label="add row" @click="agutil.addRow(5)"/>
-  <q-btn label="remove rows" @click="agutil.removeRows()"/>
-  <q-btn label="sizeToFit" @click="agutil.sizeToFit()"/>
-  <q-btn label="autoSizeAll" @click="agutil.autoSizeAll()"/>
-  <q-btn label="logData" @click="console.log(agutil.getRowData())"/>
-  <q-btn label="getFlattenedProperties" @click="console.log(agutil.getFlattenedProperties())"/>
+  <slot name="buttons">
+    <q-btn label="add row" @click="agutil.addRow(5)"/>
+    <q-btn label="remove rows" @click="agutil.removeRows()"/>
+    <q-btn label="sizeToFit" @click="agutil.sizeToFit()"/>
+    <q-btn label="autoSizeAll" @click="agutil.autoSizeAll()"/>
+    <q-btn label="logData" @click="console.log(agutil.getRowData())"/>
+    <q-btn label="getFlattenedProperties" @click="console.log(agutil.getFlattenedProperties())"/>
+  </slot>
   </div>
 </template>
 
@@ -42,7 +46,7 @@ import AgUtil from './agutil'
 
 export default {
   name: 'AgSchema',
-  props: ['modelValue', 'type', 'schema', 'editable', 'allowExamples', 'allowForceSave', 'submission', 'tableWarnings', 'tableErrors', 'admin', 'validateUrl'],
+  props: ['modelValue', 'schema', 'editable', 'allowExamples', 'allowForceSave', 'tableWarnings', 'tableErrors', 'admin', 'validateUrl'],
   data () {
     return {
       opened: false,
@@ -102,7 +106,7 @@ export default {
       this.$emit('update:modelValue', this.agutil.getRowData(false))
       this.$emit('warnings', this.warnings)
       this.$emit('errors', this.errors)
-      this.close()
+      // this.close()
     },
     validate (save) {
       // this.hst.validateTable(true)
