@@ -27,31 +27,30 @@
               :tableErrors="tableErrors"
               :admin="admin"
               :validate-url="validateUrl"
+              ref="grid"
               >
-        <q-card-section style="height:80vh; min-height:80vh;">
-            <!-- {{type}} -->
-            <q-btn
-              color="primary"
-              @click="show_help = true"
-              label="Help"
-              v-if="schema && schema.help"
-            />
-            <!-- domLayout='autoHeight' -->
-            <template v-slot:grid/>
-        </q-card-section>
-        <q-card-actions>
-            <div v-if="editable">
-
-          </div>
-          <div v-else>
-            <q-btn
-              color="negative"
-              label="Close"
-              @click="close"
-              class="float-right"
-            />
-          </div>
-        </q-card-actions>
+                <template v-slot:postButtons>
+                  <q-btn
+                    color="primary"
+                    @click="show_help = true"
+                    label="Help"
+                    v-if="schema && schema.help"
+                  />
+                  <q-btn
+                    v-if="editable"
+                    color="negative"
+                    label="Dismiss"
+                    @click="close"
+                    class="float-right"
+                  />
+                  <q-btn
+                    v-else
+                    color="negative"
+                    label="Close"
+                    @click="close"
+                    class="float-right"
+                  />
+              </template>
       </aggrid>
       </q-card>
     </q-dialog>
@@ -124,6 +123,9 @@ export default {
     }
   },
   computed: {
+    grid () {
+      return this.$refs.grid
+    }
   },
   components: {
     aggrid

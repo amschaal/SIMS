@@ -1,33 +1,41 @@
 <!-- eslint-disable no-case-declarations -->
 <template>
-  <div style="width: 100%; height: 500px;" class="ag-theme-balham">
+  <div class="ag-theme-balham">
     <!-- <p>exampleRows: {{ example }}</p> -->
   <!-- <p>editable: {{ editable }}</p> -->
   <!-- <p>modelValue: {{ modelValue }}</p> -->
-  <slot name="grid">
-            <ag-grid-vue style="width: 100%; height: 90%;" class="ag-theme-balham"
+  <slot>
+    <q-card style="min-width:90vw">
+  <q-card-section style="height:80vh; min-height:80vh;">
+    <slot name="grid">
+              <ag-grid-vue style="width: 100%; height: 90%;" class="ag-theme-balham"
 
-              rowSelection='multiple'
-              :enableColResize='true'
-              :enableSorting='true'
-              :gridOptions='gridOptions'
-              :rowData='rowData'
-              :columnDefs='columnDefs'
-              ref="grid"
-              :pinnedTopRowData="exampleRows"
-              v-if="columnDefs.length > 0"
-              @grid-ready="onGridReady"
-              >
-            </ag-grid-vue>
-  </slot>
-  columnDefs: {{ columnDefs }}
-  <slot name="buttons">
-    <q-btn label="add row" @click="agutil.addRow(5)"/>
-    <q-btn label="remove rows" @click="agutil.removeRows()"/>
-    <q-btn label="sizeToFit" @click="agutil.sizeToFit()"/>
-    <q-btn label="autoSizeAll" @click="agutil.autoSizeAll()"/>
-    <q-btn label="logData" @click="console.log(agutil.getRowData())"/>
-    <q-btn label="getFlattenedProperties" @click="console.log(agutil.getFlattenedProperties())"/>
+                rowSelection='multiple'
+                :enableColResize='true'
+                :enableSorting='true'
+                :gridOptions='gridOptions'
+                :rowData='rowData'
+                :columnDefs='columnDefs'
+                :pinnedTopRowData="exampleRows"
+                v-if="columnDefs.length > 0"
+                @grid-ready="onGridReady"
+                >
+              </ag-grid-vue>
+    </slot>
+  </q-card-section>
+    <q-card-actions>
+    <slot name="preButtons"></slot>
+    <slot name="buttons">
+      <q-btn label="add row" @click="agutil.addRow(5)"/>
+      <q-btn label="remove rows" @click="agutil.removeRows()"/>
+      <q-btn label="sizeToFit" @click="agutil.sizeToFit()"/>
+      <q-btn label="autoSizeAll" @click="agutil.autoSizeAll()"/>
+      <q-btn label="logData" @click="console.log(agutil.getRowData())"/>
+      <q-btn label="getFlattenedProperties" @click="console.log(agutil.getFlattenedProperties())"/>
+    </slot>
+    <slot name="postButtons"></slot>
+    </q-card-actions>
+  </q-card>
   </slot>
   </div>
 </template>
