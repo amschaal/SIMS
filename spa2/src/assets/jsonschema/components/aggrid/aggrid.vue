@@ -9,14 +9,13 @@
   <q-card-section style="height:80vh; min-height:80vh;">
     <slot name="grid">
               <ag-grid-vue style="width: 100%; height: 90%;" class="ag-theme-balham"
-
                 rowSelection='multiple'
                 :enableColResize='true'
                 :enableSorting='true'
                 :gridOptions='gridOptions'
                 :rowData='rowData'
                 :columnDefs='columnDefs'
-                :pinnedTopRowData="exampleRows"
+                :pinnedTopRowData="getExampleRows"
                 v-if="columnDefs.length > 0"
                 @grid-ready="onGridReady"
                 >
@@ -26,8 +25,19 @@
     <q-card-actions>
     <slot name="preButtons"></slot>
     <slot name="buttons">
-      <q-btn-dropdown label="Format" >
+      <q-btn-dropdown label="View" >
           <q-list>
+            <q-item v-close-popup v-if="agutil.hasDescriptions">
+              <q-item-section>
+                <q-checkbox v-model="showDescriptions" label="Show descriptions" class="show_descriptions"/>
+              </q-item-section>
+            </q-item>
+            <q-item v-close-popup v-if="allowExamples && this.schema.examples && this.schema.examples.length">
+              <q-item-section>
+                <q-checkbox v-model="showExamples" label="Show examples" class="show_examples"/>
+              </q-item-section>
+            </q-item>
+            <!--  -->
             <q-item clickable v-close-popup @click="agutil.sizeToFit()">
               <q-item-section>
                 <q-item-label>Maximize Columns</q-item-label>
@@ -137,6 +147,8 @@ export default {
     return {
       opened: false,
       show_help: false,
+      showExamples: this.allowExamples,
+      showDescriptions: true,
       // schema: Object.freeze({}),
       rowData: [], // this.value,
       rootNode: {},
@@ -283,6 +295,22 @@ export default {
       }
       return 0
       // return this.getRowData().length
+    },
+    getExampleRows () {
+      const examples = []
+      if (this.showDescriptions && this.agutil.hasDescriptions()) {
+        const descriptions = this.agutil.getColDescriptions()
+        descriptions._row_type = 'description'
+        examples.push(descriptions)
+      }
+      if (this.showExamples) {
+        for (const i in this.schema.examples) {
+          const example = this.schema.examples[i]
+          example._row_type = 'example'
+          examples.push(example)
+        }
+      }
+      return examples
     }
   },
   components: {
