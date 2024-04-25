@@ -27,6 +27,7 @@
               :tableErrors="tableErrors"
               :admin="admin"
               :validate-url="validateUrl"
+              :on-save="save"
               ref="grid"
               >
                 <template v-slot:postButtons>
@@ -84,6 +85,7 @@ import aggrid from './aggrid.vue'
 export default {
   name: 'AgSchema',
   props: ['modelValue', 'schema', 'editable', 'allowExamples', 'allowForceSave', 'tableWarnings', 'tableErrors', 'admin', 'validateUrl'],
+  emits: ['update:modelValue'],
   data () {
     return {
       opened: false,
@@ -108,11 +110,12 @@ export default {
     onShow () {
       console.log('onShow')
     },
-    save () {
-      this.$emit('input', this.getRowData(false))
-      this.$emit('update:modelValue', this.getRowData(false))
-      this.$emit('warnings', this.warnings)
-      this.$emit('errors', this.errors)
+    save (data) {
+      this.$emit('update:modelValue', data)
+      // this.$emit('input', this.getRowData(false))
+      // this.$emit('update:modelValue', this.getRowData(false))
+      // this.$emit('warnings', this.warnings)
+      // this.$emit('errors', this.errors)
       this.close()
     },
     close () {

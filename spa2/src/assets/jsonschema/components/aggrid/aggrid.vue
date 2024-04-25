@@ -26,12 +26,89 @@
     <q-card-actions>
     <slot name="preButtons"></slot>
     <slot name="buttons">
-      <q-btn label="add row" @click="agutil.addRow(5)"/>
-      <q-btn label="remove rows" @click="agutil.removeRows()"/>
-      <q-btn label="sizeToFit" @click="agutil.sizeToFit()"/>
-      <q-btn label="autoSizeAll" @click="agutil.autoSizeAll()"/>
-      <q-btn label="logData" @click="console.log(agutil.getRowData())"/>
-      <q-btn label="getFlattenedProperties" @click="console.log(agutil.getFlattenedProperties())"/>
+      <q-btn-dropdown label="Format" >
+          <q-list>
+            <q-item clickable v-close-popup @click="agutil.sizeToFit()">
+              <q-item-section>
+                <q-item-label>Maximize Columns</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item clickable v-close-popup @click="agutil.autoSizeAll()">
+              <q-item-section>
+                <q-item-label>Fit to columns</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
+        <q-card-actions v-if="editable">
+          <q-btn-dropdown split label="Add row" @click="agutil.addRow(1)" color="positive">
+            <q-list>
+              <q-item clickable v-close-popup @click="agutil.addRow(1)">
+                <q-item-label>
+                  <q-item-section label>Add 1</q-item-section>
+                </q-item-label>
+              </q-item>
+              <q-item clickable v-close-popup @click="agutil.addRow(10)">
+                <q-item-label>
+                  <q-item-section label>Add 10</q-item-section>
+                </q-item-label>
+              </q-item>
+              <q-item clickable v-close-popup @click="agutil.addRow(25)">
+                <q-item-label>
+                  <q-item-section label>Add 25</q-item-section>
+                </q-item-label>
+              </q-item>
+              <q-item clickable v-close-popup @click="agutil.addRow(100)">
+                <q-item-label>
+                  <q-item-section label>Add 100</q-item-section>
+                </q-item-label>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
+          <q-btn
+            color="negative"
+            label="Remove selected rows"
+            @click="agutil.removeRows()"
+          />
+          <q-btn
+            v-if="validateUrl"
+            label="Validate"
+            @click="validate(false)"
+          />
+          <q-btn
+            color="negative"
+            label="Discard"
+            @click="setupData"
+            class="float-right"
+          />
+          <q-btn
+            v-if="validateUrl"
+            color="positive"
+            label="Save"
+            @click="validate(true)"
+            class="float-right"
+          />
+          <q-btn
+            v-else
+            color="positive"
+            label="Save"
+            @click="save()"
+            class="float-right"
+          />
+
+      </q-card-actions>
+      <q-card-actions v-else>
+        <q-btn
+          color="negative"
+          label="Close"
+          @click="close"
+          class="float-right"
+        />
+      </q-card-actions>
+      <!-- <q-btn label="add row" @click="agutil.addRow(5)"/>
+      <q-btn label="remove rows" @click="agutil.removeRows()"/> -->
+      <!-- <q-btn label="logData" @click="console.log(agutil.getRowData())"/>
+      <q-btn label="getFlattenedProperties" @click="console.log(agutil.getFlattenedProperties())"/> -->
     </slot>
     <slot name="postButtons"></slot>
     </q-card-actions>
@@ -54,7 +131,8 @@ import AgUtil from './agutil'
 
 export default {
   name: 'AgSchema',
-  props: ['modelValue', 'schema', 'editable', 'allowExamples', 'allowForceSave', 'tableWarnings', 'tableErrors', 'admin', 'validateUrl'],
+  props: ['modelValue', 'schema', 'editable', 'allowExamples', 'allowForceSave', 'tableWarnings', 'tableErrors', 'admin', 'validateUrl', 'onSave'],
+  emits: ['update:modelValue'],
   data () {
     return {
       opened: false,
@@ -89,7 +167,7 @@ export default {
     console.log('destroyed agschema')
   },
   methods: {
-    setupGrid () {
+    setupData () {
       this.warnings = this.tableWarnings ? _.cloneDeep(this.agutil.getValidationObject(this.tableWarnings)) : {}
       this.errors = this.tableErrors ? _.cloneDeep(this.agutil.getValidationObject(this.tableErrors)) : {}
       if (this.value && this.value.length > 0) {
@@ -97,6 +175,9 @@ export default {
       } else {
         this.rowData = _.times(10, _.stubObject)
       }
+    },
+    setupGrid () {
+      this.setupData()
       this.gridOptions = this.agutil.getGridOptions()
       this.columnDefs = this.agutil.schema2Columns(this.schema)
     },
@@ -110,10 +191,15 @@ export default {
       console.log('gridApi', this.gridApi)
     },
     save () {
-      this.$emit('input', this.agutil.getRowData(false))
-      this.$emit('update:modelValue', this.agutil.getRowData(false))
+      const data = this.agutil.getRowData(false)
+      console.log('save', data)
+      this.$emit('input', data)
+      this.$emit('update:modelValue', data)
       this.$emit('warnings', this.warnings)
       this.$emit('errors', this.errors)
+      if (this.onSave) {
+        this.onSave(data)
+      }
       // this.close()
     },
     validate (save) {
