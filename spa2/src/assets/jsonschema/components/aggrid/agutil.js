@@ -158,6 +158,9 @@ class AgUtil {
     console.log('getColDef', definition, schema)
     const self = this
     const editable = !definition.readOnly
+    const aggrid = definition['x-aggrid'] || {}
+    const cellRenderer = aggrid.cellRenderer
+    const cellRendererParams = aggrid.cellRendererParams
     function cellClass (params) {
       // console.log('cellClass', params, self.errors)
       if (params.node.rowPinned) {
@@ -221,7 +224,7 @@ class AgUtil {
       // options._schema = JSON.parse(JSON.stringify(schema))
       // Object.freeze(options)
       const widget = new WidgetClass(id, options)
-      return { editable, headerName: header, headerTooltip: tooltip, field: id, cellEditor: WidgetClass.component, cellEditorParams: { definition, widget_options: widget.getOptions() }, cellClass, tooltipValueGetter: cellTooltip, pinned: definition.pinned } // values: definition.enum, widget: definition.widget,
+      return { editable, cellRenderer, cellRendererParams, headerName: header, headerTooltip: tooltip, field: id, cellEditor: WidgetClass.component, cellEditorParams: { definition, widget_options: widget.getOptions() }, cellClass, tooltipValueGetter: cellTooltip, pinned: definition.pinned } // values: definition.enum, widget: definition.widget,
     }
     switch (definition.type) {
       case 'table':
@@ -236,17 +239,17 @@ class AgUtil {
           // console.log('enum', {headerName: header, headerTooltip: tooltip, field: id, cellEditor: SelectComponent, cellEditorParams: {definition: definition, widget_options: {multiple: definition.multiple}}, cellClass: cellClass, tooltip: cellTooltip, pinned: definition.pinned})
           // return {headerName: header, headerTooltip: tooltip, field: id, cellEditor: AutocompleteComponent, cellEditorParams: {values: definition.enum, widget: definition.widget, definition: definition}, cellClass: cellClass, tooltip: cellTooltip, pinned: definition.pinned} // cellEditor: 'agRichSelectCellEditor', cellEditorParams: {values: definition.enum}
           // return {headerName: header, headerTooltip: tooltip, field: id, cellEditor: 'agRichSelectCellEditor', cellEditorParams: {values: definition.enum}, cellClass: cellClass, tooltip: cellTooltip, pinned: definition.pinned} // cellEditor: 'agRichSelectCellEditor', cellEditorParams: {values: definition.enum} // cellEditor: AutocompleteComponent
-          return { editable, headerName: header, headerTooltip: tooltip, field: id, cellEditor: SelectComponent, cellEditorParams: { definition, widget_options: { multiple: definition.multiple } }, cellClass, tooltipValueGetter: cellTooltip, pinned: definition.pinned }
+          return { editable, cellRenderer, cellRendererParams, headerName: header, headerTooltip: tooltip, field: id, cellEditor: SelectComponent, cellEditorParams: { definition, widget_options: { multiple: definition.multiple } }, cellClass, tooltipValueGetter: cellTooltip, pinned: definition.pinned }
         } else {
-          return { editable, headerName: header, headerTooltip: tooltip, field: id, cellDataType: 'text', cellClass, tooltipValueGetter: cellTooltip, pinned: definition.pinned }
+          return { editable, cellRenderer, cellRendererParams, headerName: header, headerTooltip: tooltip, field: id, cellDataType: 'text', cellClass, tooltipValueGetter: cellTooltip, pinned: definition.pinned }
         }
       case 'number':
-        return { editable, headerName: header, headerTooltip: tooltip, field: id, cellEditor: NumericComponent, cellClass, tooltipValueGetter: cellTooltip, cellDataType: 'number', pinned: definition.pinned }
+        return { editable, cellRenderer, cellRendererParams, headerName: header, headerTooltip: tooltip, field: id, cellEditor: NumericComponent, cellClass, tooltipValueGetter: cellTooltip, cellDataType: 'number', pinned: definition.pinned }
       case 'boolean':
-        return { editable, headerName: header, headerTooltip: tooltip, field: id, cellEditor: BooleanComponent, cellClass, tooltipValueGetter: cellTooltip, cellDataType: 'boolean', pinned: definition.pinned }
+        return { editable, cellRenderer, cellRendererParams, headerName: header, headerTooltip: tooltip, field: id, cellEditor: BooleanComponent, cellClass, tooltipValueGetter: cellTooltip, cellDataType: 'boolean', pinned: definition.pinned }
         // return { test: 'foo', headerName: header, headerTooltip: tooltip, field: id, cellEditor: 'agCheckboxCellEditor', cellRenderer: 'agCheckboxCellRenderer', cellClass, tooltipValueGetter: cellTooltip, cellDataType: 'boolean', pinned: definition.pinned }
       case 'array':
-        def = { editable, headerName: header, field: id, cellClass, tooltipValueGetter: cellTooltip, pinned: definition.pinned }
+        def = { editable, cellRenderer, cellRendererParams, headerName: header, field: id, cellClass, tooltipValueGetter: cellTooltip, pinned: definition.pinned }
         if (definition.items && definition.items.enum) {
           def.source = definition.items.enum
         }

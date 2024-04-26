@@ -7,7 +7,28 @@ const sampleSchema = {
     // type: { type: 'string', title: 'Type' },
     // data: { type: 'object', title: 'Data' },
     // physical_type: { type: ['string', 'null'], maxLength: 25, minLength: 1, title: 'Physical type' },
-    name: { type: 'string', maxLength: 50, minLength: 1, title: 'Name' }
+    id: {
+      type: 'string',
+      maxLength: 50,
+      minLength: 1,
+      title: 'ID',
+      description: 'System ID',
+      readOnly: true,
+      'x-aggrid': {
+        cellRenderer: params => {
+          // return a hyperlink to sample if not header
+          return params.node.rowPinned ? params.value : `<a href="/samples/${params.value}/">${params.value}</a>`
+        },
+        cellRendererParams: {}
+      }
+    },
+    name: {
+      type: 'string',
+      maxLength: 50,
+      minLength: 1,
+      title: 'Name',
+      description: 'Sample Name'
+    }
     // barcodes: { type: 'object', title: 'Barcodes' },
     // sample: { type: 'integer', title: 'Sample' },
     // project: { type: 'integer', title: 'Project' },
@@ -15,15 +36,16 @@ const sampleSchema = {
     // adapter: { type: 'integer', title: 'Adapter' }
   },
   required: ['name'],
-  order: ['name', 'data']
+  order: ['id', 'name', 'data']
 }
 const poolSchema = {
   type: 'object',
   properties: {
+    id: { type: 'string', maxLength: 50, minLength: 1, title: 'ID', description: 'System ID', readOnly: true },
     name: { type: 'string', maxLength: 50, minLength: 1, title: 'Name' }
   },
   required: ['name'],
-  order: ['name', 'data']
+  order: ['id', 'name', 'data']
 }
 const projectSchema = {
   type: 'object',
