@@ -53,9 +53,12 @@
             <!-- <TableDialog table-component="SamplesTable" ref="dialog"/> -->
             <!-- <TableDialog :table-component="SamplesTable" :options="{'selection': 'multiple'}" ref="dialog"/>
             <q-btn label="Samples" color="primary" @click="openDialog" /> -->
-            <SamplesTable :filters="`project__id=${id}`" ref="samples"/>
-            <JSONSchemaTable v-model="project.samples" :schema="sample_schema" v-if="project && project.samples && sample_schema"/>
-            {{ sample_schema }}
+            <!-- <SamplesTable :filters="`project__id=${id}`" ref="samples"/> -->
+            <!-- <JSONSchemaTable v-model="project.samples" :schema="sample_schema" v-if="project && project.samples && sample_schema" title="Samples" :modify="true"/> -->
+            <!-- <aggridDialog v-model="project.samples" :schema="sample_schema" v-if="project && project.samples && sample_schema" :editable="true" :allow-examples="true" title="Samples"/> -->
+            <aggrid v-model="project.samples" :schema="sample_schema" v-if="project && project.samples && sample_schema" :editable="true" :allow-examples="true" title="Samples"/>
+            <!-- {{ sample_schema }} -->
+            {{ project.samples }}
           </q-tab-panel>
           <q-tab-panel name="runs">
             <RunsTable :filters="`run_pools__pool__samples__sample__project__id=${id}`"/>
@@ -77,8 +80,10 @@ import DeleteButton from '../components/DeleteButton.vue'
 import SubmissionData from 'src/components/details/SubmissionData.vue'
 import JSONModelTypeForm from 'src/components/forms/JSONModelTypeForm.vue'
 import FormDialog from 'src/components/dialogs/FormDialog.vue'
-import JSONSchemaTable from 'src/components/tables/jsonschema/JSONSchemaTable.vue'
+// import JSONSchemaTable from 'src/components/tables/jsonschema/JSONSchemaTable.vue'
+// import aggridDialog from 'src/assets/jsonschema/components/aggrid/aggridDialog.vue'
 import ModelSchemas from 'src/model_schemas/schemas'
+import aggrid from 'src/assets/jsonschema/components/aggrid/aggrid.vue'
 // import TableDialog from '../components/dialogs/TableDialog.vue'
 export default {
   name: 'ProjectPage',
@@ -133,7 +138,7 @@ export default {
     // }
   },
   components: {
-    SamplesTable,
+    // SamplesTable,
     RunsTable,
     DeleteButton,
     Project,
@@ -141,7 +146,9 @@ export default {
     SubmissionData,
     JSONModelTypeForm,
     FormDialog,
-    JSONSchemaTable
+    aggrid
+    // JSONSchemaTable,
+    // aggridDialog
     // TableDialog
   },
   computed: {

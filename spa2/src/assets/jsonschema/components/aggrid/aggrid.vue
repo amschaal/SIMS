@@ -5,8 +5,33 @@
   <!-- <p>editable: {{ editable }}</p> -->
   <!-- <p>modelValue: {{ modelValue }}</p> -->
   <slot>
-    <q-card style="min-width:90vw">
+  <q-card style="min-width:90vw">
+    <q-toolbar v-if="title">
+      <q-toolbar-title>{{ title }}</q-toolbar-title>
+    </q-toolbar>
   <q-card-section style="height:80vh; min-height:80vh;">
+    <q-btn
+        color="primary"
+        @click="show_help = true"
+        label="Help"
+        v-if="schema && schema.help"
+      ><q-tooltip ref="tooltip">Click "Help" for details about this table definition.</q-tooltip></q-btn> <!-- icon="fas fa-question-circle" -->
+      <q-checkbox v-model="showDescriptions" label="Show descriptions" class="show_descriptions" v-if="agutil && agutil.hasDescriptions"/>
+      <q-checkbox v-model="showExamples" label="Show examples" v-if="agutil && allowExamples && this.schema.examples && this.schema.examples.length"  class="show_examples"/>
+      <q-btn-dropdown label="Resize Columns">
+      <q-list>
+        <q-item @click="agutil.sizeToFit()" clickable>
+          <q-item-label>
+            Fit all columns
+          </q-item-label>
+        </q-item>
+        <q-item @click="agutil.autoSizeAll()" clickable>
+          <q-item-label>
+            Auto-size
+          </q-item-label>
+        </q-item>
+      </q-list>
+    </q-btn-dropdown>
     <slot name="grid">
               <ag-grid-vue style="width: 100%; height: 90%;" class="ag-theme-balham"
                 rowSelection='multiple'
@@ -18,6 +43,7 @@
                 :pinnedTopRowData="getExampleRows"
                 v-if="columnDefs.length > 0"
                 @grid-ready="onGridReady"
+                ref='grid'
                 >
               </ag-grid-vue>
     </slot>
@@ -25,31 +51,6 @@
     <q-card-actions>
     <slot name="preButtons"></slot>
     <slot name="buttons">
-      <q-btn-dropdown label="View" >
-          <q-list>
-            <q-item v-close-popup v-if="agutil.hasDescriptions">
-              <q-item-section>
-                <q-checkbox v-model="showDescriptions" label="Show descriptions" class="show_descriptions"/>
-              </q-item-section>
-            </q-item>
-            <q-item v-close-popup v-if="allowExamples && this.schema.examples && this.schema.examples.length">
-              <q-item-section>
-                <q-checkbox v-model="showExamples" label="Show examples" class="show_examples"/>
-              </q-item-section>
-            </q-item>
-            <!--  -->
-            <q-item clickable v-close-popup @click="agutil.sizeToFit()">
-              <q-item-section>
-                <q-item-label>Maximize Columns</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item clickable v-close-popup @click="agutil.autoSizeAll()">
-              <q-item-section>
-                <q-item-label>Fit to columns</q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-btn-dropdown>
         <q-card-actions v-if="editable">
           <q-btn-dropdown split label="Add row" @click="agutil.addRow(1)" color="positive">
             <q-list>
@@ -141,7 +142,7 @@ import AgUtil from './agutil'
 
 export default {
   name: 'AgSchema',
-  props: ['modelValue', 'schema', 'editable', 'allowExamples', 'allowForceSave', 'tableWarnings', 'tableErrors', 'admin', 'validateUrl', 'onSave'],
+  props: ['modelValue', 'schema', 'editable', 'allowExamples', 'allowForceSave', 'tableWarnings', 'tableErrors', 'admin', 'validateUrl', 'onSave', 'title'],
   emits: ['update:modelValue'],
   data () {
     return {
@@ -289,13 +290,12 @@ export default {
       // console.log('hasWarnings', this.warnings)
       return this.warnings && _.size(this.warnings) > 0
     },
-    rowCount () {
-      if (this.gridOptions.api) {
-        return this.gridOptions.api.getModel().rootNode.allChildrenCount
-      }
-      return 0
-      // return this.getRowData().length
-    },
+    // rowCount () {
+    //   if (this.columnDefs.length > 0 && this.rootNode && this.rootNode.allChildrenCount) {
+    //     return this.rootNode.allChildrenCount
+    //   }
+    //   return 0
+    // },
     getExampleRows () {
       const examples = []
       if (this.showDescriptions && this.agutil.hasDescriptions()) {
@@ -311,6 +311,12 @@ export default {
         }
       }
       return examples
+    },
+    getTitle () {
+      return this.title || this.schema.title
+    },
+    gridRef () {
+      return this.$refs.grid
     }
   },
   components: {
