@@ -239,6 +239,7 @@ export default {
           }
           self.errors = error.response.data.errors
           self.warnings = error.response.data.warnings
+          self.agutil.updateErrors(self.errors, self.warnings)
           self.gridOptions.api.redrawRows() // redrawCells({force: true})
           if (!save || !self.allowForceSave) {
             if (self.hasErrors) {

@@ -17,6 +17,39 @@ class AgUtil {
     this.descriptions = null
   }
 
+  flatten (obj) {
+    const flattened = {}
+    for (const prop in obj) {
+      if (obj[prop].type === 'object') {
+        for (const prop2 in obj[prop]) {
+          flattened[`${prop}.${prop2}`] = obj[prop][prop2]
+        }
+      } else {
+        flattened[prop] = obj[prop]
+      }
+    }
+    return flattened
+  }
+
+  flatten_errors (errors) {
+    const flattened = {}
+    for (const row in errors) {
+      flattened[row] = this.flatten(errors[row])
+    }
+    return flattened
+  }
+
+  updateErrors (errors, warnings, flatten) {
+    this.errors = {}
+    if (flatten) {
+      this.errors = this.flatten_errors(errors)
+      this.warnings = this.flatten_errors(warnings)
+    } else {
+      this.errors = errors || {}
+      this.warnings = warnings || {}
+    }
+  }
+
   onGridReady (params) {
     this.gridApi = params.api
     this.columnApi = params.columnApi
@@ -129,12 +162,28 @@ class AgUtil {
     this.columnApi.autoSizeColumns(allColIds)
   }
 
+  getNestedData (row, field) {
+    if (!row) {
+      return null
+    }
+    let data = row
+    field.split('.').forEach(v => {
+      if (data) {
+        data = data[v]
+      }
+    })
+    return data
+  }
+
   getCellErrors (row, field) {
-    if (this.errors[row] && this.errors[row][field]) {
-      if (this.schema.properties[field].error_message) {
-        return [this.schema.properties[field].error_message]
+    const props = this.getFlattenedProperties()
+    console.log('getCellErrors', row, field, this)
+    const fieldError = this.getNestedData(this.errors[row], field)
+    if (this.errors[row] && fieldError) {
+      if (props[field].error_message) {
+        return [props[field].error_message]
       } else {
-        return this.errors[row][field]
+        return fieldError
       }
     } else {
       return null
@@ -142,12 +191,10 @@ class AgUtil {
   }
 
   getCellWarnings (row, field) {
-    if (this.warnings[row] && this.warnings[row][field]) {
-      if (this.schema.properties[field].error_message) {
-        return [this.schema.properties[field].error_message]
-      } else {
-        return this.warnings[row][field]
-      }
+    console.log('getCellWarnings', row, field, this)
+    const fieldWarning = this.getNestedData(this.warnings[row], field)
+    if (this.errors[row] && fieldWarning) {
+      return fieldWarning
     } else {
       return null
     }
@@ -156,7 +203,7 @@ class AgUtil {
   getColDef (id, definition, schema) {
     // alert('getColDef ' + id)
     console.log('getColDef', definition, schema)
-    const self = this
+    // const self = this
     const editable = definition.readOnly ? false : this.cellEditable.bind(this)
     const aggrid = definition['x-aggrid'] || {}
     const cellRenderer = aggrid.cellRenderer
@@ -174,17 +221,17 @@ class AgUtil {
         }
       }
     }
-    function cellClass (params) {
-      // console.log('cellClass', params, self.errors)
+    const cellClass = params => {
+      // console.log('cellClass', params, this.errors)
       if (params.node.rowPinned) {
         if (params.data._row_type === 'description') {
           return ['description']
         } else {
           return ['example']
         }
-      } else if (self.errors[params.rowIndex] && self.errors[params.rowIndex][params.colDef.field]) {
+      } else if (this.errors[params.rowIndex] && this.getNestedData(this.errors[params.rowIndex], params.colDef.field)) {
         return ['error']
-      } else if (self.warnings[params.rowIndex] && self.warnings[params.rowIndex][params.colDef.field]) {
+      } else if (this.warnings[params.rowIndex] && this.warnings[params.rowIndex][params.colDef.field]) {
         return ['warning']
       }
       return []
@@ -196,13 +243,13 @@ class AgUtil {
     if (schema.required && schema.required.indexOf(id) !== -1) {
       header = '*' + header
     }
-    function cellTooltip (params) {
+    const cellTooltip = params => {
       // console.log('cellTooltip', params)
       if (params.data._row_type === 'description' || params.data._row_type === 'example') {
         return 'Descriptions and examples cannot be modified.  Please use blank rows for user data.' // params.value
       }
-      const errors = self.getCellErrors(params.rowIndex, params.colDef.field)
-      const warnings = self.getCellWarnings(params.rowIndex, params.colDef.field)
+      const errors = this.getCellErrors(params.rowIndex, params.colDef.field)
+      const warnings = this.getCellWarnings(params.rowIndex, params.colDef.field)
       const text = `row ${params.rowIndex + 1}, ${header}`
       if (errors) {
         return text + ': ' + errors.join(', ')
