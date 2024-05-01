@@ -85,6 +85,34 @@ class ProjectViewSet(mixins.ActionSerializerMixin, viewsets.ModelViewSet, mixins
         except Exception as e:
             return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'project': ProjectSerializer(project).data, 'new_samples': SampleSerializer(samples, many=True).data})
+    @action(detail=True, methods=['post'])
+    def validate_samples(self, request, pk=None, save=False):
+        project = self.get_object()
+        sample_dict = dict((s.id, s) for s in project.samples.all())
+        sample_data = request.data.get('data')
+        # samples = SampleSerializer(data=sample_data, many=True)
+        # valid = samples.is_valid()
+        errors = {}
+        valid = True
+        samples = []
+        for i, s in enumerate(sample_data):
+            id = s.get('id')
+            if id:
+                instance = sample_dict.get(id)
+                sample = SampleSerializer(instance=instance, data=s)
+            else:
+                sample = SampleSerializer(data=s)
+            if not sample.is_valid():
+                valid = False
+                errors[i] = sample.errors
+            samples.append(sample)
+        if not errors and save:
+            for s in samples:
+                s.save()
+        return Response({'data': sample_data, 'is_valid': valid, 'errors': errors, }, status= status.HTTP_400_BAD_REQUEST if errors else status.HTTP_200_OK)
+    @action(detail=True, methods=['post'])
+    def update_samples(self, request, pk=None, save=False):
+        return self.validate_samples(request, pk, True)
     # @action(detail=True, methods=['post'])
     # def process_samples(self, request, pk=None):
     #     project = self.get_object()

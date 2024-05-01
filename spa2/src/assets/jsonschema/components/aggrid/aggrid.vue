@@ -52,24 +52,24 @@
     <slot name="preButtons"></slot>
     <slot name="buttons">
         <q-card-actions v-if="editable">
-          <q-btn-dropdown split label="Add row" @click="agutil.addRow(1)" color="positive">
+          <q-btn-dropdown split label="Add row" @click="agutil.addRow(1, defaultRow)" color="positive">
             <q-list>
-              <q-item clickable v-close-popup @click="agutil.addRow(1)">
+              <q-item clickable v-close-popup @click="agutil.addRow(1, defaultRow)">
                 <q-item-label>
                   <q-item-section label>Add 1</q-item-section>
                 </q-item-label>
               </q-item>
-              <q-item clickable v-close-popup @click="agutil.addRow(10)">
+              <q-item clickable v-close-popup @click="agutil.addRow(10, defaultRow)">
                 <q-item-label>
                   <q-item-section label>Add 10</q-item-section>
                 </q-item-label>
               </q-item>
-              <q-item clickable v-close-popup @click="agutil.addRow(25)">
+              <q-item clickable v-close-popup @click="agutil.addRow(25, defaultRow)">
                 <q-item-label>
                   <q-item-section label>Add 25</q-item-section>
                 </q-item-label>
               </q-item>
-              <q-item clickable v-close-popup @click="agutil.addRow(100)">
+              <q-item clickable v-close-popup @click="agutil.addRow(100, defaultRow)">
                 <q-item-label>
                   <q-item-section label>Add 100</q-item-section>
                 </q-item-label>
@@ -93,19 +93,19 @@
             class="float-right"
           />
           <q-btn
-            v-if="validateUrl"
-            color="positive"
-            label="Save"
-            @click="validate(true)"
-            class="float-right"
-          />
-          <q-btn
-            v-else
+            v-if="saveUrl"
             color="positive"
             label="Save"
             @click="save()"
             class="float-right"
           />
+          <!-- <q-btn
+            v-else
+            color="positive"
+            label="Save"
+            @click="save()"
+            class="float-right"
+          /> -->
 
       </q-card-actions>
       <q-card-actions v-else>
@@ -142,7 +142,7 @@ import AgUtil from './agutil'
 
 export default {
   name: 'AgSchema',
-  props: ['modelValue', 'schema', 'editable', 'allowExamples', 'allowForceSave', 'tableWarnings', 'tableErrors', 'admin', 'validateUrl', 'onSave', 'title'],
+  props: ['modelValue', 'schema', 'editable', 'allowExamples', 'allowForceSave', 'tableWarnings', 'tableErrors', 'admin', 'validateUrl', 'saveUrl', 'onSave', 'title', 'defaultRow'],
   emits: ['update:modelValue'],
   data () {
     return {
@@ -203,9 +203,7 @@ export default {
       this.exampleRows = this.agutil.getExampleRows()
       console.log('gridApi', this.gridApi)
     },
-    save () {
-      const data = this.agutil.getRowData(false)
-      console.log('save', data)
+    updateModel (data) {
       this.$emit('input', data)
       this.$emit('update:modelValue', data)
       this.$emit('warnings', this.warnings)
@@ -213,7 +211,54 @@ export default {
       if (this.onSave) {
         this.onSave(data)
       }
-      // this.close()
+    },
+    save () {
+      const data = this.agutil.getRowData(false)
+      this.$axios.post(this.saveUrl, { schema: this.schema, data })
+        .then(response => {
+          // console.log(response)
+          this.errors = {}
+          this.warnings = {}
+          this.agutil.updateErrors(this.errors, this.warnings)
+          // this.rowData = response.data.
+          this.gridOptions.api.redrawRows() // redrawCells({force: true})
+          this.updateModel(data)
+          // this.$q.notify({ message: 'Successfully validated.  Please hit the SUBMIT button when ready to save your changes.', type: 'positive' })
+        })
+        .catch(error => {
+          // console.log('ERROR', error.response, self.$refs.grid, self.gridOptions.api.refreshCells)
+          if (!error.response.data || (!error.response.data.errors && !error.response.data.warnings)) {
+            this.$q.notify({ message: 'A server error occurred.', type: 'negative' })
+            return
+          }
+          this.errors = error.response.data.errors
+          this.warnings = error.response.data.warnings
+          this.agutil.updateErrors(this.errors, this.warnings)
+          this.gridOptions.api.redrawRows() // redrawCells({force: true})
+          if (this.hasErrors) {
+            this.$q.notify({ message: 'There were errors in your data.', type: 'negative' })
+          }
+          if (this.hasWarnings) {
+            this.$q.notify({ message: 'There were warnings in your data.', type: 'warning' })
+          }
+          // else {
+          //   const message = self.hasErrors ? 'There were errors.  Any errors will need to be corrected before completing submission.  You may choose to "save anyway" and then save this submission as a draft in order not to lose your work.' : 'There were warnings.  To ignore the warnings, click "save anyway".'
+          //   self.$q.notify({
+          //     message,
+          //     timeout: 10000, // in milliseconds; 0 means no timeout
+          //     type: self.hasErrors ? 'negative' : 'warning',
+          //     // position: 'bottom', // 'top', 'left', 'bottom-left' etc.
+          //     actions: [
+          //       {
+          //         label: 'Save Anyway',
+          //         handler: () => {
+          //           self.save()
+          //         }
+          //       }
+          //     ]
+          //   })
+          // }
+        })
     },
     validate (save) {
       // this.hst.validateTable(true)
@@ -225,6 +270,7 @@ export default {
           // console.log(response)
           self.errors = {}
           self.warnings = {}
+          self.agutil.updateErrors(self.errors, self.warnings)
           self.gridOptions.api.redrawRows() // redrawCells({force: true})
           self.$q.notify({ message: 'Successfully validated.  Please hit the SUBMIT button when ready to save your changes.', type: 'positive' })
           if (save) {
