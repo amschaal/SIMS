@@ -136,10 +136,18 @@ class AgUtil {
     return cleaned
   }
 
-  addRow (number) {
+  addRow (number, obj) {
+    if (!obj) {
+      obj = { data: {} }
+      for (const k in this.schema.properties) {
+        if (typeof this.schema.properties[k].type === 'object') {
+          obj[k] = {}
+        }
+      }
+    }
     const rows = []
     for (let i = 0; i < number; i++) {
-      rows.push({})
+      rows.push(_.cloneDeep(obj))
     }
     this.gridApi.applyTransaction({ add: rows })
     // console.log('addRow', this.getRowData())

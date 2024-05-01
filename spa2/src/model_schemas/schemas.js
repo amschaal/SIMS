@@ -17,7 +17,8 @@ const sampleSchema = {
       'x-aggrid': {
         cellRenderer: params => {
           // return a hyperlink to sample if not header
-          return params.node.rowPinned ? params.value : `<a href="/samples/${params.value}/">${params.value}</a>`
+          return params.value ? `<a href="/samples/${params.value}/">${params.value}</a>` : params.value
+          // return params.node.rowPinned ? params.value : `<a href="/samples/${params.value}/">${params.value}</a>` // this should get checked in cellRendererSelector
         },
         cellRendererParams: {}
       }
