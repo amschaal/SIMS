@@ -109,6 +109,7 @@ class ProjectViewSet(mixins.ActionSerializerMixin, viewsets.ModelViewSet, mixins
         if not errors and save:
             for s in samples:
                 s.save()
+            return Response([s.data for s in samples])
         return Response({'data': sample_data, 'is_valid': valid, 'errors': errors, }, status= status.HTTP_400_BAD_REQUEST if errors else status.HTTP_200_OK)
     @action(detail=True, methods=['post'])
     def update_samples(self, request, pk=None, save=False):

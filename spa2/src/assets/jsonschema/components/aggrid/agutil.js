@@ -185,7 +185,7 @@ class AgUtil {
 
   getCellErrors (row, field) {
     const props = this.getFlattenedProperties()
-    console.log('getCellErrors', row, field, this)
+    // console.log('getCellErrors', row, field, this)
     const fieldError = this.getNestedData(this.errors[row], field)
     if (this.errors[row] && fieldError) {
       if (props[field].error_message) {
@@ -199,7 +199,7 @@ class AgUtil {
   }
 
   getCellWarnings (row, field) {
-    console.log('getCellWarnings', row, field, this)
+    // console.log('getCellWarnings', row, field, this)
     const fieldWarning = this.getNestedData(this.warnings[row], field)
     if (this.errors[row] && fieldWarning) {
       return fieldWarning
@@ -210,7 +210,7 @@ class AgUtil {
 
   getColDef (id, definition, schema) {
     // alert('getColDef ' + id)
-    console.log('getColDef', definition, schema)
+    // console.log('getColDef', definition, schema)
     // const self = this
     const editable = definition.readOnly ? false : this.cellEditable.bind(this)
     const aggrid = definition['x-aggrid'] || {}
@@ -362,12 +362,12 @@ class AgUtil {
       }
       // examples = examples.concat(this.schema.examples)
     }
-    console.log('examples', examples)
+    // console.log('examples', examples)
     return examples
   }
 
   cellEditable (params) {
-    console.log('cellEditable', this.editable, params)
+    // console.log('cellEditable', this.editable, params)
     if (params.node.rowPinned === 'top') {
       this.component.$q.notify({ position: 'top', message: 'Description and example rows are not editable.  Please use the "Add row" button for editable rows.' })
       return false
@@ -376,7 +376,7 @@ class AgUtil {
   }
 
   expandDescriptionRow (params) {
-    console.log('expandDescriptionRow', params, params.api, params.api.getPinnedTopRow(0)) //
+    // console.log('expandDescriptionRow', params, params.api, params.api.getPinnedTopRow(0)) //
     if (params.api.getPinnedTopRow(0)) {
       params.api.getPinnedTopRow(0).isDescription = true
     }
@@ -384,7 +384,7 @@ class AgUtil {
   }
 
   onCellFocused (params) {
-    console.log('onCellFocused', this, this.getCellErrors)
+    // console.log('onCellFocused', this, this.getCellErrors)
     if (this.dismiss) {
       this.dismiss()
     }

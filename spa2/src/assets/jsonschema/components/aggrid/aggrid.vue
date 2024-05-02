@@ -220,7 +220,7 @@ export default {
           this.errors = {}
           this.warnings = {}
           this.agutil.updateErrors(this.errors, this.warnings)
-          // this.rowData = response.data.
+          this.rowData = response.data
           this.gridOptions.api.redrawRows() // redrawCells({force: true})
           this.updateModel(data)
           // this.$q.notify({ message: 'Successfully validated.  Please hit the SUBMIT button when ready to save your changes.', type: 'positive' })

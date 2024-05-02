@@ -103,7 +103,7 @@ class SampleSerializer(DjsonTypeModelSerializer):
     class Meta:
         model = Sample
         exclude = []
-        read_only_fields = ('schema', 'submission_data')
+        read_only_fields = ('id', 'schema', 'submission_data')
 
 class LibrarySerializer(SampleSerializer):
     class Meta:
