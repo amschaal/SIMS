@@ -281,14 +281,14 @@ class Sample(DjsonTypeModel):
 #         return call_directory_function('get_sample_directory',self,full=full)
     class Meta:
         unique_together = (('id','project'),)
-#     @transaction.atomic
-#     def save(self, *args, **kwargs):
-#         if not self.id:
-# #             if not self.id and self.project:
-# #             last = Sample.objects.filter(project=self.project,id__regex=r'^[A-Z]\d{2}').last()
-#             id = generate_id(self.project)
-#             self.id = id
-#         super(Sample, self).save(*args, **kwargs)
+    # @transaction.atomic
+    def save(self, *args, **kwargs):
+        if not self.id:
+            if not self.id and self.project:
+#             last = Sample.objects.filter(project=self.project,id__regex=r'^[A-Z]\d{2}').last()
+                id = '{project}_{name}'.format(project=self.project.id, name=self.name)
+                self.id = id
+        super(Sample, self).save(*args, **kwargs)
 
 class AdapterDB(models.Model):
     id = models.SlugField(primary_key=True)
