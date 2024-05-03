@@ -14,7 +14,7 @@
         color="primary"
         @click="show_help = true"
         label="Help"
-        v-if="schema && schema.help"
+        v-if="schema && schema.help && showButton('help')"
       ><q-tooltip ref="tooltip">Click "Help" for details about this table definition.</q-tooltip></q-btn> <!-- icon="fas fa-question-circle" -->
       <q-checkbox v-model="showDescriptions" label="Show descriptions" class="show_descriptions" v-if="agutil && agutil.hasDescriptions"/>
       <q-checkbox v-model="showExamples" label="Show examples" v-if="agutil && allowExamples && this.schema.examples && this.schema.examples.length"  class="show_examples"/>
@@ -52,7 +52,7 @@
     <slot name="preButtons"></slot>
     <slot name="buttons">
         <q-card-actions v-if="editable">
-          <q-btn-dropdown split label="Add row" @click="agutil.addRow(1, defaultRow)" color="positive">
+          <q-btn-dropdown split label="Add row" @click="agutil.addRow(1, defaultRow)" color="positive" v-if="showButton('add')">
             <q-list>
               <q-item clickable v-close-popup @click="agutil.addRow(1, defaultRow)">
                 <q-item-label>
@@ -80,20 +80,22 @@
             color="negative"
             label="Remove selected rows"
             @click="agutil.removeRows()"
+            v-if="showButton('remove')"
           />
           <q-btn
-            v-if="validateUrl"
+            v-if="validateUrl && showButton('validate')"
             label="Validate"
             @click="validate(false)"
           />
           <q-btn
             color="negative"
             label="Discard"
-            @click="setupData"
+            @click="discard"
             class="float-right"
+            v-if="showButton('discard')"
           />
           <q-btn
-            v-if="saveUrl"
+            v-if="saveUrl && showButton('save')"
             color="positive"
             label="Save"
             @click="save()"
@@ -108,14 +110,15 @@
           /> -->
 
       </q-card-actions>
-      <q-card-actions v-else>
+      <!-- <q-card-actions v-else>
         <q-btn
           color="negative"
           label="Close"
           @click="close"
           class="float-right"
+          v-if="showButton('close')"
         />
-      </q-card-actions>
+      </q-card-actions> -->
       <!-- <q-btn label="add row" @click="agutil.addRow(5)"/>
       <q-btn label="remove rows" @click="agutil.removeRows()"/> -->
       <!-- <q-btn label="logData" @click="console.log(agutil.getRowData())"/>
@@ -125,6 +128,24 @@
     </q-card-actions>
   </q-card>
   </slot>
+  <q-dialog v-model="show_help">
+      <q-card>
+        <q-toolbar>
+          Help
+        </q-toolbar>
+
+        <q-card-section>
+          <div v-html="schema.help" v-if="schema && schema.help"></div>
+        </q-card-section>
+        <q-card-actions align="right" class="text-primary">
+          <q-btn
+            color="primary"
+            @click="show_help = false"
+            label="Close"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -142,7 +163,7 @@ import AgUtil from './agutil'
 
 export default {
   name: 'AgSchema',
-  props: ['modelValue', 'schema', 'editable', 'allowExamples', 'allowForceSave', 'tableWarnings', 'tableErrors', 'admin', 'validateUrl', 'saveUrl', 'onSave', 'title', 'defaultRow'],
+  props: ['modelValue', 'schema', 'editable', 'allowExamples', 'allowForceSave', 'tableWarnings', 'tableErrors', 'admin', 'validateUrl', 'saveUrl', 'onSave', 'title', 'defaultRow', 'buttons', 'hideButtons'],
   emits: ['update:modelValue'],
   data () {
     return {
@@ -188,6 +209,11 @@ export default {
       } else {
         this.rowData = _.times(10, _.stubObject)
       }
+      this.agutil.updateErrors(this.errors, this.warnings)
+    },
+    discard () {
+      this.setupData()
+      this.$q.notify({ message: 'Changes have been discarded.', type: 'info' })
     },
     setupGrid () {
       this.setupData()
@@ -316,6 +342,12 @@ export default {
           //   self.errors = error.response.data.errors
           // }
         })
+    },
+    showButton (buttonId) {
+      if (this.hideButtons && this.buttons.indexOf(buttonId) !== -1) {
+        return false
+      }
+      return !this.buttons || this.buttons.indexOf(buttonId) !== -1
     }
   },
   computed: {

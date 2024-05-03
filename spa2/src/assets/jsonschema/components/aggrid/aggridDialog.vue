@@ -5,10 +5,7 @@
       <q-card style="min-width:90vw">
         <q-bar class="bg-primary text-white">
           <q-toolbar>
-            <q-avatar>
-            </q-avatar>
-
-            <q-toolbar-title>{{type ? type.name : 'Rows'}} -
+            <q-toolbar-title>{{title}}
               <span class="float-right">
                 <q-btn title="Maximize" dense flat icon="crop_square"  @click="maximized=true" v-if="!maximized"/>
                 <q-btn title="Minimize" dense flat icon="maximize" @click="maximized=false" v-if="maximized"/>
@@ -28,15 +25,16 @@
               :admin="admin"
               :validate-url="validateUrl"
               :on-save="save"
+              :title="title"
               ref="grid"
               >
                 <template v-slot:postButtons>
-                  <q-btn
+                  <!-- <q-btn
                     color="primary"
                     @click="show_help = true"
                     label="Help"
                     v-if="schema && schema.help"
-                  />
+                  /> -->
                   <q-btn
                     v-if="editable"
                     color="negative"
@@ -55,26 +53,7 @@
       </aggrid>
       </q-card>
     </q-dialog>
-
-    <q-dialog v-model="show_help">
-      <q-card>
-        <q-toolbar>
-          Help
-        </q-toolbar>
-
-        <q-card-section>
-          <div v-html="schema.help" v-if="schema && schema.help"></div>
-        </q-card-section>
-        <q-card-actions align="right" class="text-primary">
-          <q-btn
-            color="primary"
-            @click="show_help = false"
-            label="Close"
-          />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-    <q-btn label="Open Dialog" @click="openDialog"/>
+    <q-btn :label="table_button_label()" @click="openDialog"/>
   </div>
 </template>
 
@@ -84,7 +63,7 @@ import aggrid from './aggrid.vue'
 
 export default {
   name: 'AgSchema',
-  props: ['modelValue', 'schema', 'editable', 'allowExamples', 'allowForceSave', 'tableWarnings', 'tableErrors', 'admin', 'validateUrl'],
+  props: ['modelValue', 'schema', 'editable', 'allowExamples', 'allowForceSave', 'tableWarnings', 'tableErrors', 'admin', 'validateUrl', 'title'],
   emits: ['update:modelValue'],
   data () {
     return {
@@ -123,6 +102,16 @@ export default {
     },
     modalOpened () {
       console.log('modal opened')
+    },
+    table_button_label () {
+      return (this.title ? this.title : this.variable) + ' (' + (this.modelValue ? this.modelValue.length : 0) + ')'
+    },
+    tableHint () {
+      if (this.schema.description) {
+        return this.schema.description
+      } else {
+        return (this.schema.title ? this.schema.title : '') + ': Click on the button above to open the table'
+      }
     }
   },
   computed: {

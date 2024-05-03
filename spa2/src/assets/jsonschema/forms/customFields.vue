@@ -41,8 +41,9 @@
                   :table-warnings="getTableWarnings(v)"
                   :table-errors="getTableErrors(v)"
                   :admin="true"
+                  :title="v.schema.title || v.variable"
                   />
-                <q-btn :label="table_button_label(v)"  @click="openTable(v)" />
+                <!-- <q-btn :label="table_button_label(v)"  @click="openTable(v)" /> -->
               </template>
               <template v-slot:error>
                 <div v-if="hasError(v.variable)">{{getError(v)}}</div>
@@ -111,7 +112,7 @@
 <script>
 import widgetFactory from '../widgets.js'
 import { QSelect, QOptionGroup, QCheckbox, QInput } from 'quasar'
-import AgSchema from '../components/aggrid/agschema.vue'
+import AgSchema from '../components/aggrid/aggridDialog.vue'
 // import _ from 'lodash'
 
 export default {
