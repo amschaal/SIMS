@@ -101,6 +101,13 @@
             @click="save()"
             class="float-right"
           />
+          <q-btn
+            v-if="!saveUrl && showButton('keep')"
+            color="positive"
+            label="Keep"
+            @click="keep(validateUrl)"
+            class="float-right"
+          />
           <!-- <q-btn
             v-else
             color="positive"
@@ -164,7 +171,7 @@ import AgUtil from './agutil'
 export default {
   name: 'AgSchema',
   props: ['modelValue', 'schema', 'editable', 'allowExamples', 'allowForceSave', 'tableWarnings', 'tableErrors', 'admin', 'validateUrl', 'saveUrl', 'onSave', 'title', 'defaultRow', 'buttons', 'hideButtons'],
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'input', 'warnings', 'errors'],
   data () {
     return {
       opened: false,
@@ -230,12 +237,19 @@ export default {
       console.log('gridApi', this.gridApi)
     },
     updateModel (data) {
-      this.$emit('input', data)
+      // this.$emit('input', data)
       this.$emit('update:modelValue', data)
       this.$emit('warnings', this.warnings)
       this.$emit('errors', this.errors)
       if (this.onSave) {
         this.onSave(data)
+      }
+    },
+    keep (validate) {
+      if (validate) {
+        this.validate(true)
+      } else {
+        this.updateModel(this.agutil.getRowData(false))
       }
     },
     save () {
@@ -249,7 +263,7 @@ export default {
           this.rowData = response.data
           this.gridOptions.api.redrawRows() // redrawCells({force: true})
           this.updateModel(data)
-          // this.$q.notify({ message: 'Successfully validated.  Please hit the SUBMIT button when ready to save your changes.', type: 'positive' })
+          this.$q.notify({ message: 'Changes have been saved.', type: 'positive' })
         })
         .catch(error => {
           // console.log('ERROR', error.response, self.$refs.grid, self.gridOptions.api.refreshCells)
@@ -286,9 +300,9 @@ export default {
           // }
         })
     },
-    validate (save) {
+    validate (keep) {
       // this.hst.validateTable(true)
-      console.log('validate', this.type, this.schema, save)
+      console.log('validate', this.type, this.schema, keep)
       const self = this
       // this.$axios.post('/api/submission_types/' + this.type.id + '/validate_data/', {data: this.getRowData(true)})
       this.$axios.post(this.validateUrl, { schema: this.schema, data: this.agutil.getRowData(true) })
@@ -299,8 +313,8 @@ export default {
           self.agutil.updateErrors(self.errors, self.warnings)
           self.gridOptions.api.redrawRows() // redrawCells({force: true})
           self.$q.notify({ message: 'Successfully validated.  Please hit the SUBMIT button when ready to save your changes.', type: 'positive' })
-          if (save) {
-            self.save()
+          if (keep) {
+            self.keep(false)
           }
         })
         .catch(function (error, stuff) {
@@ -313,7 +327,7 @@ export default {
           self.warnings = error.response.data.warnings
           self.agutil.updateErrors(self.errors, self.warnings)
           self.gridOptions.api.redrawRows() // redrawCells({force: true})
-          if (!save || !self.allowForceSave) {
+          if (!keep || !self.allowForceSave) {
             if (self.hasErrors) {
               self.$q.notify({ message: 'There were errors in your data.', type: 'negative' })
             }
@@ -331,7 +345,7 @@ export default {
                 {
                   label: 'Save Anyway',
                   handler: () => {
-                    self.save()
+                    self.keep(false)
                   }
                 }
               ]

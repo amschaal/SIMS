@@ -64,7 +64,7 @@ import aggrid from './aggrid.vue'
 export default {
   name: 'AgSchema',
   props: ['modelValue', 'schema', 'editable', 'allowExamples', 'allowForceSave', 'tableWarnings', 'tableErrors', 'admin', 'validateUrl', 'title'],
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'warnings', 'errors'],
   data () {
     return {
       opened: false,

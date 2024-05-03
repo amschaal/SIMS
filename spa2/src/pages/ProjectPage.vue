@@ -56,7 +56,7 @@
             <!-- <SamplesTable :filters="`project__id=${id}`" ref="samples"/> -->
             <!-- <JSONSchemaTable v-model="project.samples" :schema="sample_schema" v-if="project && project.samples && sample_schema" title="Samples" :modify="true"/> -->
             <!-- <aggridDialog v-model="project.samples" :schema="sample_schema" v-if="project && project.samples && sample_schema" :editable="true" :allow-examples="true" title="Samples"/> -->
-            <aggrid v-model="project.samples" :schema="sample_schema" v-if="project && project.samples && sample_schema" :editable="true" :allow-examples="true" title="Samples"/>
+            <aggrid v-model="project.samples" :schema="sample_schema" v-if="project && project.samples && sample_schema" :editable="true" :allow-examples="true" title="Samples" :validate-url="`/server/api/projects/${id}/validate_samples/`" :save-url="`/server/api/projects/${id}/update_samples/`" :default-row="default_sample"/>
             <!-- {{ sample_schema }} -->
             {{ project.samples }}
           </q-tab-panel>
@@ -154,6 +154,9 @@ export default {
   computed: {
     sample_schema () {
       return ModelSchemas.getSchema('sample', this.project.sample_type)
+    },
+    default_sample () {
+      return { data: {}, project: this.id, type: this.project.sample_type }
     }
   }
 }
