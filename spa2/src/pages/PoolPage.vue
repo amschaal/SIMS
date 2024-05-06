@@ -2,6 +2,8 @@
   <q-page class="q-pa-sm q-gutter-sm">
     <h6 class="text-center"><router-link :to="{ name: 'pools'}">Pools</router-link> / {{pool.name}}</h6>
     <DeleteButton :url="`/api/pools/${id}/`" :redirect="{name: 'pools'}"/>
+    <q-btn label="Lock" color="primary" @click="lock" v-if="pool && !pool.locked"/>
+    <q-btn label="Unlock" color="positive" @click="unlock" v-if="pool && pool.locked"/>
     <q-tabs
         v-model="tab"
       >
@@ -22,14 +24,14 @@
           </q-tab-panel>
           <q-tab-panel name="samples">
             <TableDialog :table-component="SamplesTable" :options="{'selection': 'multiple'}" ref="samples" :on-select="addSamples"/>
-            <q-btn label="Add samples" color="primary" @click="open('samples')" class="on-left"/>
-            <q-btn label="Remove selected" color="negative" @click="removeSamples" />
+            <q-btn label="Add samples" color="primary" @click="open('samples')" class="on-left" v-if="pool && !pool.locked"/>
+            <q-btn label="Remove selected" color="negative" @click="removeSamples" v-if="pool && !pool.locked"/>
             <SamplesTable :filters="`pools__id=${id}`" ref="samples_table" :options="{'selection': 'multiple'}"/>
           </q-tab-panel>
           <q-tab-panel name="pools">
             <TableDialog :table-component="PoolsTable" :options="{'selection': 'multiple'}" ref="pools" :on-select="addPools"/>
-            <q-btn label="Add pools" color="primary" @click="open('pools')" class="on-left"/>
-            <q-btn label="Remove selected" color="negative" @click="removePools" />
+            <q-btn label="Add pools" color="primary" @click="open('pools')" class="on-left" v-if="pool && !pool.locked"/>
+            <q-btn label="Remove selected" color="negative" @click="removePools" v-if="pool && !pool.locked" />
             <PoolsTable :filters="`pooled__id=${id}`" ref="pools_table" :options="{'selection': 'multiple'}"/>
           </q-tab-panel>
           <q-tab-panel name="runs">
@@ -135,6 +137,30 @@ export default {
     open (table) {
       console.log('table', this.$refs, this.$refs[table])
       this.$refs[table].open(this.pool)
+    },
+    lock () {
+      this.$api
+        .post(`/api/pools/${this.id}/lock/`)
+        .then(response => {
+          this.$q.notify('Pool locked.')
+          this.pool.locked = response.data.locked
+        })
+        .catch(error => {
+          console.log(error.code)
+          this.$q.notify({ color: 'negative', message: 'Failed to lock pool.' })
+        })
+    },
+    unlock () {
+      this.$api
+        .post(`/api/pools/${this.id}/unlock/`)
+        .then(response => {
+          this.$q.notify('Pool unlocked.  It is now possible to add samples or pools to this pool.')
+          this.pool.locked = response.data.locked
+        })
+        .catch(error => {
+          console.log(error.code)
+          this.$q.notify({ color: 'negative', message: 'Failed to unlock pool.' })
+        })
     }
   },
   mounted: function () {

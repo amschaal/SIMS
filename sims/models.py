@@ -64,6 +64,7 @@ class Pool(DjsonTypeModel):
     submission_data = JSONField(default=dict)
     created = models.DateField(auto_now=True,db_index=True)
     project = models.ForeignKey('Project', on_delete=models.CASCADE, related_name="pools",null=True,blank=True)
+    locked = models.DateTimeField(null=True)
     # data = JSONField(default=dict)
     pools = models.ManyToManyField(
         'self',

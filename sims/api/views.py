@@ -12,6 +12,7 @@ from rest_framework.exceptions import APIException
 from django.conf import settings
 from sims.submission import SubmissionImporter
 from tools.barcodes import get_all_conflicts
+from django.utils import timezone
 from . import mixins
 
 class SubmissionViewSet(viewsets.ModelViewSet):
@@ -238,7 +239,20 @@ class PoolViewSet(viewsets.ModelViewSet, mixins.JSONSchemaMixin):
         elif action == 'remove':
             pool.pools.remove(*pools)
         return Response({'pools': PoolSerializer(pool.pools.all(),many=True).data})
-
+    @action(detail=True, methods=['post'])
+    def lock(self, request, pk=None):
+        # if pool.locked:
+        #     return Respon
+        pool = self.get_object()
+        pool.locked = timezone.now()
+        pool.save()
+        return Response(PoolSerializer(instance=pool).data)
+    @action(detail=True, methods=['post'])
+    def unlock(self, request, pk=None):
+        pool = self.get_object()
+        pool.locked = None
+        pool.save()
+        return Response(PoolSerializer(instance=pool).data)
 class AdapterDBViewset(viewsets.ReadOnlyModelViewSet):
     queryset = AdapterDB.objects.distinct()
     serializer_class = AdapterDBSerializer
