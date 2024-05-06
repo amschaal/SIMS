@@ -23,8 +23,8 @@
                   :table-warnings="getTableWarnings(v)"
                   :table-errors="getTableErrors(v)"
                   :admin="false"
+                  :title="v.schema.title ? v.schema.title : v.variable"
                   />
-                <q-btn :label="table_button_label(v)"  @click="openTable(v)" />
               </template>
               <template v-slot:error>
                 <div v-if="hasError(v.variable)">{{getError(v)}}</div>
@@ -44,7 +44,7 @@
 
 <script>
 import widgetFactory from '../../widgets.js'
-import AgSchema from '../aggrid/agschema.vue'
+import AgSchema from '../aggrid/aggridDialog.vue'
 // import _ from 'lodash'
 
 export default {
@@ -100,9 +100,6 @@ export default {
     },
     openTable (v) {
       this.$refs[v.variable][0].openSamplesheet()
-    },
-    table_button_label (v) {
-      return (v.schema.title ? v.schema.title : v.variable) + ' (' + (this.value[v.variable] && this.value[v.variable].length ? this.value[v.variable].length : 0) + ')'
     },
     tableHint (v) {
       if (v.schema.items.description) {

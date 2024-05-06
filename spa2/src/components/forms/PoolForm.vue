@@ -15,9 +15,10 @@
         :error="has_error.name"
         />
       <q-input outlined v-model="model.description" label="Description"
-        :error-message="errors.name"
-        :error="has_error.name"
+        :error-message="errors.description"
+        :error="has_error.description"
         />
+        model: {{ model }}
     </template>
   </JSONForm>
 </template>
@@ -30,15 +31,16 @@ export default {
   data () {
     return {
       errors: {},
-      model: this.modelValue,
+      // model: this.modelValue,
       options: [
       ]
     }
   },
   methods: {
     onErrorMethod (error) {
+      console.log('onErrorMethod', this)
       if (error) {
-        this.$q.notify({ color: 'negative', message: this.model.id ? 'Error updating pool' : 'Error creating pool.' })
+        this.$q.notify({ color: 'negative', message: this.model && this.model.id ? 'Error updating pool' : 'Error creating pool.' })
       }
       if (this.onError) {
         this.onError(error)
@@ -51,6 +53,11 @@ export default {
       if (this.onSuccess) {
         this.onSuccess(request)
       }
+    }
+  },
+  computed: {
+    model () {
+      return this.modelValue
     }
   },
   mounted: function () {
