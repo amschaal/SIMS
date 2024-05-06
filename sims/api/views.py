@@ -250,6 +250,8 @@ class PoolViewSet(viewsets.ModelViewSet, mixins.JSONSchemaMixin):
     @action(detail=True, methods=['post'])
     def unlock(self, request, pk=None):
         pool = self.get_object()
+        if pool.pooled.exists() or pool.run_pools.exists():
+            return Response({'detail': 'Pool cannot be unlocked if it is in another pool or run.'}, status=status.HTTP_403_FORBIDDEN)
         pool.locked = None
         pool.save()
         return Response(PoolSerializer(instance=pool).data)

@@ -147,7 +147,7 @@ export default {
         })
         .catch(error => {
           console.log(error.code)
-          this.$q.notify({ color: 'negative', message: 'Failed to lock pool.' })
+          this.$q.notify({ color: 'negative', message: 'Failed to lock pool. ' })
         })
     },
     unlock () {
@@ -158,8 +158,8 @@ export default {
           this.pool.locked = response.data.locked
         })
         .catch(error => {
-          console.log(error.code)
-          this.$q.notify({ color: 'negative', message: 'Failed to unlock pool.' })
+          console.log(error)
+          this.$q.notify({ color: 'negative', message: 'Failed to unlock pool.  ' + (error.response.data ? error.response.data.detail : '') })
         })
     }
   },
