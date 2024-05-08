@@ -203,9 +203,10 @@ class PoolViewSet(viewsets.ModelViewSet, mixins.JSONSchemaMixin):
         'pools__id':['exact'],
         'run_pools__run__id':['exact'],
         'project__id':['icontains','exact'],
-        'submission__id': ['exact']
+        'submission__id': ['exact'],
+        'locked': ['isnull']
         }
-    search_fields = ('id', 'name', 'samples__id', 'samples__project__id')
+    search_fields = ('id', 'name', 'samples__id', 'samples__project__id', 'type__name')
     serializer_class = PoolSerializer
     queryset = Pool.objects.distinct()
     @action(detail=True, methods=['get','post'])

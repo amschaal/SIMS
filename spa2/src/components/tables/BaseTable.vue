@@ -20,6 +20,7 @@
             <q-icon name="search" />
           </template>
         </q-input>
+        <slot name="top-left"/>
       </template>
       <template v-slot:top-right>
        <q-select
@@ -174,6 +175,11 @@ export default {
     },
     getSelected () {
       return this.selected
+    }
+  },
+  watch: {
+    filters (val, old) {
+      this.refresh()
     }
   }
 }
