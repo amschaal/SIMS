@@ -8,6 +8,12 @@
       <div class="col-md-4 col-sm-12"><b>Name: </b>{{sample.name}}</div>
       <div class="col-md-4 col-sm-12"><b>Imported: </b>{{$filters.formatDate(sample.imported)}}</div>
     </div>
+    <div class="row" v-if="sample.data && sample.type && sample.schema">
+      <fieldset class="col-12">
+        <legend>{{ sample.type.name }} fields</legend>
+        <DisplayFields v-model="sample.data" :schema="sample.schema" v-if="sample.schema && sample.data"/>
+      </fieldset>
+    </div>
     <!-- <div class="row">
       <div class="col-12" v-for="(v, k) in sample.data" :key="k"><b>{{k}}: </b>{{v}}</div>
     </div> -->
@@ -18,6 +24,7 @@
 </style>
 
 <script>
+import DisplayFields from 'src/assets/jsonschema/components/display/displayFields.vue'
 export default {
   name: 'SampleDetail',
   props: ['id', 'instance'],
@@ -41,6 +48,9 @@ export default {
     sample () {
       return this.instance || this.data
     }
+  },
+  components: {
+    DisplayFields
   }
 }
 
