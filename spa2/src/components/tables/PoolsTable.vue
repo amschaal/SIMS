@@ -8,9 +8,9 @@
     ref="table"
   >
     <template v-slot:top-left>
-      <q-radio label="All pools" v-model="locked" val="all"/>
-      <q-radio label="Locked pools" v-model="locked" val="locked"/>
-      <q-radio label="Unlocked pools" v-model="locked" val="unlocked"/>
+      <q-radio label="All pools" v-model="locked" val="all" :disable="options && options.locked_only"/>
+      <q-radio label="Locked pools" v-model="locked" val="locked" :disable="options && options.locked_only"/>
+      <q-radio label="Unlocked pools" v-model="locked" val="unlocked" :disable="options && options.locked_only"/>
     </template>
     <template v-slot:body="{ props }">
       <q-tr :props="props">
@@ -67,7 +67,7 @@ export default {
       ],
       // visibleColumns: ['id', 'project'],
       combined_options: _.merge(options, this.options),
-      locked: this.locked || 'all',
+      locked: this.options && this.options.locked_only ? 'locked' : 'all',
       locked_options: [{ label: 'All pools', value: '' }, { label: 'Locked pools', value: 'locked' }, { label: 'Unlocked pools', value: 'unlocked' }]
       // options: { 'title': 'Samples' }
     }

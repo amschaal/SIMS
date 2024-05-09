@@ -121,6 +121,19 @@ class PoolSerializer(BasePoolSerializer):
 class RunPoolDetailSerializer(serializers.ModelSerializer):
 #     pool = PoolSerializer(read_only=True)
     pool = ModelRelatedField(model=Pool,serializer=PoolSerializer)
+    def validate_pool(self, value):
+        if isinstance(value, str):
+            id = value
+        else:
+            id = getattr(value, 'id')
+        if id:
+            try:
+                pool = Pool.objects.get(id=id)
+                if not pool.locked:
+                    raise serializers.ValidationError('Pool must be locked before adding it to a run.'.format(id))
+            except Pool.DoesNotExist:
+                raise serializers.ValidationError('Pool with id {} does not exist'.format(id))
+        return value
     class Meta:
         model = RunPool
         exclude = []

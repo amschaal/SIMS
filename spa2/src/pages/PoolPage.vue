@@ -29,7 +29,7 @@
             <SamplesTable :filters="`pools__id=${id}`" ref="samples_table" :options="{'selection': 'multiple'}"/>
           </q-tab-panel>
           <q-tab-panel name="pools">
-            <TableDialog :table-component="PoolsTable" :options="{'selection': 'multiple'}" ref="pools" :on-select="addPools"/>
+            <TableDialog :table-component="PoolsTable" :options="{'selection': 'multiple', 'locked_only': true}" ref="pools" :on-select="addPools"/>
             <q-btn label="Add pools" color="primary" @click="open('pools')" class="on-left" v-if="pool && !pool.locked"/>
             <q-btn label="Remove selected" color="negative" @click="removePools" v-if="pool && !pool.locked" />
             <PoolsTable :filters="`pooled__id=${id}`" ref="pools_table" :options="{'selection': 'multiple'}"/>

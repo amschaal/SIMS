@@ -1,16 +1,12 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <template>
-  <JSONForm
+  <JSONTypeForm
     v-model="model"
     ref="form"
-    api-method="put"
-    :api-url="`/api/runs/${model.id}/`"
-    :on-success="onSuccess"
-    :on-error="onError"
-    :hide-buttons="hideButtons"
-    v-if="model"
+    :errors="errors"
+    model-filter="run"
   >
-    <template v-slot:content="{ model, has_error, _errors }">
+    <template v-slot:content="{ model, has_error, errors }">
       <!-- inner model: {{ model }} -->
       <q-select outlined v-model="model.machine" :options="options" label="Machine"
         :error-message="errors.machine"
@@ -25,7 +21,7 @@
         :error="has_error.name"
         />
       <q-input outlined v-model="model.description" label="Description" />
-      <TableDialog :table-component="PoolsTable" :options="{'selection': 'single'}" ref="pools_dialog" :on-select="onSelect"/>
+      <TableDialog :table-component="PoolsTable" :options="{'selection': 'single', 'locked_only': true}" ref="pools_dialog" :on-select="onSelect"/>
       <table class="full-width">
         <thead><th>Index</th><th>Pool</th><th>Description</th></thead>
         <tbody>
@@ -47,8 +43,8 @@
               </span>
             </span>
             <q-btn v-else label="Select" size="sm" color="primary" @click="open(p)" class="on-left"/>
-            <span class="q-field--error" v-if="_errors.run_pools && _errors.run_pools[ind].pool">
-              <span class="q-field__bottom">{{_errors.run_pools[ind].pool.join(', ')}}</span>
+            <span class="q-field--error" v-if="errors.run_pools && errors.run_pools[ind].pool">
+              <span class="q-field__bottom">{{errors.run_pools[ind].pool.join(', ')}}</span>
             </span>
           </td>
           <td>
@@ -59,20 +55,20 @@
       </tbody>
       </table>
     </template>
-  </JSONForm>
+  </JSONTypeForm>
 </template>
 <script>
 import TableDialog from '../dialogs/TableDialog.vue'
 import PoolsTable from '../tables/PoolsTable.vue'
 import _ from 'lodash'
-import JSONForm from './JSONForm.vue'
+import JSONTypeForm from './JSONTypeForm.vue'
 export default {
-  props: ['hideButtons', 'modelValue'], // 'onSuccess', 'onError',
-  emits: ['update:modelValue'],
+  props: ['errors', 'modelValue'], // 'onSuccess', 'onError',
+  // emits: ['update:modelValue'],
   data () {
     return {
       currentLane: null,
-      errors: {},
+      // errors: {},
       model: this.modelValue,
       options: [
       ],
@@ -116,7 +112,7 @@ export default {
   },
   components: {
     TableDialog,
-    JSONForm
+    JSONTypeForm
   }
 }
 </script>
