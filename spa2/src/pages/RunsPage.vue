@@ -23,7 +23,6 @@ import FormDialog from '../components/dialogs/FormDialog.vue'
 export default {
   data () {
     return {
-      RunForm
     }
   },
   methods: {

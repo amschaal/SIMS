@@ -18,7 +18,6 @@
         :error-message="errors.description"
         :error="has_error.description"
         />
-        model: {{ model }}
     </template>
   </JSONForm>
 </template>
