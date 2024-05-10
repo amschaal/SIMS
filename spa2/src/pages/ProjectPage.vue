@@ -7,6 +7,7 @@
       >
         <q-tab name="details" label="Details"/>
         <q-tab name="samples" label="Samples"/>
+        <q-tab name="pools" label="Pools"/>
         <q-tab name="runs" label="Runs"/>
       </q-tabs>
       <q-tab-panels v-model="tab" animated>
@@ -60,6 +61,9 @@
             <!-- {{ sample_schema }} -->
             {{ project.samples }}
           </q-tab-panel>
+          <q-tab-panel name="pools">
+            <PoolsTable :filters="`project__id=${id}`"/>
+          </q-tab-panel>
           <q-tab-panel name="runs">
             <RunsTable :filters="`run_pools__pool__samples__sample__project__id=${id}`"/>
           </q-tab-panel>
@@ -74,6 +78,7 @@
 <script>
 import Project from '../components/details/Project.vue'
 import SamplesTable from '../components/tables/SamplesTable.vue'
+import PoolsTable from '../components/tables/PoolsTable.vue'
 import RunsTable from '../components/tables/RunsTable.vue'
 import DeleteButton from '../components/DeleteButton.vue'
 // import CustomFields from 'assets/jsonschema/forms/customFields.vue'
@@ -140,6 +145,7 @@ export default {
   components: {
     // SamplesTable,
     RunsTable,
+    PoolsTable,
     DeleteButton,
     Project,
     // CustomFields,

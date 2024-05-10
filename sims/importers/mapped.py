@@ -40,9 +40,34 @@ class MappedImporter(Importer):
                 mapped['submission_data'] = row
                 data.append(mapped)
         return data
-    def pool_samples(self):
-        pass
-        # for pool in pools:
+    def pool_samples(self, pools, samples):
+        pool_mapping = self.importer.config.get('pool')
+        pool_source = pool_mapping.get('source') # path to where pools are stored
+        sample_mapping = self.importer.config.get('sample')
+        sample_source = sample_mapping.get('source') # path to where samples are stored
+        if not sample_source or not pool_source:
+            return
+        fk_field = None # this will be the sample field which is a foreign key to the pools table
+        pool_field = None # the field in the pools table that is referenced
+        
+        # For each property in the samples table definition check if it has the "fk" property and set fields appropriately
+        for id, definition in self.schema['properties'].get(sample_source, {}).get('items', {}).get('properties',{}).items():
+            if definition and definition.get('fk'):
+                fk = definition.get('fk')
+                if fk[0] == pool_source:
+                    fk_field = id
+                    pool_field = fk[-1]
+        
+        # If FK and referenced field are found, use the original "submission_data" to pool the samples into the appropriate pool
+        if fk_field and pool_field:
+            for pool in pools:
+                pool_samples = []
+                for sample in samples:
+                    if sample.submission_data.get(fk_field) and sample.submission_data.get(fk_field) == pool.submission_data.get(pool_field):
+                        pool_samples.append(sample)
+                pool.samples.add(*pool_samples)
+                pool.locked = timezone.now()
+                pool.save()
         #     pool_samples = []
         #     for sample in samples:
         #         if pool.data.get(pool_id_column) and sample.data.get(pool_id_column) == pool.data.get(pool_id_column):
@@ -82,13 +107,15 @@ class MappedImporter(Importer):
         self.project.save()
         pools = Pool.objects.bulk_create(pools)
         samples = Sample.objects.bulk_create(samples)
-        # pool_samples(project, pools, samples)
+        self.pool_samples(pools, samples)
         self.submission.importer = self.importer
         self.submission.processed = timezone.now()
         # self.data = self.project.submission_data
         self.submission.save()
         # libraries = Library.objects.bulk_create(libraries)
         return (self.project, pools, samples)
+    # def get_sample_pool_fk(self, schema):
+
 """
 def import_submission(submission):
     
