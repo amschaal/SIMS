@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-pa-sm q-gutter-sm">
     <h6 class="text-center"><router-link :to="{ name: 'submissions'}">Submissions</router-link> / {{submission.id}}</h6>
-    <DeleteButton :url="`/api/submissions/${id}/`"/> <q-btn v-if="submission.project" color="negative" label="Unimport" @click="unimport"/>
+    <DeleteButton :url="`/api/submissions/${id}/`"/>
     <q-tabs
         v-model="tab"
       >
@@ -81,19 +81,6 @@ export default {
         .catch(function (error) {
           // console.log('error', error)
           self.$q.notify({ color: 'negative', message: 'Failed to import data. Detail: ' + error.response.data.detail })
-        })
-    },
-    unimport () {
-      this.$api
-        .post(`/api/submissions/${this.id}/unimport/`)
-        .then(response => {
-          this.$q.notify('Submission unimported.')
-          this.submission = response.data.submission
-          // window.location.reload()
-        })
-        .catch(error => {
-          console.log('error', error)
-          this.$q.notify({ color: 'negative', message: 'Failed to unimport data' })
         })
     }
   },

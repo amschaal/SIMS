@@ -1,7 +1,8 @@
 <template>
   <q-page class="q-pa-sm q-gutter-sm" v-if="project">
     <h6 class="text-center"><router-link :to="{ name: 'projects'}">Projects</router-link> / {{project.id}}</h6>
-    <DeleteButton :url="`/api/projects/${id}/`"/>
+    <q-btn v-if="project.submission && project.submission.id" color="negative" label="Unimport" @click="unimport"/>
+    <DeleteButton v-else :url="`/api/projects/${id}/`"/>
     <q-tabs
         v-model="tab"
       >
@@ -121,6 +122,19 @@ export default {
     },
     modify () {
       this.$refs.form_dialog.open(this.project)
+    },
+    unimport () {
+      const submissionId = this.project.submission.id
+      this.$api
+        .post(`/api/submissions/${submissionId}/unimport/`)
+        .then(response => {
+          this.$q.notify('Submission unimported.')
+          this.$router.push({ name: 'submission', params: { id: submissionId } })
+        })
+        .catch(error => {
+          console.log('error', error)
+          this.$q.notify({ color: 'negative', message: 'Failed to unimport data' })
+        })
     }
     // updateSamples () {
     //   const self = this
