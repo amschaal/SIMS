@@ -31,31 +31,6 @@ class Run(DjsonTypeModel):
     def __str__(self):
         return self.__unicode__()
 
-"""
-This may need to be extended to:
-- an individual sample where samples are not pooled (proteomics for example)
-- a project, for historical metadata purposes, when in SLIMS a lane was assigned to a project
-"""
-class RunPool(models.Model):
-    run = models.ForeignKey(Run, on_delete=models.CASCADE,related_name='run_pools')
-    index = models.PositiveSmallIntegerField()
-    pool = models.ForeignKey('Pool', on_delete=models.PROTECT, null=True,blank=True,related_name='run_pools')
-#     pools = models.ManyToManyField(
-#         'Pool',
-#         through='LanePool',
-#         through_fields=('lane', 'pool'),
-#     )
-    description = models.TextField(null=True,blank=True,db_index=True)
-    class Meta:
-        unique_together = (('run','index'))
-        ordering = ['run', 'index']
-    def __unicode__(self):
-        return '{} - {}'.format(self.run,self.index)
-    def __str__(self):
-        return self.__unicode__()
-#     def all_libraries(self):
-#         return Library.objects
-
 class Pool(DjsonTypeModel):
     unique_id = models.CharField(max_length=100,unique=True,db_index=True, null=True)
     name = models.CharField(max_length=100,unique=True,db_index=True)
@@ -109,6 +84,31 @@ class Pool(DjsonTypeModel):
 #         through='LanePool',
 #         through_fields=('lane', 'pool'),
 #     )
+
+"""
+This may need to be extended to:
+- an individual sample where samples are not pooled (proteomics for example)
+- a project, for historical metadata purposes, when in SLIMS a lane was assigned to a project
+"""
+class RunPool(models.Model):
+    run = models.ForeignKey(Run, on_delete=models.CASCADE,related_name='run_pools')
+    index = models.PositiveSmallIntegerField()
+    pool = models.ForeignKey('Pool', on_delete=models.PROTECT, null=True,blank=True,related_name='run_pools')
+#     pools = models.ManyToManyField(
+#         'Pool',
+#         through='LanePool',
+#         through_fields=('lane', 'pool'),
+#     )
+    description = models.TextField(null=True,blank=True,db_index=True)
+    class Meta:
+        unique_together = (('run','index'))
+        ordering = ['run', 'index']
+    def __unicode__(self):
+        return '{} - {}'.format(self.run,self.index)
+    def __str__(self):
+        return self.__unicode__()
+#     def all_libraries(self):
+#         return Library.objects
 
 class PoolLibrary(models.Model):
     pool = models.ForeignKey(Pool, on_delete=models.CASCADE)
@@ -169,7 +169,7 @@ class Project(DjsonTypeModel):
 #     participants = models.ManyToManyField(User,blank=True)
     # data = JSONField(default=dict)
     comments = models.TextField(null=True, blank=True)
-    submission = models.OneToOneField('Submission', null=True, on_delete=models.SET_NULL, related_name='project')
+    submission = models.OneToOneField('Submission', null=True, on_delete=models.RESTRICT, related_name='project')
     # plugin_data = JSONField(default=dict)s = models.TextField(null=True,blank=True)
 
 class SubmissionType(models.Model):

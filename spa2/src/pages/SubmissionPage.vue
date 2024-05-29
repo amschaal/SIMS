@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-pa-sm q-gutter-sm">
     <h6 class="text-center"><router-link :to="{ name: 'submissions'}">Submissions</router-link> / {{submission.id}}</h6>
-    <DeleteButton :url="`/api/submissions/${id}/`"/>
+    <DeleteButton :url="`/api/submissions/${id}/`" v-if="!submission.project"/>
     <q-tabs
         v-model="tab"
       >
