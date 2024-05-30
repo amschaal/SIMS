@@ -264,6 +264,7 @@ class Sample(DjsonTypeModel):
     sample = models.ForeignKey('self', related_name='samples', null=True, on_delete=models.RESTRICT) #derived from
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="samples",null=True,blank=True)
     name = models.CharField(max_length=50,db_index=True)
+    alias = models.CharField(max_length=50, null=True, db_index=True)
     imported = models.DateTimeField(auto_now=True,db_index=True)
     submission = models.ForeignKey(Submission, null=True, on_delete=models.CASCADE, related_name='samples')
     # data = JSONField(null=True,blank=True)
