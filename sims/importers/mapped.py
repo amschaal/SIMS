@@ -1,4 +1,5 @@
 from djson.models import ModelType
+from sims.id_utils import SampleNameGenerator
 from sims.importers import Importer
 from sims.models import Project, Sample, Pool
 from django.utils import timezone
@@ -91,11 +92,13 @@ class MappedImporter(Importer):
         sample_data = self.get_array_data('sample')
         samples = []
         model_type = self.get_type('sample')
+        generator = SampleNameGenerator(self.project)
         for fields in sample_data:
             fields['project'] = self.project
             fields['submission'] = self.submission
             fields['type'] = model_type
             sample = Sample(**fields)
+            sample.name = generator.next()
             sample.id = '{}_{}'.format(self.project.id, sample.name)
             samples.append(sample)
         return samples

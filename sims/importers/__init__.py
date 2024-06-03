@@ -1,9 +1,12 @@
 from django.utils import timezone
 
+from sims.schema_utils import convert_to_jsonschema
+
 class Importer(object):
     def __init__(self, submission, importer, config=None):
         self.submission = submission
         self.importer = importer
+        self.schema = convert_to_jsonschema(submission.schema)
     def delete_imported(self):
         """
         Cleanup any resources created before deleting import
