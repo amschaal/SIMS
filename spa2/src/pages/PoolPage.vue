@@ -15,7 +15,7 @@
       <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="details">
             <Pool :instance="pool" v-if="pool.id"/>
-            <SubmissionData :data="pool.submission_data"/>
+            <SubmissionData v-if="pool.submission_data" :data="pool.submission_data"/>
             <!-- <PoolForm :model="pool" v-if="pool.id && modify" :on-success="onModifySuccess"/> -->
             <BaseFormDialog ref="pool_form" :form-component="PoolForm" title="Create Pool" v-model="pool" v-if="pool.id"/>
             <q-btn label="Modify" color="primary" @click="open('pool_form')" v-if="pool.id"/>
