@@ -4,6 +4,7 @@ from sims.api.serializers import ProjectDetailSerializer, SubmissionSerializer, 
     AdapterSerializer, RunPoolSerializer, RunPoolDetailSerializer,\
     AdapterDBSerializer, ImporterDetailSerializer, ImporterSerializer, SubmissionTypeSerializer
 from sims.coreomics.api import get_submission_types
+from sims.id_utils import SampleNameGenerator
 from sims.models import Submission, Run, Machine, Project, Sample, Pool, Adapter,\
     RunPool, AdapterDB, SubmissionType, Importer
 from rest_framework.decorators import action
@@ -89,6 +90,7 @@ class ProjectViewSet(mixins.ActionSerializerMixin, viewsets.ModelViewSet, mixins
     @action(detail=True, methods=['post'])
     def validate_samples(self, request, pk=None, save=False):
         project = self.get_object()
+        generator = SampleNameGenerator(project)
         sample_dict = dict((s.id, s) for s in project.samples.all())
         sample_data = request.data.get('data')
         # samples = SampleSerializer(data=sample_data, many=True)
@@ -102,7 +104,7 @@ class ProjectViewSet(mixins.ActionSerializerMixin, viewsets.ModelViewSet, mixins
                 instance = sample_dict.get(id)
                 sample = SampleSerializer(instance=instance, data=s)
             else:
-                sample = SampleSerializer(data=s)
+                sample = SampleSerializer(data=s, generator=generator)
             if not sample.is_valid():
                 valid = False
                 errors[i] = sample.errors

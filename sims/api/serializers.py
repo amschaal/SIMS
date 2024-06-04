@@ -99,7 +99,22 @@ class RunPoolSerializer(serializers.ModelSerializer):
         model = RunPool
         exclude = []
 
+class SampleNameDefault:
+    """
+    If a sample name generator is passed to the serializer, get the next sample name as the default.
+    """
+    requires_context = True
+
+    def __call__(self, serializer_field):
+        if hasattr(serializer_field,'parent') and serializer_field.parent.generator:
+            return serializer_field.parent.generator.next()
+
+
 class SampleSerializer(DjsonTypeModelSerializer):
+    name = serializers.CharField(default=SampleNameDefault())
+    def __init__(self, instance=None, **kwargs):
+        self.generator = kwargs.pop('generator', None)
+        super().__init__(instance, **kwargs)
     class Meta:
         model = Sample
         exclude = []
