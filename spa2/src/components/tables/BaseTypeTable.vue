@@ -1,7 +1,7 @@
 <template>
   <BaseTable
     :columns="combined_columns"
-    :visible-columns="visibleColumns"
+    v-model:visible-columns="tableColumns"
     :api-url="apiUrl"
     :options="options"
     :filters="filters"
@@ -9,14 +9,18 @@
   >
     <template v-slot:top-left>
       <TypeSelect :dense="true" :error_messages="{}" :has_error="false" v-model="type" :emit_object="true"  :model-filter="'sample'"/>
-      {{ type_columns }}
+      <!-- {{ showType }} -->
+      <!-- {{ combined_columns }} -->
+      <!-- {{ type_columns }} -->
+      <!-- {{ tableColumns }} -->
+      <!-- {{ visible_type_columns }} -->
       <!-- <TypeSelect :dense="true" :modelValue="mapping[variable].model_type" @update:model-value="val => selectedModelType(val, variable)" :emit_object="true" v-if="mapping[variable] && mapping[variable].mapping_type === 'model'" :model-filter="mapping[variable].model"/> -->
     </template>
     <template v-slot:body="{ props }">
       <q-tr :props="props">
+        <q-td key="type" :props="props" v-if="showType"><Property :value="props.row.type" label="name"/></q-td>
         <slot name="columns" v-bind="{ props }"/>
-        <q-td key="type" :props="props"><Property :value="props.row.type" label="name"/></q-td>
-        <q-td :key="col.name" v-for="col in type_columns" :label="col.label">{{ props.row.data[col.name] }}</q-td>
+        <q-td :key="col.name" v-for="col in visible_type_columns" :label="col.label" class="text-right">{{ props.row.data[col.name] }}</q-td>
       </q-tr>
     </template>
   </BaseTable>
@@ -30,11 +34,13 @@ import TypeSelect from 'src/components/TypeSelect.vue'
 
 export default {
   name: 'SamplesTable',
-  props: ['filters', 'options', 'columns', 'visibleColumns', 'apiUrl'],
+  props: ['filters', 'options', 'columns', 'visibleColumns', 'apiUrl', 'showType'],
   data () {
     return {
       combined_options: this.options ? this.options : {},
-      type: null
+      type: null,
+      tableColumns: this.visibleColumns,
+      typeColumn: { name: 'type', label: 'Type', field: 'type', sortable: true }
     }
   },
   computed: {
@@ -46,8 +52,12 @@ export default {
       }
       // return [{ name: 'sample_name', label: 'Sample Name', field: 'data.sample_name', sortable: true }]
     },
+    visible_type_columns () {
+      console.log('compute visible type columns', this.visibleColumns)
+      return this.type_columns.filter(c => this.tableColumns.indexOf(c.name) !== -1)
+    },
     combined_columns () {
-      return this.columns.concat(this.type_columns)
+      return this.showType ? [this.typeColumn].concat(this.columns).concat(this.type_columns) : this.columns.concat(this.type_columns)
     }
   },
   components: {

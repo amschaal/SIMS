@@ -25,6 +25,7 @@
       <template v-slot:top-right>
        <q-select
          v-model="tableColumns"
+         @update:model-value="updatedVisibleColumns"
          multiple
          borderless
          dense
@@ -76,6 +77,7 @@ import _ from 'lodash'
 export default {
   name: 'BaseTable',
   props: ['apiUrl', 'columns', 'visibleColumns', 'options', 'filters'],
+  emits: ['update:visibleColumns'],
   data () {
     const options = {
       pagination: this.options && this.options.pagination ? this.options.pagination : {
@@ -175,6 +177,9 @@ export default {
     },
     getSelected () {
       return this.selected
+    },
+    updatedVisibleColumns (v) {
+      this.$emit('update:visibleColumns', v)
     }
   },
   watch: {
