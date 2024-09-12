@@ -4,11 +4,12 @@
     v-model:visible-columns="tableColumns"
     :api-url="apiUrl"
     :options="options"
-    :filters="filters"
+    :filters="combined_filters"
     ref="table"
   >
     <template v-slot:top-left>
       <TypeSelect :dense="true" :error_messages="{}" :has_error="false" v-model="type" :emit_object="true"  :model-filter="'sample'"/>
+      <!-- {{ type }} -->
       <!-- {{ showType }} -->
       <!-- {{ combined_columns }} -->
       <!-- {{ type_columns }} -->
@@ -40,7 +41,8 @@ export default {
       combined_options: this.options ? this.options : {},
       type: null,
       tableColumns: this.visibleColumns,
-      typeColumn: { name: 'type', label: 'Type', field: 'type', sortable: true }
+      typeColumn: { name: 'type', label: 'Type', field: 'type', sortable: true },
+      initialFilters: this.filters
     }
   },
   computed: {
@@ -58,6 +60,9 @@ export default {
     },
     combined_columns () {
       return this.showType ? [this.typeColumn].concat(this.columns).concat(this.type_columns) : this.columns.concat(this.type_columns)
+    },
+    combined_filters () {
+      return this.type ? this.initialFilters + '&type__id=' + this.type.id : this.initialFilters
     }
   },
   components: {

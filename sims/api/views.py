@@ -136,7 +136,8 @@ class SampleViewSet(viewsets.ModelViewSet, mixins.JSONSchemaMixin,):
         'pools__id': ['exact'],
         'pools__run_pools__run__id': ['exact'],
         'samples__id': ['exact'],
-        'submission__id': ['exact']
+        'submission__id': ['exact'],
+        'type__id': ['exact']
         }
     search_fields = ('id', 'project__id')
     serializer_class = SampleSerializer
