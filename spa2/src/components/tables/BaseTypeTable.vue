@@ -8,7 +8,7 @@
     ref="table"
   >
     <template v-slot:top-left>
-      <TypeSelect :dense="true" :error_messages="{}" :has_error="false" v-model="type" :emit_object="true"  :model-filter="'sample'"/>
+      <TypeSelect :dense="true" :error_messages="{}" :has_error="false" v-model="type" :emit_object="true"  :model-filter="modelType"/>
       <!-- {{ type }} -->
       <!-- {{ showType }} -->
       <!-- {{ combined_columns }} -->
@@ -35,7 +35,7 @@ import TypeSelect from 'src/components/TypeSelect.vue'
 
 export default {
   name: 'SamplesTable',
-  props: ['filters', 'options', 'columns', 'visibleColumns', 'apiUrl', 'showType'],
+  props: ['filters', 'options', 'columns', 'visibleColumns', 'apiUrl', 'showType', 'modelType'],
   data () {
     return {
       combined_options: this.options ? this.options : {},

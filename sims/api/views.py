@@ -63,7 +63,8 @@ class ProjectViewSet(mixins.ActionSerializerMixin, viewsets.ModelViewSet, mixins
         'samples__id': ['exact'],
         'samples__id': ['exact'],
         'samples__pools__id': ['exact'],
-        'samples__pools__run_pools__run__id': ['exact']
+        'samples__pools__run_pools__run__id': ['exact'],
+        'type__id': ['exact']
         }
     search_fields = ('id', 'submission__id', 'pi_first_name', 'pi_last_name', 'pi_email', 'first_name', 'last_name', 'email')
     ordering_fields = ['id', 'submitted', 'submission_id', 'created']

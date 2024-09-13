@@ -6,6 +6,7 @@
     :options="combined_options"
     :filters="filters"
     ref="table"
+    model-type="sample"
     :show-type="true"
   >
     <template v-slot:columns="{ props }">

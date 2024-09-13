@@ -1,15 +1,16 @@
 <template>
     <BaseTable
       :columns="columns"
-      :visible-columns="['id', 'submission_id', 'type', 'created', 'submitted', 'pi_name']"
+      :visible-columns="['type', 'id', 'submission_id', 'created', 'submitted', 'pi_name']"
       api-url="/api/projects/"
       :options="combined_options"
       :filters="filters"
       ref="table"
+      model-type="project"
+      :show-type="true"
     >
-      <template v-slot:body="{ props }">
+      <template v-slot:columns="{ props }">
         <!-- <q-tr :props="props"><q-td :props="props" key="id">{{props.row.id}}</q-td></q-tr> -->
-        <q-tr :props="props">
           <q-td auto-width v-if="combined_options.selection === 'multiple' || combined_options.selection === 'single'">
             <q-checkbox dense v-model="props.selected" />
           </q-td>
@@ -17,14 +18,13 @@
           <q-td key="id" :props="props"><router-link :to="{ name: 'project', params: { id: props.row.id }}">{{ props.row.id }}</router-link></q-td>
           <q-td key="submission" :props="props"><router-link :to="{ name: 'submission', params: { id: props.row.submission.id }}" v-if="props.row.submission">{{ props.row.submission.id }}</router-link></q-td>
           <!-- <q-td key="submission" :props="props">foo</q-td> -->
-          <q-td key="type" :props="props"><Property :value="props.row.type" label="name"/></q-td>
+          <!-- <q-td key="type" :props="props"><Property :value="props.row.type" label="name"/></q-td> -->
           <q-td key="submitted" :props="props">{{ $filters.formatDate(props.row.submitted) }}</q-td>
           <q-td key="name" :props="props">{{ props.row.first_name }} {{ props.row.last_name }}</q-td>
           <q-td key="email" :props="props">{{ props.row.email }}</q-td>
           <q-td key="pi_name" :props="props">{{ props.row.pi_first_name }} {{ props.row.pi_last_name }}</q-td>
           <q-td key="pi_email" :props="props">{{ props.row.pi_email }}</q-td>
           <!-- <q-td key="num_samples" :props="props"><span v-if="props.row.num_samples">{{ props.row.num_samples }}</span></q-td> -->
-        </q-tr>
       </template>
     </BaseTable>
 </template>
@@ -33,8 +33,8 @@
 </style>
 
 <script>
-import Property from '../details/Property.vue'
-import BaseTable from './BaseTable.vue'
+// import Property from '../details/Property.vue'
+import BaseTable from './BaseTypeTable.vue'
 
 import _ from 'lodash'
 export default {
@@ -56,7 +56,6 @@ export default {
         { name: 'created', label: 'Created', field: 'created', sortable: true },
         { name: 'id', label: 'ID', field: 'id', sortable: true },
         { name: 'submission', label: 'Submission', field: 'submission', sortable: false },
-        { name: 'type', label: 'Type', field: 'row.type.name', sortable: false },
         { name: 'submitted', label: 'Submitted', field: 'submitted', sortable: true },
         { name: 'name', label: 'Submitter', field: 'name' },
         { name: 'email', label: 'Email', field: 'email', sortable: true },
@@ -87,8 +86,7 @@ export default {
   // methods: {
   // },
   components: {
-    BaseTable,
-    Property
+    BaseTable
   }
 }
 </script>
