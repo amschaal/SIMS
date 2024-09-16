@@ -8,6 +8,7 @@
     ref="table"
   >
     <template v-slot:top-left>
+      <slot name="top-top-left" v-bind="{ props }"/>
       <TypeSelect :dense="true" :error_messages="{}" :has_error="false" v-model="type" :emit_object="true"  :model-filter="modelType"/>
       <!-- {{ type }} -->
       <!-- {{ showType }} -->
@@ -16,6 +17,7 @@
       <!-- {{ tableColumns }} -->
       <!-- {{ visible_type_columns }} -->
       <!-- <TypeSelect :dense="true" :modelValue="mapping[variable].model_type" @update:model-value="val => selectedModelType(val, variable)" :emit_object="true" v-if="mapping[variable] && mapping[variable].mapping_type === 'model'" :model-filter="mapping[variable].model"/> -->
+      <slot name="top-top-right" v-bind="{ props }"/>
     </template>
     <template v-slot:body="{ props }">
       <q-tr :props="props">
@@ -41,8 +43,8 @@ export default {
       combined_options: this.options ? this.options : {},
       type: null,
       tableColumns: this.visibleColumns,
-      typeColumn: { name: 'type', label: 'Type', field: 'type', sortable: true },
-      initialFilters: this.filters
+      typeColumn: { name: 'type', label: 'Type', field: 'type', sortable: true }
+      // initialFilters: this.filters
     }
   },
   computed: {
@@ -62,7 +64,7 @@ export default {
       return this.showType ? [this.typeColumn].concat(this.columns).concat(this.type_columns) : this.columns.concat(this.type_columns)
     },
     combined_filters () {
-      return this.type ? this.initialFilters + '&type__id=' + this.type.id : this.initialFilters
+      return this.type ? this.filters + '&type__id=' + this.type.id : this.filters
     }
   },
   components: {
