@@ -319,6 +319,7 @@ class RunViewSet(mixins.JSONSchemaMixin, viewsets.ModelViewSet):
         'run_pools__pool__samples__id':['exact'],
         'run_pools__pool__samples__sample__id':['exact'],
         'run_pools__pool__samples__sample__project__id':['exact'],
+        'type__id': ['exact']
         }#,'lanes__pool__library__name':['icontains'],'lanes__pool__name':['icontains']
     ordering_fields = ['created', 'name', 'machine__name']
     search_fields = ('name', 'description', 'machine__name')

@@ -20,11 +20,15 @@
       <slot name="top-top-right" v-bind="{ props }"/>
     </template>
     <template v-slot:body="{ props }">
+      <slot name="body-top" v-bind="{ props }"/>
       <q-tr :props="props">
+        <slot name="columns-top" v-bind="{ props }"/>
         <q-td key="type" :props="props" v-if="showType"><Property :value="props.row.type" label="name"/></q-td>
         <slot name="columns" v-bind="{ props }"/>
         <q-td :key="col.name" v-for="col in visible_type_columns" :label="col.label" class="text-right">{{ props.row.data[col.name] }}</q-td>
+        <slot name="columns-bottom" v-bind="{ props }"/>
       </q-tr>
+      <slot name="body-bottom" v-bind="{ props }"/>
     </template>
   </BaseTable>
 </template>
