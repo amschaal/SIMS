@@ -5,12 +5,13 @@
         @update:modelValue="val => selected(val)"
         :error-message="error_messages[field_name]"
         :error="has_error[field_name]"
+        :clearable="clearable"
     />
 </template>
 
 <script>
 export default {
-  props: ['modelValue', 'error_messages', 'has_error', 'emit_object', 'modelFilter', 'field'],
+  props: ['modelValue', 'error_messages', 'has_error', 'emit_object', 'modelFilter', 'field', 'clearable'],
   emits: ['update:modelValue', 'schema'],
   data () {
     return {
@@ -22,8 +23,16 @@ export default {
   methods: {
     selected (val) {
       this.model = val
-      this.$emit('schema', val.schema)
-      this.$emit('update:modelValue', this.emit_object !== undefined ? val : val.id)
+      if (val && val.schema) {
+        this.$emit('schema', val.schema)
+      } else {
+        this.$emit('schema', null)
+      }
+      if (val) {
+        this.$emit('update:modelValue', this.emit_object !== undefined ? val : val.id)
+      } else {
+        this.$emit('update:modelValue', null)
+      }
     }
   },
   mounted: function () {
