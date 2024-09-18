@@ -9,7 +9,7 @@
   >
     <template v-slot:top-left>
       <slot name="top-top-left" v-bind="{ props }"/>
-      <TypeSelect :dense="true" :error_messages="{}" :has_error="false" v-model="type" :emit_object="true"  :model-filter="modelType"/>
+      <TypeSelect :dense="true" :error_messages="{}" :has_error="false" v-model="type" :emit_object="true"  :model-filter="modelType" :clearable="true"/>
       <!-- {{ type }} -->
       <!-- {{ showType }} -->
       <!-- {{ combined_columns }} -->
