@@ -6,7 +6,7 @@
     </div>
     <div class="row">
       <div class="col-md-4 col-sm-12"><b>Name: </b>{{sample.name}}</div>
-      <div class="col-md-4 col-sm-12"><b>Imported: </b>{{$filters.formatDate(sample.imported)}}</div>
+      <div class="col-md-4 col-sm-12"><b>Imported: </b>{{$filters.formatDate(sample.imported)}}<span v-if="sample.submission"> from <router-link  :to="{ name: 'submission', params: { id: sample.submission }}">submission</router-link></span></div>
     </div>
     <div class="row" v-if="sample.data && sample.type && sample.schema">
       <fieldset class="col-12">

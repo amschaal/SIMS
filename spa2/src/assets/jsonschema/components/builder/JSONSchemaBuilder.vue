@@ -26,14 +26,14 @@
                   v-model="schema.layout[variable.variable].width"
                   :options="width_options"
                   v-if="schema.layout[variable.variable]"
-                  @input="setNested(`schema.layout.${variable.variable}.width`,$event)"
+                  @update:model-value="setNested(`schema.layout.${variable.variable}.width`,$event)"
                 />
                 <q-select
                   dense options-dense
                   map-options emit-value
                   :options="width_options"
                   v-if="!schema.layout[variable.variable]"
-                  @input="setNested(`schema.layout.${variable.variable}.width`,$event)"
+                  @update:model-value="setNested(`schema.layout.${variable.variable}.width`,$event)"
                 />
                 <!-- @input="$set(item,'prop',$event.target.value)" -->
 
@@ -239,17 +239,16 @@ export default {
     setNested (path, value) {
       const props = path.split('.')
       console.log('setNested', props, value)
-      const self = this
       let last = this
 
       props.forEach(function (prop, index) {
         if (!last[prop] && index < props.length - 1) {
           console.log('set blank', last, prop)
-          self.$set(last, prop, {})
+          last[prop] = {}
         }
         if (index === props.length - 1) {
           console.log('set value', last, prop, value)
-          self.$set(last, prop, value)
+          last[prop] = value
         }
         last = last[prop]
       })

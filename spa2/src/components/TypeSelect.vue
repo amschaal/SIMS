@@ -1,5 +1,5 @@
 <template>
-    <q-select outlined v-model="model" :options="filtered_options" label="Type" ref="select"
+    <q-select outlined v-model="model" :options="filtered_options" stack-label="Type" label="Type" ref="select" class="type-select"
         option-value="id"
         option-label="name"
         @update:modelValue="val => selected(val)"
@@ -62,3 +62,9 @@ export default {
   }
 }
 </script>
+
+<style>
+  .type-select {
+    min-width: 200px;
+  }
+</style>
