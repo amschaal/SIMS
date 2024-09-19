@@ -21,7 +21,7 @@
         :error="has_error.name"
         />
       <q-input outlined v-model="model.description" label="Description" />
-      <TableDialog :table-component="PoolsTable" :options="{'selection': 'single', 'locked_only': true}" ref="pools_dialog" :on-select="onSelect"/>
+      <TableDialog :table-component="PoolsTable" :options="{'selection': 'single', 'locked_only': true}" ref="pools_dialog" @selected="onSelect"/>
       <table class="full-width">
         <thead><th>Index</th><th>Pool</th><th>Description</th></thead>
         <tbody>

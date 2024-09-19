@@ -1,10 +1,10 @@
 <template>
   <BaseDialog ref="dialog" :title="title">
     <template v-slot:content>
-      <component :is="tableComponent" :filters="filters" :options="options" ref="table"></component>
+      <component :is="tableComponent" :filters="filters" :options="options" ref="table" @selected="onSelect"></component>
     </template>
     <template v-slot:buttons>
-      <q-btn flat label="Select" color="primary" v-close-popup @click="getSelected"/>
+      <q-btn flat label="Select" color="primary" v-close-popup @click="getSelected" :disable="selected === null || selected.length === 0"/>
       <q-btn flat label="Close" color="primary" v-close-popup />
     </template>
   </BaseDialog>
@@ -12,23 +12,23 @@
 <script>
 import BaseDialog from './BaseDialog.vue'
 export default {
-  props: ['tableComponent', 'title', 'options', 'filters', 'onSelect'],
+  props: ['tableComponent', 'title', 'options', 'filters'],
+  emits: ['selected'],
   data () {
     return {
+      selected: null
     }
   },
   methods: {
     open () {
-      console.log('open!', this.title)
       this.$refs.dialog.open()
     },
+    onSelect (val) {
+      this.selected = val
+    },
     getSelected () {
-      // console.log('selected', this.$refs.table.$refs.table.getSelected())
-      if (this.onSelect) {
-        this.onSelect(this.$refs.table.$refs.table.getSelected())
-      }
+      this.$emit('selected', this.selected)
       this.$refs.dialog.close()
-      // return this.$refs.dialog.getSelected()
     }
   },
   mounted: function () {
