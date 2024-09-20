@@ -23,10 +23,10 @@
             <q-btn label="Modify" @click="modify=true" v-if="!modify"/> -->
           </q-tab-panel>
           <q-tab-panel name="samples">
-            <TableDialog :table-component="SamplesTable" :options="{'selection': 'multiple'}" ref="samples" :on-select="addSamples"/>
+            <TableDialog :table-component="SamplesTable" :options="{'selection': 'multiple'}" ref="samples" @selected="addSamples"/>
             <q-btn label="Add samples" color="primary" @click="open('samples')" class="on-left" v-if="pool && !pool.locked"/>
-            <q-btn label="Remove selected" color="negative" @click="removeSamples" v-if="pool && !pool.locked"/>
-            <SamplesTable :filters="`pools__id=${id}`" ref="samples_table" :options="{'selection': 'multiple'}"/>
+            <q-btn label="Remove selected" color="negative" @click="removeSamples(selectedSamples)" v-if="pool && !pool.locked && selectedSamples.length"/>
+            <SamplesTable :filters="`pools__id=${id}`" ref="samples_table" :options="{'selection': 'multiple'}" v-model:selection="selectedSamples"/>
           </q-tab-panel>
           <q-tab-panel name="pools">
             <TableDialog :table-component="PoolsTable" :options="{'selection': 'multiple', 'locked_only': true}" ref="pools" :on-select="addPools"/>
@@ -64,6 +64,8 @@ export default {
       pool: {},
       modify: false,
       tab: 'details',
+      selectedSamples: [],
+      selectedPools: [],
       SamplesTable,
       PoolsTable,
       PoolForm
@@ -72,7 +74,6 @@ export default {
   methods: {
     addSamples (samples) {
       samples = samples.map(l => l.id)
-      console.log('addSamples', samples)
       const self = this
       this.$api
         .post(`/api/pools/${self.id}/add_samples/`, { samples })
@@ -86,7 +87,8 @@ export default {
         })
     },
     removeSamples (samples) {
-      samples = this.$refs.samples_table.$refs.table.selected.map(l => l.id)
+      // samples = this.$refs.samples_table.$refs.table.selected.map(l => l.id)
+      samples = samples.map(s => s.id)
       console.log('removeSamples', samples)
       const self = this
       this.$api

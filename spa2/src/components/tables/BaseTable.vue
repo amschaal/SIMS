@@ -77,7 +77,7 @@ import _ from 'lodash'
 export default {
   name: 'BaseTable',
   props: ['apiUrl', 'columns', 'visibleColumns', 'options', 'filters'],
-  emits: ['update:visibleColumns', 'selected'],
+  emits: ['update:visibleColumns'],
   data () {
     const options = {
       pagination: this.options && this.options.pagination ? this.options.pagination : {
@@ -188,6 +188,7 @@ export default {
     },
     selected (val, old) {
       this.$emit('selected', val)
+      this.$emit('update:selection', val)
     }
   }
 }

@@ -9,11 +9,13 @@
     model-type="sample"
     :show-type="true"
   >
+    <template v-slot:columns-top="{ props }">
+      <q-td auto-width v-if="combined_options.selection === 'multiple' || combined_options.selection === 'single'">
+        <q-checkbox dense v-model="props.selected" />
+      </q-td>
+    </template>
     <template v-slot:columns="{ props }">
       <!-- <q-tr :props="props"> -->
-        <q-td auto-width v-if="combined_options.selection === 'multiple' || combined_options.selection === 'single'">
-          <q-checkbox dense v-model="props.selected" />
-        </q-td>
         <!-- <q-td key="type" :props="props"><Property :value="props.row.type" label="name"/></q-td> -->
         <q-td key="id" :props="props"><router-link :to="{ name: 'sample', params: { id: props.row.id }}">{{ props.row.id }}</router-link></q-td>
         <q-td key="project" :props="props"><router-link :to="{ name: 'project', params: { id: props.row.project }}">{{ props.row.project }}</router-link></q-td>

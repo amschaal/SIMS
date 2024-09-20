@@ -71,6 +71,11 @@ export default {
       return this.type ? this.filters + '&type__id=' + this.type.id : this.filters
     }
   },
+  methods: {
+    refresh () {
+      this.$refs.table.refresh()
+    }
+  },
   components: {
     BaseTable,
     Property,
