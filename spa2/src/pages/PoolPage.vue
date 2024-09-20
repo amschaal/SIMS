@@ -29,10 +29,10 @@
             <SamplesTable :filters="`pools__id=${id}`" ref="samples_table" :options="{'selection': 'multiple'}" v-model:selection="selectedSamples"/>
           </q-tab-panel>
           <q-tab-panel name="pools">
-            <TableDialog :table-component="PoolsTable" :options="{'selection': 'multiple', 'locked_only': true}" ref="pools" :on-select="addPools"/>
+            <TableDialog :table-component="PoolsTable" :options="{'selection': 'multiple', 'locked_only': true}" ref="pools" @selected="addPools"/>
             <q-btn label="Add pools" color="primary" @click="open('pools')" class="on-left" v-if="pool && !pool.locked"/>
-            <q-btn label="Remove selected" color="negative" @click="removePools" v-if="pool && !pool.locked" />
-            <PoolsTable :filters="`pooled__id=${id}`" ref="pools_table" :options="{'selection': 'multiple'}"/>
+            <q-btn label="Remove selected" color="negative" @click="removePools(selectedPools)" v-if="pool && !pool.locked && selectedPools.length" />
+            <PoolsTable :filters="`pooled__id=${id}`" ref="pools_table" :options="{'selection': 'multiple'}" v-model:selection="selectedPools"/>
           </q-tab-panel>
           <q-tab-panel name="runs">
             <RunsTable :filters="`run_pools__pool__id=${id}`" ref="runs_table"/>
@@ -118,7 +118,7 @@ export default {
         })
     },
     removePools (pools) {
-      pools = this.$refs.pools_table.$refs.table.selected.map(l => l.id)
+      pools = pools.map(p => p.id)
       const self = this
       this.$api
         .post(`/api/pools/${self.id}/remove_pools/`, { pools })

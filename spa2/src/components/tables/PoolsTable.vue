@@ -14,10 +14,12 @@
       <q-radio label="Locked pools" v-model="locked" val="locked" :disable="options && options.locked_only"/>
       <q-radio label="Unlocked pools" v-model="locked" val="unlocked" :disable="options && options.locked_only"/>
     </template>
+    <template v-slot:columns-top="{ props }">
+      <q-td auto-width v-if="combined_options.selection === 'multiple' || combined_options.selection === 'single'">
+        <q-checkbox dense v-model="props.selected" />
+      </q-td>
+    </template>
     <template v-slot:columns="{ props }">
-        <q-td auto-width v-if="combined_options.selection === 'multiple' || combined_options.selection === 'single'">
-          <q-checkbox dense v-model="props.selected" />
-        </q-td>
         <q-td key="locked" :props="props"><q-icon name="lock" color="negative" v-if="props.row.locked" :title="props.row.locked"/><q-icon v-else name="lock_open" color="positive"/></q-td>
         <q-td key="created" :props="props">{{ props.row.created }}</q-td>
         <q-td key="id" :props="props"><router-link :to="{ name: 'pool', params: { id: props.row.id }}">{{ props.row.name }}</router-link></q-td>
