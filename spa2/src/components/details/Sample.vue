@@ -3,6 +3,7 @@
     <div class="row">
       <div class="col-md-4 col-sm-12"><b>ID: </b>{{sample.id}}</div>
       <div class="col-md-4 col-sm-12"><b>Project: </b><router-link :to="{ name: 'project', params: { id: sample.project }}">{{sample.project}}</router-link></div>
+      <div class="col-md-4 col-sm-12"><b>Type: </b><span v-if="sample.type">{{sample.type.name}}</span><span v-else>{{sample.type}}</span></div>
     </div>
     <div class="row">
       <div class="col-md-4 col-sm-12"><b>Name: </b>{{sample.name}}</div>

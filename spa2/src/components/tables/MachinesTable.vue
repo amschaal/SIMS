@@ -7,7 +7,7 @@
     :filters="filters"
     ref="table"
     model-type="machine"
-    show-type="type"
+    :show-type="true"
   >
     <template v-slot:columns-top="{ props }">
       <q-td auto-width v-if="combined_options.selection === 'multiple' || combined_options.selection === 'single'">
