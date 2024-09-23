@@ -1,3 +1,4 @@
+<!-- Form that takes model, allows changing type and JSON schema fields related to type.  Also includes logic for submitting form data to an API endpoint, displaying errors, etc.  -->
 <template>
   <div class="q-pa-sm q-gutter-sm">
     (JSONForm)
@@ -9,17 +10,13 @@
       Data: {{model}}
       Errors: {{errors}}
     </slot>
-    <!-- <fieldset>
-      <legend>Custom fields</legend>
-      <CustomFields v-model="data.data" :schema="schema" ref="custom_fields" v-if="schema && data.data" :modify="true" :errors="errors.data" :warnings="{}"/>
-    </fieldset> -->
     <fieldset v-if="schema && data.data">
       <legend v-if="data.type && data.type.name">{{ data.type.name }} fields</legend>
       <JSONSchemaForm v-model="data.data" :schema="schema" ref="custom_fields" :modify="true" :errors="errors.data" :warnings="{}">
-      <template v-for="(_, name) in $slots" #[name]="slotData">
-        <slot :name="name" v-bind="slotData || {}" />
-      </template>
-    </JSONSchemaForm>
+        <template v-for="(_, name) in $slots" #[name]="slotData">
+          <slot :name="name" v-bind="slotData || {}" />
+        </template>
+      </JSONSchemaForm>
     </fieldset>
     <slot name="buttons" v-bind:submit="submit">
       <q-btn label="Submit" color="primary" @click="submit" v-if="!hideButtons"/>

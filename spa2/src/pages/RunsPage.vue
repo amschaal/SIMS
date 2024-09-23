@@ -30,11 +30,11 @@ export default {
       this.$refs.form_dialog.open({})
     },
     runCreated (request) {
-      console.log('run!', request.data)
-      console.log('still here', this.$q, this.$refs)
+      // console.log('run!', request.data)
+      // console.log('still here', this.$q, this.$refs)
       this.$q.notify('Run created.')
       this.$router.push({ name: 'run', params: { id: request.data.id } })
-      this.$refs.run_form.$refs.dialog.close()
+      // this.$refs.run_form.$refs.dialog.close()
     },
     runError (error) {
       if (error) {

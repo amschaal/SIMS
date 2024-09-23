@@ -56,11 +56,11 @@ export default {
         .then(response => {
           console.log('form dialog success', response.data)
           this.$emit('update:modelValue', response.data)
-          this.errors = {}
+          // this.errors = {}
           if (this.onSuccess) {
             this.onSuccess(response)
           }
-          this.$refs.dialog.close()
+          this.close()
         })
         .catch(error => {
           if (error.response && error.response.data) {

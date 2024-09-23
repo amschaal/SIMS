@@ -13,7 +13,7 @@
           <q-tab-panel name="details">
             <Sample :instance="sample" v-if="sample.id"/>
             <SubmissionData v-if="sample.submission_data" :data="sample.submission_data"/>
-            <FormDialog ref="form_dialog" title="Modify Sample" :on-success="runCreated" :on-error="runError" api-method="put" :api-url="`/api/samples/${this.id}/`" v-model="sample">
+            <FormDialog ref="form_dialog" title="Modify Sample" api-method="put" :api-url="`/api/samples/${this.id}/`" v-model="sample">
               <template #form="props">
                 <JSONModelTypeForm v-model="props.data" :schema-url="`/api/samples/${this.id}/jsonschema/`" :errors="props.errors" v-if="sample">
                   <!-- <template #field_id="{ v, data, form }">

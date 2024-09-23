@@ -1,3 +1,4 @@
+<!-- Form that takes schema, or URL to schema to generate the whole form, not just the type driven .data attribute.  Custom fields can still be added in "content" slot. -->
 <template>
   <div class="q-pa-sm q-gutter-sm">
     (JSONModelTypeForm)
@@ -6,10 +7,6 @@
       Data: {{model}}
       Errors: {{errors}} -->
     </slot>
-    <!-- <fieldset>
-      <legend>Custom fields</legend>
-      <CustomFields v-model="data.data" :schema="schema" ref="custom_fields" v-if="schema && data.data" :modify="true" :errors="errors.data" :warnings="{}"/>
-    </fieldset> -->
     <JSONSchemaForm v-model="data" :schema="jsonschema" ref="custom_fields" v-if="jsonschema && data" :modify="true" :errors="errors" :warnings="{}" :ui="ui">
       <template #field_type="{ data }">
           <TypeSelect v-model="data.type" :emit_object="true" @schema="schema => changeSchema(schema)" :error_messages="error_messages" :has_error="has_error" v-if="data" :model-filter="modelFilter"/>
@@ -36,24 +33,6 @@ export default {
     schemaUrl: String,
     schema: Object,
     modelFilter: String,
-    // schema: {
-    //   type: Object,
-    //   default () {
-    //     return {
-    //       type: 'object',
-    //       properties: {
-    //         type: {
-    //           type: 'string',
-    //           title: 'Type'
-    //         },
-    //         data: {
-    //           type: 'object',
-    //           title: 'Data'
-    //         }
-    //       }
-    //     }
-    //   }
-    // },
     modelValue: { type: Object, default () { return {} } },
     exclude: { type: Array, default () { return [] } },
     ui: { type: Object, default () { return {} } }

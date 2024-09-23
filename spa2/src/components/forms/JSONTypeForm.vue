@@ -1,5 +1,6 @@
+<!-- Form that takes model, allows changing type and JSON schema fields related to type. -->
 <template>
-  <div>
+  <div class="q-pa-sm q-gutter-sm">
     (JSONTypeForm)
     <!-- MODEL: {{ model }}
     DATA: {{ data }} -->
@@ -9,7 +10,6 @@
       Data: {{model}}
       Errors: {{errors}}
     </slot>
-    <!-- JSONSchemaForm data: {{ data.data }} errors: {{ errors }} -->
     <fieldset v-if="schema && data.data">
       <legend v-if="data.type && data.type.name">{{ data.type.name }} fields</legend>
       <JSONSchemaForm v-model="data.data" :schema="schema" ref="custom_fields" :modify="true" :errors="errors.data" :warnings="{}">
