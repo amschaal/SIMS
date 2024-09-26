@@ -17,9 +17,12 @@ from django.contrib import admin
 from django.urls import path
 from sims.api.urls import urlpatterns as api_urlpatterns
 from django.urls import include, re_path
+from sims.api import views
 
 urlpatterns = [
     path('server/admin/', admin.site.urls),
     re_path(r'^server/api/', include(api_urlpatterns)),
-    re_path(r'^server/api-auth/', include('rest_framework.urls'))
+    re_path(r'^server/api-auth/', include('rest_framework.urls')),
+    re_path(r'^server/api/logout/$', views.logout_view, name='logout'),
+    re_path(r'^server/api/get_user/$', views.get_user, name='get_user')
 ]
