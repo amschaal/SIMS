@@ -1,6 +1,7 @@
 import { route } from 'quasar/wrappers'
 import { createRouter, createMemoryHistory, createWebHistory, createWebHashHistory } from 'vue-router'
 import routes from './routes'
+import { useAuthStore } from 'src/stores/authStore'
 
 /*
  * If not building with SSR mode, you can
@@ -11,7 +12,7 @@ import routes from './routes'
  * with the Router instance.
  */
 
-export default route(function (/* { store, ssrContext } */) {
+export default route(function ({ store }) {
   const createHistory = process.env.SERVER
     ? createMemoryHistory
     : (process.env.VUE_ROUTER_MODE === 'history' ? createWebHistory : createWebHashHistory)
@@ -25,6 +26,21 @@ export default route(function (/* { store, ssrContext } */) {
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.VUE_ROUTER_BASE)
   })
-
+  const authStore = useAuthStore()
+  Router.beforeEach((to, from, next) => {
+    // // redirect to login page if not logged in and trying to access a restricted page
+    // const { authorize } = to.meta
+    if (authStore.user || to.path !== '/login') {
+      next()
+    } else {
+      authStore.fetchUser().then(f => {
+        if (!authStore.user && to.path !== '/login') {
+          return next({ path: '/login' })
+        } else {
+          next()
+        }
+      })
+    }
+  })
   return Router
 })

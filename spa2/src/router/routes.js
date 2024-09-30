@@ -94,6 +94,10 @@ const routes = [
       { name: 'json_schema_test', path: 'json_schema_test', component: () => import('pages/JSONSchemaFormTest.vue') }
     ]
   },
+  {
+    path: '/login',
+    component: () => import('pages/LoginPage.vue')
+  },
   // Always leave this as last one,
   // but you can also remove it
   {
