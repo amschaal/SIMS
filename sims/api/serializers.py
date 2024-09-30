@@ -8,6 +8,7 @@ from sims.api.fields import JSONSchemaConverterField
 from sims.models import Submission, Project, Machine, Run, Sample, Adapter, Pool, RunPool,\
     AdapterDB, SubmissionType, Importer
 from django.conf import settings
+from django.contrib.auth.models import User
 
 #Allows Creation/Updating of related model fields with OBJECT instead of just id
 #usage field_name = ModelRelatedField(model=Sample,serializer=SampleSerializer)
@@ -204,4 +205,8 @@ class ImporterSerializer(serializers.ModelSerializer):
 class ImporterDetailSerializer(ImporterSerializer):
     submission_type = ModelRelatedField(model=SubmissionType, serializer=SubmissionTypeSerializer)
     model_type = ModelRelatedField(model=ModelType, serializer=ModelTypeSerializer)
-    
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'is_staff', 'is_superuser']
