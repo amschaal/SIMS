@@ -1,5 +1,7 @@
-django<=4.0
+django<5.0
 django-cors-headers
 django-filter
 djangorestframework
 psycopg2-binary
+jsonschema
+django-allauth
