@@ -30,7 +30,7 @@ export default route(function ({ store }) {
   Router.beforeEach((to, from, next) => {
     // // redirect to login page if not logged in and trying to access a restricted page
     // const { authorize } = to.meta
-    if (authStore.user || to.path !== '/login') {
+    if (authStore.user || to.path === '/login') {
       next()
     } else {
       authStore.fetchUser().then(f => {

@@ -6,8 +6,8 @@ export default boot(({ app }) => {
   const jsonschema = useJsonSchemaStore()
   jsonschema.refreshTypeSchemas()
   const authStore = useAuthStore()
-  authStore.fetchUser()
+  // authStore.fetchUser()
   app.config.globalProperties.$store = {}
   app.config.globalProperties.$store.jsonschema = jsonschema
-  app.config.globalProperties.$store.auth = userStore
+  app.config.globalProperties.$store.auth = authStore
 })
