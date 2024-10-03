@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     "djson",
     "allauth",
     "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.openid_connect",
 ]
 
 MIDDLEWARE = [
