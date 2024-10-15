@@ -10,11 +10,11 @@
       </div> -->
 
       <q-btn
-        class="login-button"
+        class="btn login-button"
         color="white"
         text-color="blue"
         unelevated
-        to="/server/admin"
+        @click="login"
         label="Login"
         no-caps
       />
@@ -24,7 +24,12 @@
 
 <script>
 export default {
-  name: 'LoginPage'
+  name: 'LoginPage',
+  methods: {
+    login () {
+      window.location.href = '/server/accounts/login/'
+    }
+  }
 }
 </script>
 

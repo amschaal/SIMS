@@ -1,6 +1,6 @@
 from rest_framework import routers
 from djson.api.views import ModelTypeViewset, ContentTypeViewset
-from sims.api.views import ProjectViewSet, SampleViewSet, PoolViewSet,\
+from sims.api.viewsets import ProjectViewSet, SampleViewSet, PoolViewSet,\
     LibraryViewSet, AdapterViewSet, RunViewSet, MachineViewSet, RunPoolViewSet,\
     AdapterDBViewset, ImporterViewSet, SubmissionViewSet, SubmissionTypeViewSet
 
@@ -9,7 +9,7 @@ router.register(r'submissions', SubmissionViewSet)
 router.register(r'projects', ProjectViewSet)
 router.register(r'samples', SampleViewSet)
 router.register(r'pools', PoolViewSet)
-router.register(r'libraries', LibraryViewSet)
+router.register(r'libraries', LibraryViewSet, 'libraries')
 router.register(r'adapters/(?P<db>[^/.]+)', AdapterViewSet)
 router.register(r'adapter_db', AdapterDBViewset)
 router.register(r'runs', RunViewSet)
