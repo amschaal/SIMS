@@ -21,7 +21,8 @@ const sampleSchema = {
           // return params.node.rowPinned ? params.value : `<a href="/samples/${params.value}/">${params.value}</a>` // this should get checked in cellRendererSelector
         },
         cellRendererParams: {}
-      }
+      },
+      checkboxSelection: true
     },
     name: {
       type: 'string',
@@ -29,6 +30,38 @@ const sampleSchema = {
       minLength: 1,
       title: 'Name',
       description: 'Sample Name'
+    },
+    alias: {
+      type: 'string',
+      title: 'Alias',
+      description: 'Sample Alias / Tube Name'
+    },
+    barcodes: {
+      type: 'object',
+      properties: {
+        i5: {
+          type: 'string',
+          minLength: 1,
+          title: 'I5'
+        },
+        i7: {
+          type: 'string',
+          minLength: 1,
+          title: 'I7'
+        },
+        adapter_db: {
+          type: 'string',
+          minLength: 1,
+          title: 'Adapter db'
+        },
+        adapter: {
+          type: 'string',
+          minLength: 1,
+          title: 'Adapter'
+        }
+      },
+      order: ['i5', 'i7', 'adapter_db', 'adapter'],
+      title: 'Barcodes'
     }
     // barcodes: { type: 'object', title: 'Barcodes' },
     // sample: { type: 'integer', title: 'Sample' },
@@ -37,7 +70,7 @@ const sampleSchema = {
     // adapter: { type: 'integer', title: 'Adapter' }
   },
   required: ['name'],
-  order: ['id', 'name', 'data']
+  order: ['id', 'name', 'alias', 'barcodes', 'data']
 }
 const poolSchema = {
   type: 'object',
