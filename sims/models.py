@@ -98,7 +98,12 @@ class Pool(DjsonTypeModel):
                 barcodes[l.adapter.barcode] = []
             barcodes[l.adapter.barcode].append(l.name)
         return barcodes
-
+    def get_all_samples(self):
+        samples = set()
+        samples.update(list(self.samples.all()))
+        for pool in self.pools.all():
+            samples.update(pool.get_all_samples())
+        return list(samples)
 
 #     pools = models.ManyToManyField(
 #         'Pool',

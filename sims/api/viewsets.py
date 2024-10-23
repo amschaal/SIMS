@@ -261,6 +261,15 @@ class PoolViewSet(viewsets.ModelViewSet, mixins.JSONSchemaMixin):
         pool.locked = None
         pool.save()
         return Response(PoolSerializer(instance=pool).data)
+    @action(detail=True, methods=['GET'])
+    def samples(self, request, pk=None):
+        pool = self.get_object()
+        return Response(SampleSerializer(pool.get_all_samples(), many=True).data)
+    @action(detail=True, methods=['GET'])
+    def check_barcodes(self,request, pk=None):
+        pool = self.get_object()
+        conflicts = get_all_conflicts(SampleSerializer(pool.get_all_samples(), many=True).data)
+        return Response({'conflicts': conflicts})
 class AdapterDBViewset(viewsets.ReadOnlyModelViewSet):
     queryset = AdapterDB.objects.distinct()
     serializer_class = AdapterDBSerializer
