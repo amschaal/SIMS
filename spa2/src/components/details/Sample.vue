@@ -9,6 +9,15 @@
       <div class="col-md-4 col-sm-12"><b>Name: </b>{{sample.name}}</div>
       <div class="col-md-4 col-sm-12"><b>Imported: </b>{{$filters.formatDate(sample.imported)}}<span v-if="sample.submission"> from <router-link  :to="{ name: 'submission', params: { id: sample.submission }}">submission</router-link></span></div>
     </div>
+    <fieldset class="col-12" v-if="barcodes">
+      <legend>Barcodes</legend>
+      <div class="row">
+        <div class="col-md-3 col-sm-12" v-if="barcodes.i5"><b>i5: </b>{{barcodes.i5}}</div>
+        <div class="col-md-3 col-sm-12" v-if="barcodes.i7"><b>i7: </b>{{barcodes.i7}}</div>
+        <div class="col-md-3 col-sm-12" v-if="barcodes.adapter_db"><b>Adapter DB: </b>{{barcodes.adapter_db}}</div>
+        <div class="col-md-3 col-sm-12" v-if="barcodes.adapter"><b>Adapter: </b>{{barcodes.adapter}}</div>
+      </div>
+    </fieldset>
     <div class="row" v-if="sample.data && sample.type && sample.schema">
       <fieldset class="col-12">
         <legend>{{ sample.type.name }} fields</legend>
@@ -26,6 +35,7 @@
 
 <script>
 import DisplayFields from 'src/assets/jsonschema/components/display/displayFields.vue'
+import _ from 'lodash'
 export default {
   name: 'SampleDetail',
   props: ['id', 'instance'],
@@ -48,6 +58,9 @@ export default {
   computed: {
     sample () {
       return this.instance || this.data
+    },
+    barcodes () {
+      return _.isEmpty(this.sample.barcodes) ? null : this.sample.barcodes
     }
   },
   components: {
