@@ -1,5 +1,6 @@
 <template>
   <div>
+    <q-btn label="Check Barcodes" @click="checkBarcodes"/>
     <div class="row">
       <div class="col-md-4 col-sm-12"><b>Type: </b><span v-if="pool.type && pool.type.name">{{pool.type.name}}</span><span v-else>{{pool.type}}</span></div>
       <div class="col-md-4 col-sm-12"><b>Name: </b>{{pool.name}}</div>
@@ -41,6 +42,7 @@
 
 <script>
 import DisplayFields from 'src/assets/jsonschema/components/display/displayFields.vue'
+import BarcodeCheckerDialog from '../dialogs/BarcodeCheckerDialog.vue'
 export default {
   name: 'PoolDetail',
   props: ['id', 'instance'],
@@ -58,6 +60,22 @@ export default {
           console.log('response', response)
           self.data = response.data
         })
+    }
+  },
+  methods: {
+    checkBarcodes () {
+      this.$q.dialog({
+        component: BarcodeCheckerDialog,
+        componentProps: {
+          pool: this.pool
+        }
+      }).onOk(() => {
+        console.log('OK')
+      }).onCancel(() => {
+        console.log('Cancel')
+      }).onDismiss(() => {
+        console.log('Called on OK or Cancel')
+      })
     }
   },
   computed: {
