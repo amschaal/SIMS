@@ -5,21 +5,18 @@ def hamming_distance(s1, s2):
 """
 l1, l2: {'id':'id1', 'barcodes': {'P5':[...]}} 
 """
-def get_conflicts(l1, l2, min_distance=2, keys=['i5','i7']):
+def get_conflicts(l1, l2, min_distance=2):
 #     print('test distance {} + {}'.format(l1,l2))
     conflicts = []
     for k in l1['barcodes'].keys():
-        if k in keys or not keys:
-    #         print('barcodes {}'.format(k))
-            if k in l2['barcodes']:
-                # raise Exception(k, l1['barcodes'][k], l2['barcodes'][k])
-                # for s1 in l1['barcodes'][k]:
-                #     for s2 in l2['barcodes'][k]:
-                        # d = hamming_distance(s1, s2)
-                d = hamming_distance(l1['barcodes'][k], l2['barcodes'][k])
-                if d < min_distance:
-                    print('hamming distance {} - {} = {}'.format(l1['barcodes'][k],l2['barcodes'][k],d))
-                    conflicts.append({l1['id']: s1, l2['id']: s2, 'distance': d})
+#         print('barcodes {}'.format(k))
+        if k in l2['barcodes']:
+            for s1 in l1['barcodes'][k]:
+                for s2 in l2['barcodes'][k]:
+                    d = hamming_distance(s1, s2)
+                    if d < min_distance:
+                        print('hamming distance {} - {} = {}'.format(s1,s2,d))
+                        conflicts.append({l1['id']: s1, l2['id']: s2, 'distance': d})
     return conflicts
 #     if len(conflicts) > 0:
 #         errors = {l1['id']: {l2['id']:[]}, l2['id']: {l1['id']:[]}}
@@ -47,8 +44,8 @@ def get_all_conflicts(libraries, min_distance=2, keys=['i5', 'i7']):
                         conflicts[l1['id']][k] = []
                     if k not in conflicts[l2['id']]:
                         conflicts[l2['id']][k] = []
-                    conflicts[l1['id']][k].append([l2['id']])
-                    conflicts[l2['id']][k].append([l1['id']])
+                    conflicts[l1['id']][k].append(l2['id'])
+                    conflicts[l2['id']][k].append(l1['id'])
     return conflicts
 
 def test_all_library_conflicts(min_distance=1):
