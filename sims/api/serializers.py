@@ -22,6 +22,8 @@ from sims.models import (
 from django.conf import settings
 from django.contrib.auth.models import User
 
+from tools.barcodes import get_all_conflicts
+
 
 # Allows Creation/Updating of related model fields with OBJECT instead of just id
 # usage field_name = ModelRelatedField(model=Sample,serializer=SampleSerializer)
@@ -191,6 +193,11 @@ class RunPoolDetailSerializer(serializers.ModelSerializer):
                 if not pool.locked:
                     raise serializers.ValidationError(
                         "Pool must be locked before adding it to a run.".format(id)
+                    )
+                conflicts = get_all_conflicts(SampleSerializer(pool.get_all_samples(), many=True).data)
+                if conflicts:
+                    raise serializers.ValidationError(
+                        "Pool has barcode conflicts"
                     )
             except Pool.DoesNotExist:
                 raise serializers.ValidationError(
