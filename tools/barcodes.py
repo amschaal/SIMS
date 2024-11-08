@@ -27,25 +27,32 @@ def get_conflicts(l1, l2, min_distance=2):
 libraries: [{'id':'id1', 'barcodes': {'P5':[...]}}, ...] 
 returns: {'id1': {'id3': [{'barcode':'...','distance':2},...]}, 'id3': {'id1': [{'barcode':'...','distance':2},...]}
 """
-def get_all_conflicts(libraries, min_distance=2, keys=['i5', 'i7']):
+def get_all_conflicts(libraries, min_distance=2, keys=['i5', 'i7'], enforce_length=True):
     conflicts = {}
     # raise Exception(libraries)
     for i, l1 in enumerate(libraries):
         for l2 in libraries[i+1:]:
-            print(l1['barcodes'], l2['barcodes'])
+            # print(l1['barcodes'], l2['barcodes'])
             for k in keys:
-                distance = hamming_distance(l1['barcodes'][k], l2['barcodes'][k])
-                if distance < min_distance:
-                    if not l1['id'] in conflicts:
-                        conflicts[l1['id']] = {}
-                    if not l2['id'] in conflicts:
-                        conflicts[l2['id']] = {}
-                    if k not in conflicts[l1['id']]:
-                        conflicts[l1['id']][k] = []
-                    if k not in conflicts[l2['id']]:
-                        conflicts[l2['id']][k] = []
-                    conflicts[l1['id']][k].append(l2['id'])
-                    conflicts[l2['id']][k].append(l1['id'])
+                if k in l1['barcodes'] and k in l2['barcodes'] and l1['barcodes'][k] and l2['barcodes'][k]:
+                    conflict = False
+                    if enforce_length and len(l1['barcodes'][k]) != len(l2['barcodes'][k]):
+                        conflict = True
+                    else:
+                        distance = hamming_distance(l1['barcodes'][k], l2['barcodes'][k])
+                        if distance < min_distance:
+                            conflict = True
+                    if conflict:
+                        if not l1['id'] in conflicts:
+                            conflicts[l1['id']] = {}
+                        if not l2['id'] in conflicts:
+                            conflicts[l2['id']] = {}
+                        if k not in conflicts[l1['id']]:
+                            conflicts[l1['id']][k] = []
+                        if k not in conflicts[l2['id']]:
+                            conflicts[l2['id']][k] = []
+                        conflicts[l1['id']][k].append(l2['id'])
+                        conflicts[l2['id']][k].append(l1['id'])
     return conflicts
 
 def test_all_library_conflicts(min_distance=1):

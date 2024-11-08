@@ -5,7 +5,7 @@
         <q-toolbar-title>Barcode conflicts for pool <router-link :to="{ name: 'pool', params: { id: pool.id }}">{{ pool.name }}</router-link></q-toolbar-title>
       </q-toolbar>
 
-      <q-markup-table>
+      <q-markup-table v-if="Object.keys(conflicts).length">
         <thead>
           <tr><th>Sample</th><th>i5 Conflicts</th><th>i7 Conflicts</th></tr>
         </thead>
@@ -29,6 +29,7 @@
           </tr>
         </tbody>
       </q-markup-table>
+      <b v-else>No conflicts found.</b>
       <q-card-actions>
         <q-btn color="primary" label="OK" @click="onOKClick" />
         <q-btn color="primary" label="Cancel" @click="onCancelClick" />
@@ -56,9 +57,12 @@ export default {
     // following method is REQUIRED
     // (don't change its name --> "show")
     show () {
-      this.$refs.dialog.show()
       this.$api.get(`/api/pools/${this.pool.id}/check_barcodes/`).then(response => {
+        this.$refs.dialog.show()
         this.conflicts = response.data.conflicts
+      }).catch(error => {
+        this.$q.notify({ color: 'negative', message: 'There was an error checking barcodes.  Please check them manually. Exception: ' + error.message })
+        this.hide()
       })
     },
 
