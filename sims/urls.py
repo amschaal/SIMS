@@ -22,8 +22,6 @@ from sims.api import views
 
 urlpatterns = [
     path("server/admin/", admin.site.urls),
-    path("server/accounts/", include("allauth.urls")),
-    path("server/accounts/", include("allauth.socialaccount.urls")),
     re_path(r"^server/api/", include(api_urlpatterns)),
     re_path(r"^server/api-auth/", include("rest_framework.urls")),
     re_path(r"^server/api/logout/$", views.logout_view, name="logout"),
