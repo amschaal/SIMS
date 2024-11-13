@@ -4,4 +4,4 @@ django-filter
 djangorestframework
 psycopg2-binary
 jsonschema
-django-allauth
+social-auth-app-django
