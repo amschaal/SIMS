@@ -28,4 +28,5 @@ urlpatterns = [
     re_path(r"^server/api-auth/", include("rest_framework.urls")),
     re_path(r"^server/api/logout/$", views.logout_view, name="logout"),
     re_path(r"^server/api/get_user/$", views.get_user, name="get_user"),
+    path('server/social/', include('social_django.urls', namespace='social'))
 ]
