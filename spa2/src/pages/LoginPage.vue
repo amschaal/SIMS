@@ -27,7 +27,7 @@ export default {
   name: 'LoginPage',
   methods: {
     login () {
-      window.location.href = '/server/accounts/login/'
+      window.location.href = '/server/social/login/keycloak/'// '/server/accounts/login/'
     }
   }
 }

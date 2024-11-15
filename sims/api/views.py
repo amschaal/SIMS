@@ -16,6 +16,7 @@ def get_user(request):
         return Response({'message':'Not authenticated.'},status=403)
 
 @api_view(['POST', 'GET'])
+@permission_classes((AllowAny,))
 def logout_view(request):
     auth_logout(request)
     return Response({'status':'success'})

@@ -16,7 +16,6 @@
           SIMS
         </q-toolbar-title>
 
-        <div>
           <q-btn-dropdown color="white" flat label="Admin">
             <q-list>
               <q-item clickable v-close-popup :to="{ name: 'model_types'}">
@@ -41,7 +40,15 @@
               </q-item>
             </q-list>
           </q-btn-dropdown>
-        </div>
+          <q-btn-dropdown v-if="auth.user" color="primary" class="q-btn--flat" icon="person" :label="auth.user.username">
+              <q-list>
+                <q-item clickable v-close-popup @click="logout()">
+                  <q-item-section>
+                    <q-item-label>Logout</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-btn-dropdown>
       </q-toolbar>
     </q-header>
 
@@ -103,7 +110,7 @@
 
 <script>
 import { defineComponent, ref } from 'vue'
-
+import { useAuthStore } from 'src/stores/authStore'
 export default defineComponent({
   name: 'MainLayout',
 
@@ -112,11 +119,15 @@ export default defineComponent({
 
   setup () {
     const leftDrawerOpen = ref(false)
-
+    const auth = useAuthStore()
     return {
       leftDrawerOpen,
+      auth,
       toggleLeftDrawer () {
         leftDrawerOpen.value = !leftDrawerOpen.value
+      },
+      logout () {
+        window.location.href = '/server/accounts/logout/'
       }
     }
   }
