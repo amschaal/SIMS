@@ -6,6 +6,7 @@ from djson.serializers import DjsonTypeModelSerializer, ModelTypeSerializer
 # from djson.validators import JsonSchemaValidator
 from djson.tests import TEST_SCHEMA
 from sims.api.fields import JSONSchemaConverterField
+from sims.api.validators import BarcodeValidator
 from sims.models import (
     Submission,
     Project,
@@ -146,6 +147,8 @@ class BarcodeSerializer(serializers.Serializer):
     i7 = serializers.CharField(required=False)
     adapter_db = serializers.CharField(required=False)
     adapter = serializers.CharField(required=False)
+    class Meta:
+        validators = [BarcodeValidator()]
 
 
 class SampleSerializer(DjsonTypeModelSerializer):
