@@ -122,6 +122,10 @@ class BasePoolSerializer(DjsonTypeModelSerializer):
         exclude = []
         read_only_fields = ("schema", "submission_data")
 
+class PoolListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Pool
+        exclude = ['schema']
 
 class RunPoolSerializer(serializers.ModelSerializer):
     #     pool = PoolSerializer(many=True, read_only=True)
@@ -164,6 +168,10 @@ class SampleSerializer(DjsonTypeModelSerializer):
         exclude = []
         read_only_fields = ("id", "schema", "submission_data")
 
+class SampleDetailSerializer(SampleSerializer):
+    pools = serializers.SerializerMethodField()
+    def get_pools(self, obj):
+        return PoolListSerializer(obj.get_all_pools(), many=True).data
 
 class LibrarySerializer(SampleSerializer):
     class Meta:

@@ -350,7 +350,7 @@ class Sample(DjsonTypeModel):
         blank=True,
         related_name="samples",
     )
-    barcodes = JSONField(null=True)
+    barcodes = JSONField(null=False, default=dict)
 
     #     received = models.DateField(null=True,blank=True,db_index=True)
     def __unicode__(self):
@@ -365,6 +365,13 @@ class Sample(DjsonTypeModel):
     #         return call_directory_function('get_sample_directory',self,full=full)
     class Meta:
         unique_together = (("id", "project"),)
+
+    def get_all_pools(self):
+        pools = set()
+        pools.update(list(self.pools.all()))
+        for pool in self.pools.all():
+            pools.update(pool.pooled.all())
+        return list(pools)
 
     # @transaction.atomic
     def save(self, *args, **kwargs):

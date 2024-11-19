@@ -1,5 +1,5 @@
 from rest_framework import viewsets, status
-from sims.api.serializers import ProjectDetailSerializer, SubmissionSerializer, LibrarySerializer, RunSerializer,RunDetailSerializer, MachineSerializer,\
+from sims.api.serializers import PoolListSerializer, ProjectDetailSerializer, SampleDetailSerializer, SubmissionSerializer, LibrarySerializer, RunSerializer,RunDetailSerializer, MachineSerializer,\
     ProjectSerializer, SampleSerializer, PoolSerializer, \
     AdapterSerializer, RunPoolSerializer, RunPoolDetailSerializer,\
     AdapterDBSerializer, ImporterDetailSerializer, ImporterSerializer, SubmissionTypeSerializer
@@ -130,6 +130,9 @@ class ProjectViewSet(mixins.ActionSerializerMixin, viewsets.ModelViewSet, mixins
     #     # return Response({'samples':SampleSerializer(samples, many=True).data})
 
 class SampleViewSet(viewsets.ModelViewSet, mixins.JSONSchemaMixin,):
+    action_serializers = {
+        'retrieve': SampleDetailSerializer
+    }
     filterset_fields = {
         'name':['icontains','exact'],
         'id':['icontains','exact'],
@@ -143,6 +146,12 @@ class SampleViewSet(viewsets.ModelViewSet, mixins.JSONSchemaMixin,):
     search_fields = ('id', 'project__id')
     serializer_class = SampleSerializer
     queryset = Sample.objects.distinct()
+    def get_serializer_class(self):
+        if hasattr(self, 'action_serializers'):
+            if self.action in self.action_serializers.keys():
+                return self.action_serializers[self.action]
+        return viewsets.ModelViewSet.get_serializer_class(self)
+
 
 class LibraryViewSet(viewsets.ModelViewSet, mixins.JSONSchemaMixin):
     filterset_fields = {
