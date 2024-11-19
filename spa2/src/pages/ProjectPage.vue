@@ -15,6 +15,7 @@
           <q-tab-panel name="details">
             <div class="text-h6">Project</div>
             <Project :instance="project" v-if="project"/>
+            <SubmissionData :data="project.submission.data" :schema="project.submission.schema" v-if="project && project.submission"/>
             <FormDialog ref="form_dialog" title="Modify Project" api-method="put" :api-url="`/api/projects/${this.id}/`" v-model="project">
               <template #form="props">
                 <JSONModelTypeForm v-model="props.data" :schema-url="`/api/projects/${this.id}/jsonschema/`" :errors="props.errors" :ui="ui" model-filter="project">
@@ -27,7 +28,6 @@
               </template>
             </FormDialog>
             <q-btn label="Modify" color="primary" @click="modify" v-if="project"/>
-            <SubmissionData :data="project.submission.data" :schema="project.submission.schema" v-if="project && project.submission"/>
             <!-- <q-list bordered class="rounded-borders">
             <q-expansion-item
               expand-separator
@@ -60,7 +60,7 @@
             <!-- <aggridDialog v-model="project.samples" :schema="sample_schema" v-if="project && project.samples && sample_schema" :editable="true" :allow-examples="true" title="Samples"/> -->
             <aggrid v-model="project.samples" :schema="sample_schema" v-if="project && project.samples && sample_schema" :editable="true" :allow-examples="true" title="Samples" :validate-url="`/server/api/projects/${id}/validate_samples/`" :save-url="`/server/api/projects/${id}/update_samples/`" :default-row="default_sample"/>
             <!-- {{ sample_schema }} -->
-            {{ project.samples }}
+            <!-- {{ project.samples }} -->
           </q-tab-panel>
           <q-tab-panel name="pools">
             <PoolsTable :filters="`project__id=${id}`"/>
