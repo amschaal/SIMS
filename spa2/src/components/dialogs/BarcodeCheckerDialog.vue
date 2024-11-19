@@ -4,7 +4,6 @@
       <q-toolbar>
         <q-toolbar-title>Barcode conflicts for pool <router-link :to="{ name: 'pool', params: { id: pool.id }}">{{ pool.name }}</router-link></q-toolbar-title>
       </q-toolbar>
-
       <q-markup-table v-if="Object.keys(conflicts).length">
         <thead>
           <tr><th>Sample</th><th>i5 Conflicts</th><th>i7 Conflicts</th></tr>
@@ -12,9 +11,7 @@
         <tbody>
           <tr v-for="(sample_conflicts, sample) in conflicts" :key="sample">
             <td>
-              <span v-if="sample_conflicts.i7">
                 <router-link :to="{ name: 'sample', params: { id: sample }}">{{ sample }}</router-link>
-              </span>
             </td>
             <td>
               <span v-if="sample_conflicts.i5">
@@ -31,8 +28,8 @@
       </q-markup-table>
       <b v-else>No conflicts found.</b>
       <q-card-actions>
-        <q-btn color="primary" label="OK" @click="onOKClick" />
-        <q-btn color="primary" label="Cancel" @click="onCancelClick" />
+        <!-- <q-btn color="primary" label="OK" @click="onOKClick" /> -->
+        <q-btn color="primary" label="Dismiss" @click="onCancelClick" />
       </q-card-actions>
     </q-card>
   </q-dialog>
