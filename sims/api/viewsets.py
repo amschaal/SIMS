@@ -1,4 +1,5 @@
 from rest_framework import viewsets, status
+from sims.api.filters import ContainsSampleFilter
 from sims.api.serializers import PoolListSerializer, ProjectDetailSerializer, SampleDetailSerializer, SubmissionSerializer, LibrarySerializer, RunSerializer,RunDetailSerializer, MachineSerializer,\
     ProjectSerializer, SampleSerializer, PoolSerializer, \
     AdapterSerializer, RunPoolSerializer, RunPoolDetailSerializer,\
@@ -218,6 +219,7 @@ class PoolViewSet(viewsets.ModelViewSet, mixins.JSONSchemaMixin):
     search_fields = ('id', 'name', 'samples__id', 'samples__project__id', 'type__name')
     serializer_class = PoolSerializer
     queryset = Pool.objects.distinct()
+    filter_backends = viewsets.ModelViewSet.filter_backends + [ContainsSampleFilter]
     @action(detail=True, methods=['get','post'])
     def add_samples(self, request, pk=None):
         return self.update_samples(request, 'add')

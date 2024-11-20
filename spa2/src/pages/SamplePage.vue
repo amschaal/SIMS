@@ -32,7 +32,7 @@
             <SamplesTable :filters="`samples__id=${id}`"/>
           </q-tab-panel>
           <q-tab-panel name="pools">
-            <PoolsTable :filters="`samples__id=${id}`"/>
+            <PoolsTable :filters="`contains_sample=${id}`"/>
           </q-tab-panel>
           <q-tab-panel name="runs">
             <RunsTable :filters="`run_pools__pool__samples__id=${id}`"/>
