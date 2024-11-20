@@ -22,6 +22,14 @@ class JSONSchemaMixin:
         return Response(to_jsonschema(serializer))
 
 class ActionSerializerMixin:
+    """
+    Provide the following in model for different serializers
+    action_serializers = {
+        'retrieve': MyModelDetailSerializer,
+        'list': MyModelListSerializer,
+        'create': MyModelCreateSerializer
+    }
+    """
     def get_serializer_class(self):
         if hasattr(self, 'action_serializers'):
             if self.action in self.action_serializers.keys():

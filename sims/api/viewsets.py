@@ -129,7 +129,7 @@ class ProjectViewSet(mixins.ActionSerializerMixin, viewsets.ModelViewSet, mixins
     #     return Response({'project': ProjectSerializer(project).data, 'new_pools': PoolSerializer(pools, many=True).data, 'new_samples': SampleSerializer(samples, many=True).data})
     #     # return Response({'samples':SampleSerializer(samples, many=True).data})
 
-class SampleViewSet(viewsets.ModelViewSet, mixins.JSONSchemaMixin,):
+class SampleViewSet(mixins.ActionSerializerMixin, viewsets.ModelViewSet, mixins.JSONSchemaMixin):
     action_serializers = {
         'retrieve': SampleDetailSerializer
     }
@@ -146,11 +146,6 @@ class SampleViewSet(viewsets.ModelViewSet, mixins.JSONSchemaMixin,):
     search_fields = ('id', 'project__id')
     serializer_class = SampleSerializer
     queryset = Sample.objects.distinct()
-    def get_serializer_class(self):
-        if hasattr(self, 'action_serializers'):
-            if self.action in self.action_serializers.keys():
-                return self.action_serializers[self.action]
-        return viewsets.ModelViewSet.get_serializer_class(self)
 
 
 class LibraryViewSet(viewsets.ModelViewSet, mixins.JSONSchemaMixin):
@@ -302,24 +297,8 @@ class AdapterViewSet(viewsets.ReadOnlyModelViewSet):
         return viewsets.ReadOnlyModelViewSet.get_queryset(self).filter(db=self.kwargs.get('db'))
     def get_object(self):
         return viewsets.ReadOnlyModelViewSet.get_object(self)
-# #@todo: fix this... it isn't being called when used as a mixin
-# class ActionSerializerMixin(object):
-#     """
-#     Provide the following in model for different serializers
-#     action_serializers = {
-#         'retrieve': MyModelDetailSerializer,
-#         'list': MyModelListSerializer,
-#         'create': MyModelCreateSerializer
-#     }
-#     """
-#     def get_serializer_class(self):
-#         if hasattr(self, 'action_serializers'):
-#             if self.action in self.action_serializers.keys():
-#                 return self.action_serializers[self.action]
-#         return viewsets.ModelViewSet.get_serializer_class(self)
 
-
-class RunViewSet(mixins.JSONSchemaMixin, viewsets.ModelViewSet):
+class RunViewSet(mixins.ActionSerializerMixin, mixins.JSONSchemaMixin, viewsets.ModelViewSet):
     action_serializers = {
         'retrieve': RunDetailSerializer,
         'list': RunSerializer,
@@ -345,13 +324,8 @@ class RunViewSet(mixins.JSONSchemaMixin, viewsets.ModelViewSet):
         if self.action == 'retrieve':
             return Run.objects.distinct().prefetch_related('run_pools', 'run_pools__pool__samples')
         return Run.objects.distinct()
-    def get_serializer_class(self):
-        if hasattr(self, 'action_serializers'):
-            if self.action in self.action_serializers.keys():
-                return self.action_serializers[self.action]
-        return viewsets.ModelViewSet.get_serializer_class(self)
 
-class RunPoolViewSet(viewsets.ModelViewSet):
+class RunPoolViewSet(mixins.ActionSerializerMixin, viewsets.ModelViewSet):
     filterset_fields = {'run__id':['exact']
                      }
     serializer_class = RunPoolSerializer
@@ -366,11 +340,6 @@ class RunPoolViewSet(viewsets.ModelViewSet):
         if self.action == 'retrieve':
             return RunPool.objects.distinct().prefetch_related('pool__samples')
         return RunPool.objects.distinct()
-    def get_serializer_class(self):
-        if hasattr(self, 'action_serializers'):
-            if self.action in self.action_serializers.keys():
-                return self.action_serializers[self.action]
-        return viewsets.ModelViewSet.get_serializer_class(self)
 
 class MachineViewSet(viewsets.ModelViewSet):
     serializer_class = MachineSerializer
