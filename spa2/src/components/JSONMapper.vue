@@ -18,7 +18,8 @@
           <td class="text-left">{{submission_type.submission_schema.properties[variable].type}}</td>
           <td class="text-left">{{submission_type.submission_schema.properties[variable].title}}</td>
           <td colspan="3">
-            <q-select dense outlined v-model="mapping[variable]" :options="mapping_types" label="Select Mapping Type"
+            <!-- {{mapping[variable]}} -->
+            <q-select dense outlined v-model="mapping_type[variable]" :options="mapping_types" label="Select Mapping Type"
                 option-value="id"
                 option-label="label"
                 @update:modelValue="val => selectMappingType(val, variable)"
@@ -83,6 +84,7 @@ export default {
   data () {
     return {
       mapping: this.modelValue,
+      mapping_type: {},
       variable_schemas: {},
       mapping_types: [{ id: 'JSON', label: 'JSON' }, { id: 'samples', model: 'sample', label: 'Samples', schema_url: '/api/samples/jsonschema/' }, { id: 'pools', model: 'pool', label: 'Pools', schema_url: '/api/pools/jsonschema/' }]
     }

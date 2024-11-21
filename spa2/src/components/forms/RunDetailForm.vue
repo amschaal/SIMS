@@ -79,7 +79,7 @@ export default {
     onSuccess: function () {
       this.$q.notify('Run updated.')
       this.$emit('update:modelValue', this.model)
-      this.$parent.close()
+      // this.$parent.close()
     },
     onError: function () {
       this.$q.notify({ color: 'negative', message: 'Error updating run.' })

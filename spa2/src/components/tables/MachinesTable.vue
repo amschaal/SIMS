@@ -32,7 +32,6 @@ export default {
     return {
       columns: [
         { name: 'name', label: 'Name', field: 'name', sortable: true },
-        { name: 'type', label: 'Type', field: 'row.type.name', sortable: false },
         { name: 'num_lanes', label: '# Lanes/Cells/Partitions', field: 'num_lanes', sortable: true },
         { name: 'description', label: 'Description', field: 'description', sortable: false }
       ],
