@@ -3,7 +3,7 @@
     <q-header elevated>
       <q-toolbar>
         <q-toolbar-title>
-          SIMS
+          Core Omics Lab
         </q-toolbar-title>
           <q-btn-dropdown color="white" flat label="Admin">
             <q-list>
@@ -22,11 +22,11 @@
                   <q-item-label>Submission Types</q-item-label>
                 </q-item-section>
               </q-item>
-              <q-item clickable v-close-popup :to="{ name: 'map_types'}">
+              <!-- <q-item clickable v-close-popup :to="{ name: 'map_types'}">
                 <q-item-section>
                   <q-item-label>Map Types</q-item-label>
                 </q-item-section>
-              </q-item>
+              </q-item> -->
             </q-list>
           </q-btn-dropdown>
           <q-btn-dropdown v-if="auth.user" color="primary" class="q-btn--flat" icon="person" :label="auth.user.username">

@@ -83,7 +83,7 @@ const routes = [
         name: 'machine',
         props: true
       },
-      { name: 'map_types', path: 'map_types', component: () => import('pages/MapTypesPage.vue') },
+      // { name: 'map_types', path: 'map_types', component: () => import('pages/MapTypesPage.vue') },
       { name: 'model_types', path: 'model_types', component: () => import('pages/ModelTypesPage.vue') },
       {
         path: '/model_types/:id/',

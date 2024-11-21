@@ -30,7 +30,7 @@
         </tr>
       </tbody>
     </q-markup-table> -->
-    <JSONMapper v-model="mapping" :submission_type="submission_type" :type="type" v-if="submission_type && type"/>
+    <DataMapper v-model="mapping" :submission_type="submission_type" :type="type" v-if="submission_type && type"/>
     <q-btn label="Update Mapping" @click="updateMapping" v-if="submission_type.id"/>
     {{ mapping }}
   </div>
@@ -41,7 +41,7 @@
 </style>
 
 <script>
-import JSONMapper from 'src/components/JSONMapper.vue'
+import DataMapper from 'src/components/DataMapper.vue'
 import SubmissionTypeSelect from 'src/components/SubmissionTypeSelect.vue'
 import TypeSelect from 'src/components/TypeSelect.vue'
 import _ from 'lodash'
@@ -92,6 +92,6 @@ export default {
     }
   },
   // name: 'PageIndex',
-  components: { SubmissionTypeSelect, TypeSelect, JSONMapper }
+  components: { SubmissionTypeSelect, TypeSelect, DataMapper }
 }
 </script>
