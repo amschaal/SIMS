@@ -16,7 +16,7 @@
             <DataMapper v-model="importer.config" :submission_type="importer.submission_type" :type="importer.model_type"/>
             <q-btn label="Update Mapping" @click="updateMapping"/>
             <!-- {{importer}} -->
-            {{ importer.mapping }}
+            <!-- {{ importer.config }} -->
           </q-tab-panel>
           <q-tab-panel name="imports">
           </q-tab-panel>

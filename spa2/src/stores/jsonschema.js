@@ -27,7 +27,7 @@ export const useJsonSchemaStore = defineStore('jsonschema', {
     async refreshTypeSchemas () {
       // try {
       console.log('refresh schemas')
-      const data = await api.get('/api/model_types/')
+      const data = await api.get('/api/model_types/?page_size=100')
       this.schemas = data.data.results
       // } catch {
       //   throw Error('Unable to fetch model type schemas')

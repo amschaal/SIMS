@@ -48,7 +48,7 @@ export default {
     onSuccessMethod (request) {
       console.log('pool!', request)
       this.$emit('update:modelValue', this.model)
-      this.$q.notify(this.model.id ? 'Pool updated.' : 'Pool created.')
+      this.$q.notify(this.model && this.model.id ? 'Pool updated.' : 'Pool created.')
       if (this.onSuccess) {
         this.onSuccess(request)
       }

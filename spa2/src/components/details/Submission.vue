@@ -9,7 +9,7 @@
           <span v-else>None</span>
         </div>
         <div class="col-md-4 col-sm-12"><b>ID: </b>{{submission.submission_id}}</div>
-        <div class="col-md-4 col-sm-12"><b>Type: </b><router-link :to="{ name: 'submission_type', params: { id: submission.type.id }}">{{submission.type.name}}</router-link>{{submission.type.name}}</div>
+        <div class="col-md-4 col-sm-12"><b>Type: </b><router-link :to="{ name: 'submission_type', params: { id: submission.type.id }}">{{submission.type.name}}</router-link></div>
       </div>
       <div class="row">
         <div class="col-md-4 col-sm-12"><b>PI: </b>{{submission.pi_first_name}} {{submission.pi_last_name}} ({{submission.pi_email}})</div>

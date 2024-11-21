@@ -2,7 +2,7 @@
   <BaseDialog ref="dialog" :title="title">
     <template v-slot:content>
       <component :is="formComponent" :onSuccess="success" :onError="onError" :hide-buttons="true" :model="data" ref="form" v-model="data">
-        <template v-slot:buttons>Nothing here</template>Dood
+        <template v-slot:buttons>Nothing here</template>
       </component>
     </template>
     <template v-slot:buttons>
