@@ -68,7 +68,7 @@
     <template v-for="related in related_types" :key="related.model">
       <div v-if="type.metadata[related.model]">
         <h5>Map {{related.title}}</h5>
-        {{ type.metadata[related.model] }}
+        <TypeSelect v-model="mapping[related.model].type" :error_messages="{}" :has_error="false" :model-filter="related.model" @update:model-value="val => updateRelatedSchema(related.model, val)"/><br>
         <q-markup-table flat bordered dense>
         <thead>
           <tr><th colspan="4">{{related.title}}</th></tr>
@@ -97,11 +97,11 @@
                 <!-- <JSONTableMapper :source-schema="submission_type.submission_schema.properties[variable].schema" :dest-schema="type.schema.properties[mapping[variable].variable].schema" v-model="mapping[variable].mapping"/> -->
               <!-- <TableMapper :source-schema="submission_type.submission_schema.properties[variable].schema" :dest-schema="variable_schemas[variable]" v-model="mapping[variable].mapping" /> -->
           </tr>
-          <tr v-if="type.metadata[related.model] && mapping[related.model] && mapping[related.model].source">
+          <tr v-if="type.metadata[related.model] && mapping[related.model] && mapping[related.model].source && mapping[related.model].type && related_schemas[related.model]">
             <td colspan="4" >
               <!-- {{ $store.jsonschema.typeSchemas[type.metadata[related.model]] }} -->
-              modelSchema ( {{ related.model }} -> {{ type.metadata[related.model] }} ): {{ getModelSchema(related.model, type.metadata[related.model] ) }}
-              Test: <TableMapper :source-schema="submission_type.submission_schema" :dest-schema="getModelSchema(related.model, type.metadata[related.model] )" v-model="mapping[related.model].mapping" :table="mapping[related.model].source" :model="related.model"/>
+              <!-- modelSchema ( {{ related.model }} -> {{ type.metadata[related.model] }} ): {{ getModelSchema(related.model, type.metadata[related.model] ) }} -->
+              <TableMapper :source-schema="submission_type.submission_schema" :dest-schema="related_schemas[related.model]" :key="related.model+'_'+mapping[related.model].type" v-model="mapping[related.model].mapping" :table="mapping[related.model].source" :model="related.model"/>
               <p>variable_schemas: {{ variable_schemas }}</p>
             </td>
           </tr>
@@ -117,7 +117,7 @@
 
 <script>
 import TableMapper from './TableMapper.vue'
-// import TypeSelect from 'src/components/TypeSelect.vue'
+import TypeSelect from 'src/components/TypeSelect.vue'
 import ModelSchemas from 'src/model_schemas/schemas'
 // import SubmissionTypeSelect from 'src/components/SubmissionTypeSelect.vue'
 // import TypeSelect from 'src/components/TypeSelect.vue'
@@ -131,7 +131,8 @@ export default {
       mapping_type: {},
       variable_schemas: {},
       mapping_types: [{ id: 'JSON', label: 'JSON' }, { id: 'samples', model: 'sample', label: 'Samples', schema_url: '/api/samples/jsonschema/' }, { id: 'pools', model: 'pool', label: 'Pools', schema_url: '/api/pools/jsonschema/' }],
-      related_types: [{ model: 'sample', accessor: 'samples', title: 'Samples' }, { model: 'pool', accessor: 'pools', title: 'Pools' }]
+      related_types: [{ model: 'sample', accessor: 'samples', title: 'Samples' }, { model: 'pool', accessor: 'pools', title: 'Pools' }],
+      related_schemas: {}
     }
   },
   mounted () {
@@ -220,6 +221,10 @@ export default {
     },
     getModelSchema (model, type) {
       return ModelSchemas.getSchema(model, type)
+    },
+    updateRelatedSchema (model, type) {
+      console.log('updateRelatedSchema', model, type, ModelSchemas)
+      this.related_schemas[model] = ModelSchemas.getSchema(model, type)
     }
   },
   computed: {
@@ -231,11 +236,10 @@ export default {
   },
   watch: {
     modelValue: function (val) {
-      alert('mapping changed')
       console.log('JSONMapper model value changed ', val)
       this.mapping = val
     }
   },
-  components: { TableMapper }
+  components: { TableMapper, TypeSelect }
 }
 </script>

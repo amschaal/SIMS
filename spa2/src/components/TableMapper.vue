@@ -1,5 +1,6 @@
 <template>
     <q-markup-table flat bordered dense>
+      <span v-if="destSchema && destSchema.properties && destSchema.properties.data"></span>
       <thead>
         <tr><th colspan="3">Destination</th><th colspan="3">Source <q-btn label="I'm feeling lucky!" v-on:click="autoAssign()"></q-btn></th><th></th><th></th></tr>
         <tr>
@@ -12,7 +13,7 @@
         </tr>
       </thead>
       <tbody>
-        <template v-for="variable in schema_to_variables(destSchema)" :key="variable">
+        <template v-for="variable in destVariables" :key="variable">
         <tr v-if="destSchema.properties[variable].type !== 'object'">
           <td class="text-left">{{variable}}</td>
           <td class="text-left">{{destSchema.properties[variable].type}}</td>
@@ -97,6 +98,7 @@ export default {
       this.$emit('update:modelValue', this.mapping)
     },
     autoAssign () {
+      alert(this.variableOptions.map(o => o.id))
       // const destVariables = this.schema_to_variables(this.destSchema)
       // this.schema_to_variables(this.sourceSchema).forEach(variable => {
       //   console.log(variable)
@@ -136,6 +138,9 @@ export default {
         obj[o.id] = o
       })
       return obj
+    },
+    destVariables () {
+      return this.schema_to_variables(this.destSchema)
     }
   },
   watch: {
