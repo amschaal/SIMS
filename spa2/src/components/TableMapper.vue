@@ -37,8 +37,6 @@
                 </template>
               </q-select>
           </td>
-          <!-- <td><span v-if="mapping.data && mapping.data[variable] && destSchema.properties[mapping.data[variable]]">{{destSchema.properties[mapping.data[variable]].type}}</span></td>
-          <td><span v-if="mapping.data && mapping.data[variable] && destSchema.properties[mapping.data[variable]]">{{destSchema.properties[mapping.data[variable]].title}}</span></td> -->
         </tr>
         <tr v-else>
           <td>{{variable}}</td><td colspan="5">
@@ -66,6 +64,7 @@ export default {
     }
   },
   mounted () {
+    console.log('mounted TableMapper', this.table)
     this.schema_to_variables(this.destSchema).forEach(v => {
       if (this.destSchema.properties[v].type === 'object' && !this.mapping[v]) {
         this.mapping[v] = {}
@@ -77,6 +76,7 @@ export default {
   },
   methods: {
     schema_to_variables (schema, path) {
+      console.log('schema_to_variables', this.table, path, schema)
       return path ? schema[path].order : schema.order
     },
     // getAvailableFields (schema, mapping, variableType) {
@@ -125,11 +125,14 @@ export default {
           options.push({ id: v, variable: v, label: this.sourceSchema.properties[v].title || v, type: this.sourceSchema.properties[v].type })
         }
       })
-      const tableSchema = this.sourceSchema.properties[this.table].items
-      tableSchema.order.forEach(v => {
-        const label = tableSchema.properties[v].title || v
-        options.push({ id: `${this.table}.${v}`, variable: v, label: `${this.table} -> ${label}`, type: tableSchema.properties[v].type })
-      })
+      if (this.table !== '.') {
+        const tableSchema = this.sourceSchema.properties[this.table].items
+        tableSchema.order.forEach(v => {
+          const label = tableSchema.properties[v].title || v
+          options.push({ id: `${this.table}.${v}`, variable: v, label: `${this.table} -> ${label}`, type: tableSchema.properties[v].type })
+        })
+      }
+      console.log('variableOptions', this.table, this.options)
       return options
     },
     variableObject () {
