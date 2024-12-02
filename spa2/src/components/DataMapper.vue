@@ -55,17 +55,14 @@ export default {
   data () {
     return {
       mapping: this.modelValue,
-      related_types: [{ model: 'project', title: 'Project', source: '.' }, { model: 'sample', accessor: 'samples', title: 'Samples' }, { model: 'pool', accessor: 'pools', title: 'Pools' }],
+      related_types: [{ model: 'project', title: 'Project', source: '.' }, { model: 'sample', accessor: 'samples', title: 'Samples', source: null }, { model: 'pool', accessor: 'pools', title: 'Pools', source: null }],
       related_schemas: {}
     }
   },
-  mounted () {
-    if (!this.mapping.project) {
-      this.mapping.project = { type: null, mapping: {}, source: '.' }
-    }
+  beforeMount () {
     this.related_types.forEach(r => {
       if (!this.mapping[r.model]) {
-        this.mapping[r.model] = { type: 'array', source: null, mapping: {} }
+        this.mapping[r.model] = { type: 'array', source: r.source, mapping: {} }
       }
     })
   },
