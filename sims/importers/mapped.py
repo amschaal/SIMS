@@ -102,6 +102,14 @@ class MappedImporter(Importer):
             sample.id = '{}_{}'.format(self.project.id, sample.name)
             samples.append(sample)
         return samples
+    def get_project(self):
+        project = super().get_project()
+        mapping = self.importer.config.get('project')
+        if not mapping or 'mapping' not in mapping:
+            return project
+        project_data = MappedImporter.map_data(mapping.get('mapping', {}), self.submission.data)
+        project.data = project_data.get('data', {})
+        return project
     def process(self):
         self.project = self.get_project()
         samples = self.get_samples()
