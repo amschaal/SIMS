@@ -29,7 +29,7 @@ export default {
         this.$emit('schema', null)
       }
       if (val) {
-        this.$emit('update:modelValue', this.emit_object !== undefined ? val : val.id)
+        this.$emit('update:modelValue', this.emit_object !== undefined && this.emit_object !== false ? val : val.id)
       } else {
         this.$emit('update:modelValue', null)
       }

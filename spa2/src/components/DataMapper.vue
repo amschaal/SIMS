@@ -62,7 +62,7 @@ export default {
   beforeMount () {
     this.related_types.forEach(r => {
       if (!this.mapping[r.model]) {
-        this.mapping[r.model] = { type: 'array', source: r.source, mapping: {} }
+        this.mapping[r.model] = { type: null, source: r.source, mapping: {} }
       }
     })
   },

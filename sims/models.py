@@ -253,6 +253,16 @@ class Importer(models.Model):
     model_type = models.ForeignKey(ModelType, on_delete=models.CASCADE)
     config = JSONField(default=dict)
 
+    @property
+    def ImporterClass(self):
+        """
+        This may eventually be dynamic
+        """
+        from sims.importers.mapped import MappedImporter
+
+        return MappedImporter
+
+
 
 class Submission(models.Model):
     id = models.CharField(max_length=50, primary_key=True, editable=False)
@@ -281,35 +291,13 @@ class Submission(models.Model):
     processed = models.DateTimeField(null=True)
     config = models.JSONField(null=True, default=dict)
 
-    @property
-    def ImporterClass(self):
-        """
-        This may eventually be dynamic
-        """
-        from sims.importers.mapped import MappedImporter
-
-        return MappedImporter
-
     def process(self, importer):
         if not getattr(self.processed, "project", None):
-            mapper_importer = self.ImporterClass(self, importer)
+            mapper_importer = importer.ImporterClass(submission=self, importer=importer)
             return mapper_importer.process()
-            # from sims.transform import import_submission, pool_samples
-            # project, pools, samples = import_submission(self)
-            # project.save()
-            # pools = Pool.objects.bulk_create(pools)
-            # samples = Sample.objects.bulk_create(samples)
-            # pool_samples(project, pools, samples)
-            # self.importer = importer
-            # self.processed = timezone.now()
-            # # self.data = self.project.submission_data
-            # self.save()
-            # # libraries = Library.objects.bulk_create(libraries)
-            # return (project, pools, samples)
-
     def unimport(self):
         # if self.importer and self.processed:
-        mapper_importer = self.ImporterClass(self, self.importer, config=self.config)
+        mapper_importer = self.importer.ImporterClass(submission=self, importer=self.importer, config=self.config)
         mapper_importer.delete_imported()
         self.importer = None
         self.config = None
