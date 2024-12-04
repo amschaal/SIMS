@@ -99,6 +99,14 @@ const projectSchema = {
   order: ['data']
 }
 
+const dataSchema = {
+  type: 'object',
+  properties: {
+  },
+  required: [],
+  order: []
+}
+
 // const schema = {
 //   type: 'object',
 //   properties: {
@@ -121,7 +129,11 @@ class ModelSchemas {
     dataField = dataField || 'data'
     const schema = ModelSchemas.schemas[model]
     const type = ModelSchemas.schemaStore.typeSchemas[typeId]
-    schema.properties[dataField] = type.schema
+    if (type) {
+      schema.properties[dataField] = type.schema
+    } else {
+      schema.properties[dataField] = dataSchema
+    }
     if (schema.order.indexOf(dataField) === -1) {
       schema.order.push(dataField)
     }
