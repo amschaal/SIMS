@@ -20,7 +20,7 @@ class Importer(object):
         submission = self.submission
         project = Project(
             id=submission.submission_id or submission.id,
-            type=self.importer.model_type,
+            # type=self.importer.model_type,
             # submission_id=submission.submission_id,
             first_name=submission.first_name,
             last_name=submission.last_name,

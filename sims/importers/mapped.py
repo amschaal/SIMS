@@ -24,9 +24,10 @@ class MappedImporter(Importer):
                     result[k] = data.get(v)
         return result
     def get_type(self, model):
-        if self.importer.model_type:
-            type_id = self.importer.model_type.metadata.get(model, None)
-            return ModelType.objects.filter(id=type_id).first()
+        # if self.importer.model_type:
+        mapping = self.importer.config.get(model, {})
+        type_id = mapping.get('type', None)
+        return ModelType.objects.filter(id=type_id).first() if type_id else None
     def get_array_data(self, model): # takes 'pool', 'sample', or 'project'
         # { "pool": { "type": "array", "source": null, "mapping": {} }, "sample": { "type": "array", "source": "samples", "mapping": { "data": { "i5": "samples[].fragment_size", "i7": "samples[].special_instructions" }, "name": "samples[].sample_name" } }, "run_type": "runtype" }
         mapping = self.importer.config.get(model)
@@ -105,6 +106,7 @@ class MappedImporter(Importer):
         return samples
     def get_project(self):
         project = super().get_project()
+        project.type = self.get_type('project')
         mapping = self.importer.config.get('project')
         if not mapping or 'mapping' not in mapping:
             return project

@@ -256,7 +256,7 @@ class ProjectDetailSerializer(ProjectSerializer):
     samples = SampleSerializer(many=True)
 
     def get_sample_type(self, obj):
-        return obj.type.metadata.get("sample") if obj.type else None
+        return obj.metadata.get("sample_type") if obj.metadata else None
 
 
 class AdapterDBSerializer(serializers.ModelSerializer):
@@ -283,7 +283,7 @@ class ImporterDetailSerializer(ImporterSerializer):
     submission_type = ModelRelatedField(
         model=SubmissionType, serializer=SubmissionTypeSerializer
     )
-    model_type = ModelRelatedField(model=ModelType, serializer=ModelTypeSerializer)
+    # model_type = ModelRelatedField(model=ModelType, serializer=ModelTypeSerializer)
 
 
 class UserSerializer(serializers.ModelSerializer):

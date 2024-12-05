@@ -11,9 +11,9 @@
       <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="details">
             From: {{ importer.submission_type.name }}
-            To: {{importer.model_type.name}}
+            <!-- To: {{importer.model_type.name}} -->
     <!-- Variables: {{  schema_to_variables(submission_type.submission_schema) }} -->
-            <DataMapper v-model="importer.config" :submission_type="importer.submission_type" :type="importer.model_type"/>
+            <DataMapper v-model="importer.config" :submission_type="importer.submission_type"/>
             <q-btn label="Update Mapping" @click="updateMapping"/>
             <!-- {{importer}} -->
             <!-- {{ importer.config }} -->

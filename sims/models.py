@@ -222,6 +222,7 @@ class Project(DjsonTypeModel):
     submission = models.OneToOneField(
         "Submission", null=True, on_delete=models.RESTRICT, related_name="project"
     )
+    metadata = models.JSONField(default=dict) # info about sample types, etc
     # plugin_data = JSONField(default=dict)s = models.TextField(null=True,blank=True)
 
 
@@ -250,7 +251,7 @@ class Importer(models.Model):
     submission_type = models.ForeignKey(
         SubmissionType, related_name="importers", on_delete=models.CASCADE
     )
-    model_type = models.ForeignKey(ModelType, on_delete=models.CASCADE)
+    # model_type = models.ForeignKey(ModelType, on_delete=models.CASCADE)
     config = JSONField(default=dict)
 
     @property
