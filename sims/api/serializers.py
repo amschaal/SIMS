@@ -252,12 +252,7 @@ class ProjectDetailSerializer(ProjectSerializer):
     type = ModelRelatedField(
         model=ModelType, serializer=ModelTypeSerializer, required=False, allow_null=True
     )
-    sample_type = serializers.SerializerMethodField()
     samples = SampleSerializer(many=True)
-
-    def get_sample_type(self, obj):
-        return obj.metadata.get("sample_type") if obj.metadata else None
-
 
 class AdapterDBSerializer(serializers.ModelSerializer):
     class Meta:

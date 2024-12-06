@@ -173,7 +173,8 @@ export default {
   },
   computed: {
     sample_schema () {
-      return ModelSchemas.getSchema('sample', this.project.sample_type)
+      const sampleType = this.project && this.project.metadata && this.project.metadata.types ? this.project.metadata.types.sample : null
+      return ModelSchemas.getSchema('sample', sampleType)
     },
     default_sample () {
       return { data: {}, project: this.id, type: this.project.sample_type }
