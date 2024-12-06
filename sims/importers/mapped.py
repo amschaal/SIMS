@@ -42,10 +42,11 @@ class MappedImporter(Importer):
         if 'source' in mapping:
             source = mapping['source']
             array = self.submission.data.get(source)
-            for row in array:
-                mapped = MappedImporter.map_data(mapping.get('mapping', {}), self.submission.data, row, array_prefix=source)
-                mapped['submission_data'] = row
-                data.append(mapped)
+            if isinstance(array, list):
+                for row in array:
+                    mapped = MappedImporter.map_data(mapping.get('mapping', {}), self.submission.data, row, array_prefix=source)
+                    mapped['submission_data'] = row
+                    data.append(mapped)
         return data
     def pool_samples(self, pools, samples):
         pool_mapping = self.importer.config.get('pool')

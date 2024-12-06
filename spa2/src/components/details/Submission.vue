@@ -7,6 +7,7 @@
           <b>Project: </b>
           <router-link :to="{ name: 'project', params: { id: submission.project }}" v-if="submission.project">{{ submission.project }}</router-link>
           <span v-else>None</span>
+          <span v-if="submission.importer"> Imported using importer "{{ submission.importer.name }}" at {{ $filters.formatDate(submission.imported) }}</span>
         </div>
         <div class="col-md-4 col-sm-12"><b>ID: </b>{{submission.submission_id}}</div>
         <div class="col-md-4 col-sm-12"><b>Type: </b><router-link :to="{ name: 'submission_type', params: { id: submission.type.id }}">{{submission.type.name}}</router-link></div>

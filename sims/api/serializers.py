@@ -54,15 +54,33 @@ class ModelRelatedField(serializers.RelatedField):
     def to_representation(self, value):
         return self.serializer(value).data
 
+class SubmissionTypeSerializer(serializers.ModelSerializer):
+    submission_schema = JSONSchemaConverterField()
+
+    class Meta:
+        model = SubmissionType
+        exclude = []
+
+class ImporterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Importer
+        exclude = ['config']
+
+class ImporterDetailSerializer(ImporterSerializer):
+    submission_type = ModelRelatedField(
+        model=SubmissionType, serializer=SubmissionTypeSerializer
+    )
+    class Meta:
+        model = Importer
+        exclude = []
 
 class SubmissionSerializer(serializers.ModelSerializer):
     project = serializers.PrimaryKeyRelatedField(read_only=True)
     schema = JSONSchemaConverterField()
-
+    importer = ImporterSerializer()
     class Meta:
         model = Submission
         exclude = []
-
 
 class ProjectSerializer(DjsonTypeModelSerializer):
     submission_url = serializers.SerializerMethodField()
@@ -258,28 +276,6 @@ class AdapterDBSerializer(serializers.ModelSerializer):
     class Meta:
         model = AdapterDB
         exclude = []
-
-
-class SubmissionTypeSerializer(serializers.ModelSerializer):
-    submission_schema = JSONSchemaConverterField()
-
-    class Meta:
-        model = SubmissionType
-        exclude = []
-
-
-class ImporterSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Importer
-        exclude = []
-
-
-class ImporterDetailSerializer(ImporterSerializer):
-    submission_type = ModelRelatedField(
-        model=SubmissionType, serializer=SubmissionTypeSerializer
-    )
-    # model_type = ModelRelatedField(model=ModelType, serializer=ModelTypeSerializer)
-
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
