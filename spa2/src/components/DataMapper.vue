@@ -3,7 +3,7 @@
     <template v-for="related in related_types" :key="related.model">
       <div>
         <h5>Map {{related.title}}</h5>
-        <TypeSelect v-model="mapping[related.model].type" :error_messages="{}" :has_error="false" :model-filter="related.model" @update:model-value="val => updateRelatedSchema(related.model, val)"/><br>
+        <TypeSelect v-model="mapping[related.model].type" :error_messages="{}" :has_error="false" :model-filter="related.model" @update:model-value="val => updateRelatedSchema(related.model, val)" :clearable="true"/><br>
         <q-markup-table flat bordered dense>
         <thead>
           <tr><th colspan="4">{{related.title}}</th></tr>
@@ -28,7 +28,8 @@
 
             </td>
           </tr>
-          <tr v-if="mapping[related.model] && mapping[related.model].source && mapping[related.model].type && related_schemas[related.model]">
+          <tr v-if="mapping[related.model] && mapping[related.model].source && related_schemas[related.model]">
+          <!-- <tr v-if="mapping[related.model] && mapping[related.model].source && mapping[related.model].type && related_schemas[related.model]"></tr> -->
             <td colspan="4" >
               <TableMapper :source-schema="submission_type.submission_schema" :dest-schema="related_schemas[related.model]" :key="related.model+'_'+mapping[related.model].type" v-model="mapping[related.model].mapping" :table="mapping[related.model].source" :model="related.model"/>
             </td>
@@ -64,6 +65,7 @@ export default {
       if (!this.mapping[r.model]) {
         this.mapping[r.model] = { type: null, source: r.source, mapping: {} }
       }
+      this.updateRelatedSchema(r.model, this.mapping[r.model].type)
     })
   },
   methods: {
@@ -76,9 +78,6 @@ export default {
         return []
       }
       return this.getAvailableFields(schema, variableType).map(v => ({ id: v, label: schema.properties[v].title || v }))
-    },
-    getModelSchema (model, type) {
-      return ModelSchemas.getSchema(model, type)
     },
     updateRelatedSchema (model, type) {
       this.related_schemas[model] = ModelSchemas.getSchema(model, type)

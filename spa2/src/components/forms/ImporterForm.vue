@@ -1,7 +1,6 @@
 <template>
   <BaseForm :api-url="`/api/importers/`" api-method="post" v-model="model" :on-success="onSuccess" :on-error="onError">
       <template v-slot:content="{ model, errors, has_error }">
-        <TypeSelect v-model="model.model_type" model-filter="project" :error_messages="errors" :has_error="has_error" field="model_type"/>
         <q-input outlined v-model="model.name" label="Name"
           :error-message="errors.name"
           :error="has_error.name"
@@ -18,7 +17,6 @@
 </template>
 <script>
 import BaseForm from './BaseForm.vue'
-import TypeSelect from '../TypeSelect.vue'
 export default {
   props: ['errors', 'modelValue', 'onSuccess'],
   data () {
@@ -35,8 +33,7 @@ export default {
     }
   },
   components: {
-    BaseForm,
-    TypeSelect
+    BaseForm
   }
 }
 </script>
