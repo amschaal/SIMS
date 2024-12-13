@@ -21,6 +21,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     serializer_class = SubmissionSerializer
     filterset_fields = {
         'id':['icontains','exact'],
+        'submission_type':['exact'],
         'samples__id': ['exact'],
         'samples__id': ['exact'],
         'samples__pools__id': ['exact'],
@@ -31,6 +32,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     queryset = Submission.objects.distinct()
     @action(detail=False, methods=['get','post'])
     def import_submission(self, request):
+        """ Import the submission from the submission system """
         id = request.data.get('id').strip()
 #         url = settings.SUBMISSION_SYSTEM_URLS['submission'].format(id=id)
         try:

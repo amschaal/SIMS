@@ -5,6 +5,7 @@
         v-model="tab"
       >
         <q-tab name="details" label="Details"/>
+        <q-tab name="submissions" label="Submissions"/>
         <q-tab name="importers" label="Importers"/>
       </q-tabs>
       <q-tab-panels v-model="tab" animated>
@@ -21,6 +22,9 @@
                 </tr>
               </tbody>
             </q-markup-table>
+          </q-tab-panel>
+          <q-tab-panel name="submissions">
+            <SubmissionsTable :filters="`submission_type=${id}`"/>
           </q-tab-panel>
           <q-tab-panel name="importers">
             <ImporterTable :filters="`submission_type=${id}`"/>
@@ -39,6 +43,7 @@
 <script>
 import ImporterTable from 'src/components/tables/ImporterTable.vue'
 import ImporterForm from 'src/components/forms/ImporterForm.vue'
+import SubmissionsTable from '../components/tables/SubmissionsTable.vue'
 export default {
   name: 'SubmissionTypePage',
   props: ['id'],
@@ -70,7 +75,8 @@ export default {
   },
   components: {
     ImporterTable,
-    ImporterForm
+    ImporterForm,
+    SubmissionsTable
   }
 }
 </script>

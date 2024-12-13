@@ -285,6 +285,7 @@ class Submission(models.Model):
     institute = models.CharField(max_length=75)
     comments = models.TextField(null=True, blank=True)
     type = models.JSONField(default=dict)
+    submission_type = models.ForeignKey(SubmissionType, null=True, on_delete=models.RESTRICT)
     schema = models.JSONField(default=dict)
     data = models.JSONField(default=dict)
     # import fields below

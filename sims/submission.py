@@ -1,7 +1,7 @@
 from django.utils import timezone
 import urllib.request, json
 from django.conf import settings
-from sims.models import Project, Sample
+from sims.models import Project, Sample, SubmissionType
 from django.conf.urls.static import static
 
 class SubmissionImporter(object):
@@ -25,13 +25,16 @@ class SubmissionImporter(object):
         self.biocore = data['biocore']
         self.data = data['data']
         self.comments = data['comments']
+        self.submission_type = SubmissionType.objects.filter(id=self.type.get('id')).first()
     def import_submission(self):
         from sims.models import Submission
         if Submission.objects.filter(submission_id=self.id).first():
             raise Exception('Submission "{0}" has already been imported.'.format(self.id))
+        
         submission = Submission.objects.create(
                                         #  id=self.internal_id or self.id,
                                          id=self.id,
+                                         submission_type=self.submission_type,
                                          submission_id=self.internal_id or self.id, 
                                          submitted=self.submitted,
                                          imported=timezone.now(),
