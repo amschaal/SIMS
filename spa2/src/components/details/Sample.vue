@@ -7,6 +7,7 @@
     </div>
     <div class="row">
       <div class="col-md-4 col-sm-12"><b>Name: </b>{{sample.name}}</div>
+      <div class="col-md-4 col-sm-12"><b>Alias: </b>{{sample.alias}}</div>
       <div class="col-md-4 col-sm-12"><b>Imported: </b>{{$filters.formatDate(sample.imported)}}<span v-if="sample.submission"> from <router-link  :to="{ name: 'submission', params: { id: sample.submission }}">submission</router-link></span></div>
       <div class="col-md-4 col-sm-12" v-if="sample && sample.pools && sample.pools.length">
         <b>Pools: </b>

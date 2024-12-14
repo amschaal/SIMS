@@ -146,7 +146,7 @@ class SampleViewSet(mixins.ActionSerializerMixin, viewsets.ModelViewSet, mixins.
         'submission__id': ['exact'],
         'type__id': ['exact']
         }
-    search_fields = ('id', 'project__id')
+    search_fields = ('id', 'project__id', 'alias')
     serializer_class = SampleSerializer
     queryset = Sample.objects.distinct()
 

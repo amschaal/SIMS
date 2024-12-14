@@ -18,6 +18,7 @@
       <!-- <q-tr :props="props"> -->
         <!-- <q-td key="type" :props="props"><Property :value="props.row.type" label="name"/></q-td> -->
         <q-td key="id" :props="props"><router-link :to="{ name: 'sample', params: { id: props.row.id }}">{{ props.row.id }}</router-link></q-td>
+        <q-td key="alias" :props="props"><router-link :to="{ name: 'sample', params: { id: props.row.id }}" v-if="props.row.alias">{{ props.row.alias }}</router-link></q-td>
         <q-td key="project" :props="props"><router-link :to="{ name: 'project', params: { id: props.row.project }}">{{ props.row.project }}</router-link></q-td>
         <q-td key="barcodes.i5" :props="props">{{ props.row.barcodes.i5 }}</q-td>
         <q-td key="barcodes.i7" :props="props">{{ props.row.barcodes.i7 }}</q-td>
@@ -40,6 +41,7 @@ export default {
     return {
       columns: [
         { name: 'id', label: 'ID', field: 'id', sortable: true },
+        { name: 'alias', label: 'Alias', field: 'alias', sortable: true },
         { name: 'project', label: 'Project', field: 'project', sortable: true },
         { name: 'barcodes.i5', label: 'i5 Barcode', field: 'barcodes', sortable: false },
         { name: 'barcodes.i7', label: 'i7 Barcode', field: 'barcodes', sortable: false },
