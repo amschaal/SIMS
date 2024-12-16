@@ -81,22 +81,42 @@ const poolSchema = {
   required: ['name'],
   order: ['id', 'name', 'data']
 }
+// const projectSchema = {
+//   type: 'object',
+//   properties: {
+//     id: { type: 'string', maxLength: 50, minLength: 1, title: 'Id' },
+//     type: { type: 'string', title: 'Type' },
+//     data: { type: 'object', title: 'Data' }
+//     // physical_type: { type: ['string', 'null'], maxLength: 25, minLength: 1, title: 'Physical type' },
+//     // comment: { type: 'string', title: 'Comment' }
+//     // barcodes: { type: 'object', title: 'Barcodes' },
+//     // sample: { type: 'integer', title: 'Sample' },
+//     // project: { type: 'integer', title: 'Project' },
+//     // submission: { type: 'integer', title: 'Submission' },
+//     // adapter: { type: 'integer', title: 'Adapter' }
+//   },
+//   required: [],
+//   order: ['id', 'type', 'data']
+// }
 const projectSchema = {
   type: 'object',
   properties: {
-    // id: { type: 'string', maxLength: 50, minLength: 1, title: 'Id' },
-    // type: { type: 'string', title: 'Type' },
-    // data: { type: 'object', title: 'Data' },
-    // physical_type: { type: ['string', 'null'], maxLength: 25, minLength: 1, title: 'Physical type' },
-    // comment: { type: 'string', title: 'Comment' }
-    // barcodes: { type: 'object', title: 'Barcodes' },
-    // sample: { type: 'integer', title: 'Sample' },
-    // project: { type: 'integer', title: 'Project' },
-    // submission: { type: 'integer', title: 'Submission' },
-    // adapter: { type: 'integer', title: 'Adapter' }
+    id: { type: 'string', maxLength: 50, minLength: 1, title: 'Id' },
+    type: { type: 'string', title: 'Type' },
+    data: { type: 'object', title: 'Data' },
+    first_name: { type: 'string', maxLength: 50, minLength: 1, title: 'First name' },
+    last_name: { type: 'string', maxLength: 50, minLength: 1, title: 'Last name' },
+    email: { type: 'string', format: 'email', maxLength: 75, minLength: 1, title: 'Email' },
+    phone: { type: 'string', maxLength: 20, minLength: 1, title: 'Phone' },
+    pi_first_name: { type: 'string', maxLength: 50, minLength: 1, title: 'Pi first name' },
+    pi_last_name: { type: 'string', maxLength: 50, minLength: 1, title: 'Pi last name' },
+    pi_email: { type: 'string', format: 'email', maxLength: 75, minLength: 1, title: 'Pi email' },
+    pi_phone: { type: 'string', maxLength: 20, minLength: 1, title: 'Pi phone' },
+    institute: { type: 'string', maxLength: 75, minLength: 1, title: 'Institute' },
+    comments: { type: ['string', 'null'], title: 'Comments' }
   },
-  required: [],
-  order: ['data']
+  required: ['id', 'data', 'first_name', 'last_name', 'email', 'phone', 'pi_first_name', 'pi_last_name', 'pi_email', 'pi_phone', 'institute'],
+  order: ['id', 'type', 'first_name', 'last_name', 'email', 'phone', 'pi_first_name', 'pi_last_name', 'pi_email', 'pi_phone', 'institute', 'comments', 'data']
 }
 
 const dataSchema = {
