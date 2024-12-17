@@ -75,8 +75,8 @@ class ProjectViewSet(mixins.ActionSerializerMixin, viewsets.ModelViewSet, mixins
     action_serializers = {
         'retrieve': ProjectDetailSerializer,
         'list': ProjectSerializer,
-        'create': ProjectSerializer,
-        'update': ProjectSerializer
+        'create': ProjectDetailSerializer,
+        'update': ProjectDetailSerializer
     }
     @action(detail=True, methods=['post'])
     def update_samples(self, request, pk=None):

@@ -270,7 +270,7 @@ class ProjectDetailSerializer(ProjectSerializer):
     type = ModelRelatedField(
         model=ModelType, serializer=ModelTypeSerializer, required=False, allow_null=True
     )
-    samples = SampleSerializer(many=True)
+    samples = SampleSerializer(many=True, read_only=True)
 
 class AdapterDBSerializer(serializers.ModelSerializer):
     class Meta:

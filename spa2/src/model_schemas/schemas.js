@@ -116,7 +116,7 @@ const projectSchema = {
     comments: { type: ['string', 'null'], title: 'Comments' }
   },
   required: ['id', 'data', 'first_name', 'last_name', 'email', 'phone', 'pi_first_name', 'pi_last_name', 'pi_email', 'pi_phone', 'institute'],
-  order: ['id', 'type', 'first_name', 'last_name', 'email', 'phone', 'pi_first_name', 'pi_last_name', 'pi_email', 'pi_phone', 'institute', 'comments', 'data'],
+  order: ['id', 'type', 'first_name', 'last_name', 'email', 'phone', 'pi_first_name', 'pi_last_name', 'pi_email', 'pi_phone', 'institute', 'comments', 'data']
 }
 
 const dataSchema = {
@@ -142,15 +142,19 @@ class ModelSchemas {
     sample: sampleSchema,
     pool: poolSchema
   }
+
   static layouts = {
-    project: { first_name: { width: 'col-3' }, last_name: { width: 'col-3' }, phone: { width: 'col-3' }, email: { width: 'col-3' }, pi_first_name: { width: 'col-3' }, pi_last_name: { width: 'col-3' }, pi_phone: { width: 'col-3' }, pi_email: { width: 'col-3' } }
+    project: { id: { width: 'col-6' }, type: { width: 'col-6' }, first_name: { width: 'col-3' }, last_name: { width: 'col-3' }, phone: { width: 'col-3' }, email: { width: 'col-3' }, pi_first_name: { width: 'col-3' }, pi_last_name: { width: 'col-3' }, pi_phone: { width: 'col-3' }, pi_email: { width: 'col-3' } }
   }
+
   static schemaStore = useJsonSchemaStore()
 
-  static getSchema (model, typeId, dataField) {
+  static getSchema (model, type, dataField) {
     dataField = dataField || 'data'
     const schema = ModelSchemas.schemas[model]
-    const type = ModelSchemas.schemaStore.typeSchemas[typeId]
+    if (typeof type === 'string' || type instanceof String) {
+      type = ModelSchemas.schemaStore.typeSchemas[type]
+    }
     if (type) {
       schema.properties[dataField] = type.schema
     } else {
@@ -163,7 +167,6 @@ class ModelSchemas {
   }
 }
 
-class ModelUI
 // const SampleSchema = BaseModelSchema(sample)
 // const SampleSchema = BaseModelSchema(sample)
 
