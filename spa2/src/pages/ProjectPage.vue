@@ -100,9 +100,7 @@ export default {
       tab: 'details',
       openSampleDialog: false,
       SamplesTable,
-      ui: {
-        first_name: { width: 'col-3' }, last_name: { width: 'col-3' }, phone: { width: 'col-3' }, email: { width: 'col-3' }, pi_first_name: { width: 'col-3' }, pi_last_name: { width: 'col-3' }, pi_phone: { width: 'col-3' }, pi_email: { width: 'col-3' }
-      }
+      ui: ModelSchemas.layouts.project
     }
   },
   mounted: function () {

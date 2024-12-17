@@ -4,7 +4,8 @@
     <q-btn label="New Project" color="primary" @click="createProject"/>
     <FormDialog ref="form_dialog" title="Create Project" :on-success="projectCreated" api-method="post" :api-url="`/api/projects/`">
       <template #form="props">
-        <JSONModelTypeForm v-model="props.data" :schema="project_schema" :errors="props.errors" model-filter="project">
+        <JSONModelTypeForm v-model="props.data" :schema="project_schema" :errors="props.errors" model-filter="project" :ui="ui">
+        <!-- <JSONModelTypeForm v-model="props.data" :schema-url="`/api/projects/jsonschema/`" :errors="props.errors" model-filter="project"> -->
           <!-- <template #field_id="{ v, data, form }">
           <div>
             <q-input type="textarea" v-model="data[v.variable]" label="OVERRIDDEN!!"/>
@@ -28,7 +29,8 @@ import ModelSchemas from 'src/model_schemas/schemas'
 export default {
   data () {
     return {
-      project_schema: ModelSchemas.getSchema('project', null)
+      project_schema: ModelSchemas.getSchema('project', null),
+      ui: ModelSchemas.layouts.project
     }
   },
   methods: {
