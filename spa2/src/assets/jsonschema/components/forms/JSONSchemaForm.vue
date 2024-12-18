@@ -131,7 +131,7 @@ import AgSchema from '../aggrid/aggridDialog.vue'
 // import _ from 'lodash'
 
 export default {
-  props: ['modelValue', 'schema', 'editable', 'errors', 'warnings', 'modify', 'ui'],
+  props: ['modelValue', 'schema', 'editable', 'errors', 'warnings', 'modify', 'ui', 'hide'],
   data () {
     return {
       data: this.modelValue ? this.modelValue : {}
@@ -221,7 +221,8 @@ export default {
         return []
       }
       if (this.schema.order || this.schema.properties) {
-        const order = this.schema.order || Object.getOwnPropertyNames(this.schema.properties)
+        let order = this.schema.order || Object.getOwnPropertyNames(this.schema.properties)
+        order = order.filter(v => this.hidden.indexOf(v) === -1)
         return order.map(variable => {
           return { variable, schema: this.schema.properties[variable] }
         })
@@ -237,6 +238,9 @@ export default {
       } else {
         return 'col-12'
       }
+    },
+    hidden () {
+      return this.hide || []
     }
   },
   components: {

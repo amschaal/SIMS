@@ -16,9 +16,9 @@
             <div class="text-h6">Project</div>
             <Project :instance="project" v-if="project"/>
             <SubmissionData :data="project.submission.data" :schema="project.submission.schema" v-if="project && project.submission"/>
-            <FormDialog ref="form_dialog" title="Modify Project" api-method="put" :api-url="`/api/projects/${this.id}/`" v-model="project">
+            <FormDialog ref="form_dialog" title="Modify Project" api-method="put" :api-url="`/api/projects/${this.id}/`" v-model="project" v-if="project">
               <template #form="props">
-                <JSONModelTypeForm v-model="props.data" :schema-url="`/api/projects/${this.id}/jsonschema/`" :errors="props.errors" :ui="ui" model-filter="project">
+                <JSONModelTypeForm v-model="props.data" :schema="schema" :errors="props.errors" :ui="ui" model-filter="project" :hide="['id']">
                   <!-- <template #field_id="{ v, data, form }">
                   <div>
                     <q-input type="textarea" v-model="data[v.variable]" label="OVERRIDDEN!!"/>
@@ -176,6 +176,9 @@ export default {
     },
     default_sample () {
       return { data: {}, project: this.id, type: this.project.sample_type }
+    },
+    schema () {
+      return ModelSchemas.getSchema('project', this.project.type)
     }
   }
 }

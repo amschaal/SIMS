@@ -7,7 +7,7 @@
       Data: {{model}}
       Errors: {{errors}} -->
     </slot>
-    <JSONSchemaForm v-model="data" :schema="jsonschema" ref="custom_fields" v-if="jsonschema && data" :modify="true" :errors="errors" :warnings="{}" :ui="ui">
+    <JSONSchemaForm v-model="data" :schema="jsonschema" ref="custom_fields" v-if="jsonschema && data" :modify="true" :errors="errors" :warnings="{}" :ui="ui" :hide="hide">
       <template #field_type="{ data }">
           <TypeSelect v-model="data.type" :emit_object="true" @schema="schema => changeSchema(schema)" :error_messages="error_messages" :has_error="has_error" v-if="data" :model-filter="modelFilter"/>
       </template>
@@ -18,6 +18,7 @@
     </JSONSchemaForm>
     <!-- jsonschema: {{ jsonschema }}
     data: {{ data }} -->
+    {{ data }}
   </div>
 </template>
 <script>
@@ -35,7 +36,8 @@ export default {
     modelFilter: String,
     modelValue: { type: Object, default () { return {} } },
     exclude: { type: Array, default () { return [] } },
-    ui: { type: Object, default () { return {} } }
+    ui: { type: Object, default () { return {} } },
+    hide: { type: Array, default () { return [] } }
   },
   emits: ['update:modelValue'],
   data () {
@@ -77,7 +79,7 @@ export default {
       return this.schema || this.api_schema
     }
   },
-  mounted: function () {
+  beforeMount: function () {
     if (this.data && !this.data.data) {
       this.data.data = {}
     }
