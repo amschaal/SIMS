@@ -58,7 +58,11 @@
             <!-- <SamplesTable :filters="`project__id=${id}`" ref="samples"/> -->
             <!-- <JSONSchemaTable v-model="project.samples" :schema="sample_schema" v-if="project && project.samples && sample_schema" title="Samples" :modify="true"/> -->
             <!-- <aggridDialog v-model="project.samples" :schema="sample_schema" v-if="project && project.samples && sample_schema" :editable="true" :allow-examples="true" title="Samples"/> -->
-            <aggrid v-model="project.samples" :schema="sample_schema" v-if="project && project.samples && sample_schema" :editable="true" :allow-examples="true" title="Samples" :validate-url="`/server/api/projects/${id}/validate_samples/`" :save-url="`/server/api/projects/${id}/update_samples/`" :default-row="default_sample"/>
+            Default Sample Type: {{ default_sample_type }}
+            Sample Types: {{ sample_types }}
+            Sample Schema: {{ sample_schema }}
+            <TypeSelect v-model="sample_grid_type" :emit_object="false" :model-filter="'sample'" :error_messages="{}" :has_error="{}" @update:model-value="updateSamplesheet"/>
+            <aggrid v-model="project.samples" :schema="sample_schema" v-if="project && project.samples && sample_schema" :editable="true" :allow-examples="true" title="Samples" :validate-url="`/server/api/projects/${id}/validate_samples/`" :save-url="`/server/api/projects/${id}/update_samples/`" :default-row="default_sample" ref="samplesheet"/>
             <!-- {{ sample_schema }} -->
             <!-- {{ project.samples }} -->
           </q-tab-panel>
@@ -91,6 +95,7 @@ import FormDialog from 'src/components/dialogs/FormDialog.vue'
 import ModelSchemas from 'src/model_schemas/schemas'
 import aggrid from 'src/assets/jsonschema/components/aggrid/aggrid.vue'
 // import TableDialog from '../components/dialogs/TableDialog.vue'
+import TypeSelect from '../components/TypeSelect.vue'
 export default {
   name: 'ProjectPage',
   props: ['id'],
@@ -100,17 +105,18 @@ export default {
       tab: 'details',
       openSampleDialog: false,
       SamplesTable,
+      sample_grid_type: null,
       ui: ModelSchemas.layouts.project
     }
   },
   mounted: function () {
-    const self = this
     this.$api
-      .get(`/api/projects/${self.id}/`)
-      .then(function (response) {
+      .get(`/api/projects/${this.id}/`)
+      .then((response) => {
         console.log('response', response)
         // Vue.set(self, 'project', response.data) #Vue2
-        self.project = response.data
+        this.project = response.data
+        this.sample_grid_type = this.default_sample_type
       })
   },
   methods: {
@@ -133,6 +139,9 @@ export default {
           console.log('error', error)
           this.$q.notify({ color: 'negative', message: 'Failed to unimport data' })
         })
+    },
+    updateSamplesheet () {
+      this.$refs.samplesheet.setup()
     }
     // updateSamples () {
     //   const self = this
@@ -164,21 +173,31 @@ export default {
     SubmissionData,
     JSONModelTypeForm,
     FormDialog,
-    aggrid
+    aggrid,
+    TypeSelect
     // JSONSchemaTable,
     // aggridDialog
     // TableDialog
   },
   computed: {
     sample_schema () {
-      const sampleType = this.project && this.project.metadata && this.project.metadata.types ? this.project.metadata.types.sample : null
-      return ModelSchemas.getSchema('sample', sampleType)
+      // return ModelSchemas.getSchema('sample', this.default_sample_type)
+      return ModelSchemas.getSchema('sample', this.sample_grid_type)
+    },
+    default_sample_type () {
+      return this.project && this.project.metadata && this.project.metadata.types ? this.project.metadata.types.sample : null
     },
     default_sample () {
-      return { data: {}, project: this.id, type: this.project.sample_type }
+      return { data: {}, project: this.id, type: this.default_sample_type }
     },
     schema () {
       return ModelSchemas.getSchema('project', this.project.type)
+    },
+    sample_types () {
+      if (!this.project || !this.project.samples) {
+        return []
+      }
+      return [...new Set(this.project.samples.map(s => s.type ? s.type.id : null))]
     }
   }
 }
