@@ -61,8 +61,29 @@
             Default Sample Type: {{ default_sample_type }}
             Sample Types: {{ sample_types }}
             Sample Schema: {{ sample_schema }}
-            <TypeSelect v-model="sample_grid_type" :emit_object="false" :model-filter="'sample'" :error_messages="{}" :has_error="{}" @update:model-value="updateSamplesheet"/>
-            <aggrid v-model="project.samples" :schema="sample_schema" v-if="project && project.samples && sample_schema" :editable="true" :allow-examples="true" title="Samples" :validate-url="`/server/api/projects/${id}/validate_samples/`" :save-url="`/server/api/projects/${id}/update_samples/`" :default-row="default_sample" ref="samplesheet"/>
+            <TypeSelect v-model="sample_grid_type" :emit_object="false" :model-filter="'sample'" :error_messages="{}" :has_error="{}"/>
+              <q-tabs
+                v-model="sample_sheet_tab"
+              >
+                <q-tab name="all" label="All types" v-if="sample_types.length > 1"/>
+                <template v-for="s_type in sample_types" :key="s_type">
+                  <q-tab :name="s_type" :label="s_type" v-if="s_type"/>
+                </template>
+              </q-tabs>
+              <q-tab-panels v-model="sample_sheet_tab" animated>
+                <q-tab-panel name="all" v-if="sample_types.length > 1">
+                  <aggrid v-model="project.samples" :key="default_sample_type" :schema="getSampleTypeSchema(null)" v-if="project && project.samples" :editable="true" :allow-examples="true" title="Samples" :validate-url="`/server/api/projects/${id}/validate_samples/`" :save-url="`/server/api/projects/${id}/update_samples/`" :default-row="default_sample"/>
+                </q-tab-panel>
+                <template v-for="s_type in sample_types" :key="s_type">
+                <q-tab-panel :name="s_type" v-if="s_type">
+                  <q-tab-panel >
+                      {{ s_type }}
+                    <aggrid v-model="project.samples" :key="s_type" :schema="getSampleTypeSchema(s_type)" v-if="project && project.samples" :editable="true" :allow-examples="true" title="Samples" :validate-url="`/server/api/projects/${id}/validate_samples/`" :save-url="`/server/api/projects/${id}/update_samples/`" :default-row="default_sample"/>
+                    </q-tab-panel>
+                  </q-tab-panel>
+                </template>
+              </q-tab-panels>
+
             <!-- {{ sample_schema }} -->
             <!-- {{ project.samples }} -->
           </q-tab-panel>
@@ -106,7 +127,8 @@ export default {
       openSampleDialog: false,
       SamplesTable,
       sample_grid_type: null,
-      ui: ModelSchemas.layouts.project
+      ui: ModelSchemas.layouts.project,
+      sample_sheet_tab: 'default'
     }
   },
   mounted: function () {
@@ -140,8 +162,8 @@ export default {
           this.$q.notify({ color: 'negative', message: 'Failed to unimport data' })
         })
     },
-    updateSamplesheet () {
-      this.$refs.samplesheet.setup()
+    getSampleTypeSchema (type) {
+      return ModelSchemas.getSchema('sample', type)
     }
     // updateSamples () {
     //   const self = this
@@ -197,6 +219,7 @@ export default {
       if (!this.project || !this.project.samples) {
         return []
       }
+      // return ['library']
       return [...new Set(this.project.samples.map(s => s.type ? s.type.id : null))]
     }
   }
