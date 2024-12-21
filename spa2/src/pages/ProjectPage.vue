@@ -46,46 +46,14 @@
             <!-- <CustomFields v-model="submission.submission_data" :schema="submission_schema" ref="submission_fields" :warnings="submission.warnings ? submission.warnings.submission_data : {}" v-if="submission_schema" :modify="false"/> -->
           </q-tab-panel>
           <q-tab-panel name="samples" class="q-pa-sm q-gutter-sm">
-            <!-- {{project.sample_data.length}} -->
-            <!-- <BaseDialog ref="dialog" title="Samples">
-              <template v-slot:content>
-                <SamplesTable :filters="`project__id=${id}`" :options="{'selection': 'multiple'}"/>
-              </template>
-            </BaseDialog> -->
-            <!-- <TableDialog table-component="SamplesTable" ref="dialog"/> -->
-            <!-- <TableDialog :table-component="SamplesTable" :options="{'selection': 'multiple'}" ref="dialog"/>
-            <q-btn label="Samples" color="primary" @click="openDialog" /> -->
-            <!-- <SamplesTable :filters="`project__id=${id}`" ref="samples"/> -->
-            <!-- <JSONSchemaTable v-model="project.samples" :schema="sample_schema" v-if="project && project.samples && sample_schema" title="Samples" :modify="true"/> -->
-            <!-- <aggridDialog v-model="project.samples" :schema="sample_schema" v-if="project && project.samples && sample_schema" :editable="true" :allow-examples="true" title="Samples"/> -->
-            Default Sample Type: {{ default_sample_type }}
-            Sample Types: {{ sample_types }}
-            Sample Schema: {{ sample_schema }}
-            <TypeSelect v-model="sample_grid_type" :emit_object="false" :model-filter="'sample'" :error_messages="{}" :has_error="{}"/>
-              <q-tabs
-                v-model="sample_sheet_tab"
-              >
-                <q-tab name="all" label="All types" v-if="sample_types.length > 1"/>
-                <template v-for="s_type in sample_types" :key="s_type">
-                  <q-tab :name="s_type" :label="s_type" v-if="s_type"/>
-                </template>
-              </q-tabs>
-              <q-tab-panels v-model="sample_sheet_tab" animated>
-                <q-tab-panel name="all" v-if="sample_types.length > 1">
-                  <aggrid v-model="project.samples" :key="default_sample_type" :schema="getSampleTypeSchema(null)" v-if="project && project.samples" :editable="true" :allow-examples="true" title="Samples" :validate-url="`/server/api/projects/${id}/validate_samples/`" :save-url="`/server/api/projects/${id}/update_samples/`" :default-row="default_sample"/>
-                </q-tab-panel>
-                <template v-for="s_type in sample_types" :key="s_type">
-                <q-tab-panel :name="s_type" v-if="s_type">
-                  <q-tab-panel >
-                      {{ s_type }}
-                    <aggrid v-model="project.samples" :key="s_type" :schema="getSampleTypeSchema(s_type)" v-if="project && project.samples" :editable="true" :allow-examples="true" title="Samples" :validate-url="`/server/api/projects/${id}/validate_samples/`" :save-url="`/server/api/projects/${id}/update_samples/`" :default-row="default_sample"/>
-                    </q-tab-panel>
-                  </q-tab-panel>
-                </template>
-              </q-tab-panels>
-
-            <!-- {{ sample_schema }} -->
-            <!-- {{ project.samples }} -->
+            <!-- <p>Default Sample Type: {{ default_sample_type }}</p>
+            <p>Sample Types: {{ sample_type_ids }}</p>
+            <p>Sample Schema ({{ sample_grid_type }}): {{ sample_schema }}</p> -->
+            <q-banner inline-actions rounded dense class="text-white bg-orange" v-if="sample_types.length > 1">
+              This project contains samples of multiple types, which may have different fields.  Please select a sample type to determine which fields to display.
+              <q-select v-model="select_sample_type" :options="sample_types" option-label="name" option-value="id" emit-value map-options filled bg-color="white" dense label="Select which sample type columns to display"/>
+            </q-banner>
+            <aggrid v-model="project.samples" :key="sample_grid_type" :schema="sample_schema" v-if="project && project.samples && sample_schema" :editable="true" :allow-examples="true" :title="`Samples (displaying columns for type '${sample_grid_type}')`" :validate-url="`/server/api/projects/${id}/validate_samples/`" :save-url="`/server/api/projects/${id}/update_samples/`" :default-row="default_sample"/>
           </q-tab-panel>
           <q-tab-panel name="pools">
             <PoolsTable :filters="`project__id=${id}`"/>
@@ -115,8 +83,8 @@ import FormDialog from 'src/components/dialogs/FormDialog.vue'
 // import aggridDialog from 'src/assets/jsonschema/components/aggrid/aggridDialog.vue'
 import ModelSchemas from 'src/model_schemas/schemas'
 import aggrid from 'src/assets/jsonschema/components/aggrid/aggrid.vue'
+import _ from 'lodash'
 // import TableDialog from '../components/dialogs/TableDialog.vue'
-import TypeSelect from '../components/TypeSelect.vue'
 export default {
   name: 'ProjectPage',
   props: ['id'],
@@ -126,7 +94,7 @@ export default {
       tab: 'details',
       openSampleDialog: false,
       SamplesTable,
-      sample_grid_type: null,
+      select_sample_type: null,
       ui: ModelSchemas.layouts.project,
       sample_sheet_tab: 'default'
     }
@@ -195,8 +163,7 @@ export default {
     SubmissionData,
     JSONModelTypeForm,
     FormDialog,
-    aggrid,
-    TypeSelect
+    aggrid
     // JSONSchemaTable,
     // aggridDialog
     // TableDialog
@@ -205,6 +172,13 @@ export default {
     sample_schema () {
       // return ModelSchemas.getSchema('sample', this.default_sample_type)
       return ModelSchemas.getSchema('sample', this.sample_grid_type)
+    },
+    sample_grid_type () {
+      if (this.sample_type_ids.length === 1) {
+        return this.sample_type_ids[0]
+      } else {
+        return this.select_sample_type
+      }
     },
     default_sample_type () {
       return this.project && this.project.metadata && this.project.metadata.types ? this.project.metadata.types.sample : null
@@ -220,7 +194,12 @@ export default {
         return []
       }
       // return ['library']
-      return [...new Set(this.project.samples.map(s => s.type ? s.type.id : null))]
+      const types = this.project.samples.map(s => s.type ? s.type : { id: null, name: 'Untyped' })
+      return _.uniqWith(types, (a1, a2) => a1.id === a2.id)
+      // return [...new Set(this.project.samples.map(s => s.type ? s.type.id : null))]
+    },
+    sample_type_ids () {
+      return this.sample_types.map(t => t.id)
     }
   }
 }
