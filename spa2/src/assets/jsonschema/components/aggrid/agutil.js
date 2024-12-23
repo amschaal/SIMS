@@ -11,6 +11,7 @@ class AgUtil {
   constructor (schema, props, component) {
     this.schema = schema
     this.props = props
+    this.options = this.props.options || {}
     this.component = component
     this.errors = component.errors
     this.warnings = component.warnings
@@ -371,6 +372,9 @@ class AgUtil {
     if (params.node.rowPinned === 'top') {
       this.component.$q.notify({ position: 'top', message: 'Description and example rows are not editable.  Please use the "Add row" button for editable rows.' })
       return false
+    }
+    if (this.options.isCellEditable) {
+      return this.props.editable && this.options.isCellEditable(params.node)
     }
     return this.props.editable
   }

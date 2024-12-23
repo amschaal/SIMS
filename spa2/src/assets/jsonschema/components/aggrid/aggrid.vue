@@ -170,7 +170,7 @@ import AgUtil from './agutil'
 
 export default {
   name: 'AgSchema',
-  props: ['modelValue', 'schema', 'editable', 'allowExamples', 'allowForceSave', 'tableWarnings', 'tableErrors', 'admin', 'validateUrl', 'saveUrl', 'onSave', 'title', 'defaultRow', 'buttons', 'hideButtons'],
+  props: ['modelValue', 'schema', 'editable', 'allowExamples', 'allowForceSave', 'tableWarnings', 'tableErrors', 'admin', 'validateUrl', 'saveUrl', 'onSave', 'title', 'defaultRow', 'buttons', 'hideButtons', 'options'],
   emits: ['update:modelValue', 'input', 'warnings', 'errors'],
   data () {
     return {
@@ -191,15 +191,7 @@ export default {
   },
   mounted () {
     console.log('mounted agschema')
-    this.agutil = new AgUtil(this.schema,
-      {
-        admin: this.admin,
-        editable: this.editable,
-        showExamples: this.allowExamples,
-        showDescriptions: true
-      },
-      this)
-    this.setupGrid()
+    this.setup()
   },
   created () {
     console.log('created agschema')
@@ -208,6 +200,18 @@ export default {
     console.log('destroyed agschema')
   },
   methods: {
+    setup () {
+      this.agutil = new AgUtil(this.schema,
+        {
+          admin: this.admin,
+          editable: this.editable,
+          showExamples: this.allowExamples,
+          showDescriptions: true,
+          options: this.options
+        },
+        this)
+      this.setupGrid()
+    },
     setupData () {
       this.warnings = this.tableWarnings ? _.cloneDeep(this.agutil.getValidationObject(this.tableWarnings)) : {}
       this.errors = this.tableErrors ? _.cloneDeep(this.agutil.getValidationObject(this.tableErrors)) : {}
