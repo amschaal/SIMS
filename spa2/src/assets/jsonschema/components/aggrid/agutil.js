@@ -420,7 +420,7 @@ class AgUtil {
   }
 
   getGridOptions () {
-    return {
+    const gridOptions = {
       enableRangeSelection: true,
       defaultColDef: {
         editable: this.cellEditable.bind(this),
@@ -462,6 +462,8 @@ class AgUtil {
       rowGroupPanelSuppressSort: true,
       rowSelection: 'multiple'
     }
+    // gridOptions.getRowClass = this.options.getRowClass
+    return _.merge(gridOptions, this.options)
   }
 }
 export default AgUtil

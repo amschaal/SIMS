@@ -435,10 +435,12 @@ export default {
   }
   .ag-row .example, .show_examples span {
     background-color: lightgreen !important;
+    color: black !important;
   }
   .ag-row .description, .show_descriptions span {
     background-color: lightgrey !important;
     white-space: normal;
+    color: black !important;
   }
   .ag-theme-balham .ag-row-odd:not(.ag-row-selected) {
     background-color: #fafafa;
@@ -448,6 +450,10 @@ export default {
   }
   .ag-theme-balham .ag-ltr .ag-cell {
     border-right: 1px solid #BDC3C7;
+  }
+  .ag-row.read-only .ag-cell {
+    background-color: #f8f8f8;
+    color: #888;
   }
   /* .ag-watermark {
     display: none !important;

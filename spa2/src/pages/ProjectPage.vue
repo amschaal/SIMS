@@ -53,7 +53,7 @@
               This project contains samples of multiple types, which may have different fields.  Please select a sample type to determine which fields to display.
               <q-select v-model="select_sample_type" :options="sample_types" option-label="name" option-value="id" emit-value map-options filled bg-color="white" dense label="Select which sample type columns to display"/>
             </q-banner>
-            <aggrid v-model="project.samples" :key="sample_grid_type" :schema="sample_schema" v-if="project && project.samples && sample_schema" :editable="true" :allow-examples="true" :title="`Samples (displaying columns for type '${sample_grid_type}')`" :validate-url="`/server/api/projects/${id}/validate_samples/`" :save-url="`/server/api/projects/${id}/update_samples/`" :default-row="default_sample" :options="{isCellEditable: isCellEditable}"/>
+            <aggrid v-model="project.samples" :key="sample_grid_type" :schema="sample_schema" v-if="project && project.samples && sample_schema" :editable="true" :allow-examples="true" :title="`Samples (displaying columns for type '${sample_grid_type}')`" :validate-url="`/server/api/projects/${id}/validate_samples/`" :save-url="`/server/api/projects/${id}/update_samples/`" :default-row="default_sample" :options="{isCellEditable: isRowEditable, getRowClass}"/>
           </q-tab-panel>
           <q-tab-panel name="pools">
             <PoolsTable :filters="`project__id=${id}`"/>
@@ -133,15 +133,16 @@ export default {
     getSampleTypeSchema (type) {
       return ModelSchemas.getSchema('sample', type)
     },
-    isCellEditable (node) {
+    isRowEditable (node) {
       const row = node.data
       const rowTypeId = row.type && row.type.id ? row.type.id : row.type
-      // console.log('isCellEditable', this.sample_grid_type, rowTypeId)
       if (this.sample_grid_type && (this.sample_grid_type !== rowTypeId)) {
-        // this.$q.notify(`This sample is not of type "${this.sample_grid_type}".  Please select the "${rowTypeId}"" type in the above ÷drop down to be able to edit samples of this type.`)
         return false
       }
       return true
+    },
+    getRowClass (node) {
+      return this.isRowEditable(node) ? '' : 'read-only'
     }
     // updateSamples () {
     //   const self = this
