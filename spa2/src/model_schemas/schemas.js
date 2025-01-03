@@ -20,9 +20,23 @@ const sampleSchema = {
           return params.value ? `<a href="/samples/${params.value}/">${params.value}</a>` : params.value
           // return params.node.rowPinned ? params.value : `<a href="/samples/${params.value}/">${params.value}</a>` // this should get checked in cellRendererSelector
         },
-        cellRendererParams: {}
+        cellRendererParams: {},
+        sortable: true
       },
       checkboxSelection: true
+    },
+    type: {
+      type: 'string',
+      title: 'Type',
+      readOnly: true,
+      'x-aggrid': {
+        cellRenderer: params => {
+          // return a hyperlink to sample if not header
+          return params.value ? params.value.id : params.value
+          // return params.node.rowPinned ? params.value : `<a href="/samples/${params.value}/">${params.value}</a>` // this should get checked in cellRendererSelector
+        },
+        cellRendererParams: {}
+      }
     },
     name: {
       type: 'string',
@@ -70,7 +84,7 @@ const sampleSchema = {
     // adapter: { type: 'integer', title: 'Adapter' }
   },
   required: ['name'],
-  order: ['id', 'name', 'alias', 'barcodes', 'data']
+  order: ['id', 'type', 'name', 'alias', 'barcodes', 'data']
 }
 const poolSchema = {
   type: 'object',
