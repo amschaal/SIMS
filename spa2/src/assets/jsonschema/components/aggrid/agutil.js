@@ -111,7 +111,7 @@ class AgUtil {
   }
 
   rowIsEmpty (row) {
-    return !_.values(row).some(x => x !== undefined && x !== '')
+    return row['.new'] !== undefined || !_.values(row).some(x => x !== undefined && x !== '')
   }
 
   getRowData (filterAndSort) {
@@ -146,6 +146,7 @@ class AgUtil {
         }
       }
     }
+    obj['.new'] = true
     const rows = []
     for (let i = 0; i < number; i++) {
       rows.push(_.cloneDeep(obj))
@@ -443,6 +444,13 @@ class AgUtil {
       },
       onPinnedRowDataChanged: this.expandDescriptionRow.bind(this),
       onCellFocused: this.onCellFocused.bind(this),
+      onCellValueChanged (event) {
+        console.log('onCellValueChanged', event)
+        const row = event.node.data
+        if (row['.new'] !== undefined) {
+          delete row['.new']
+        }
+      },
       // suppressMultiRangeSelection: true,
       // suppressRowClickSelection: true,
       // checkboxSelection: function () { return true },

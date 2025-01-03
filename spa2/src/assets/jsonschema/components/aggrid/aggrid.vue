@@ -217,9 +217,11 @@ export default {
       this.errors = this.tableErrors ? _.cloneDeep(this.agutil.getValidationObject(this.tableErrors)) : {}
       if (this.value && this.value.length > 0) {
         this.rowData = _.cloneDeep(this.value)
-      } else {
-        this.rowData = _.times(10, _.stubObject)
       }
+      // else {
+      //   // this.agutil.addRow(10, this.defaultRow)
+      //   // this.rowData = _.times(10, _.stubObject)
+      // }
       this.agutil.updateErrors(this.errors, this.warnings)
     },
     discard () {
@@ -238,6 +240,9 @@ export default {
       this.columnApi = params.columnApi
       this.rootNode = this.gridApi.getModel().rootNode
       this.exampleRows = this.agutil.getExampleRows()
+      if (!this.rowData || this.rowData.length === 0) {
+        this.agutil.addRow(10, this.defaultRow)
+      }
       console.log('gridApi', this.gridApi)
     },
     updateModel (data) {
