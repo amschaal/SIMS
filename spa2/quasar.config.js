@@ -101,6 +101,13 @@ module.exports = configure(function (ctx) {
           pathRewrite: {
             '^/server': ''
           }
+        },
+        '/static': {
+          target: 'http://simsapi:8000',
+          changeOrigin: true
+          // pathRewrite: {
+          //   '^/server': ''
+          // }
         }
       }
     },
