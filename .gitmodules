@@ -1,0 +1,3 @@
+[submodule "spa2/src/assets/schema_forms"]
+	path = spa2/src/assets/schema_forms
+	url = https://github.com/amschaal/schema_forms
